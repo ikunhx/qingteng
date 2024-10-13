@@ -39,11 +39,11 @@ export default {
 
 <style>
 .aside {
-width: 300px;
+width: 16%;
   float: left;
 }
 .box {
   float: left;
-  width: 70vw;
+  width: 84%;
 }
 </style>

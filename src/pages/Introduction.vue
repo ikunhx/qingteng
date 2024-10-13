@@ -29,11 +29,11 @@ export default {
 
 <style>
 .fir-img {
-    width: 60vw;
-    margin-left: 12vw;
+    width: 68%;
+    margin-left: 15%;
 }
 .itr-img{
-    width: 81.4vw;
+    width: 100%;
     margin-top: -4px;
 }
 </style>
