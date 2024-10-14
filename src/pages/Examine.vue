@@ -1,11 +1,11 @@
 <template>
   <div>
     <h1 class="exam-title">管理员考核</h1>
-    <el-table :data="exams" height="250" border style="width: 100%;font-size: 18px;" :header-cell-style="{ fontSize: '20px' }" >
-      <el-table-column prop="name" label="考核" width="380"> </el-table-column>
-      <el-table-column prop="beginTime" label="开始时间" width="380">
+    <el-table :data="exams" :header-cell-style="{ fontSize: '20px' }" :cell-style="{ fontSize: '18px' }">
+      <el-table-column prop="name" label="考核"> </el-table-column>
+      <el-table-column prop="beginTime" label="开始时间">
       </el-table-column>
-      <el-table-column prop="endTime" label="结束时间" width="380"> </el-table-column>
+      <el-table-column prop="endTime" label="结束时间"> </el-table-column>
       <el-table-column label="操作">
       
           <button
@@ -22,6 +22,11 @@
             class="btn-ranking btn"
             @click="handleRanking()"
             >排名</button
+          >
+          <button
+            class="btn-score btn"
+            @click="handleScore()"
+            >评分</button
           >
     
       </el-table-column>
@@ -64,7 +69,8 @@ export default {
     },
     handleEdit(){},
     handleDelete(){},
-    handleRanking(){}
+    handleRanking(){},
+    handleScore(){},
   },
 };
 </script>
@@ -92,6 +98,7 @@ export default {
   cursor: pointer;
   font-size: 15px;
   transition: 0.25s;
+  color: #fff;
 }
 .btn:hover{
   transform: scale(1.1);
@@ -107,21 +114,23 @@ export default {
 .btn-ranking:hover{
   box-shadow: 0 0 8px rgba( 246,194,62,0.8);
 }
+
+.btn-score:hover{
+  box-shadow: 0 0 8px rgba(64,152,255,0.8);
+}
 .btn-edit {
   background-color: #2ba257;
-  color: #fff;
 }
 
 .btn-delete {
   background-color: #ff5c5c;
-  color: #fff;
 }
 
 .btn-ranking {
   background-color: #f6c23e;
-  color: #fff;
 }
-.el-table>>>.el-table-clumn{
-  font-size: 15px;
+.btn-score {
+  background-color: #409EFF;
 }
+
 </style>
