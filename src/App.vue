@@ -41,11 +41,10 @@ export default {
 .aside {
 width: 16.05%;
   float: left;
-  /* background-color: aqua; */
+  margin-right: 30px;
 }
 .box {
   float: left;
   width: 70%;
-  /* background-color: blue; */
 }
 </style>
