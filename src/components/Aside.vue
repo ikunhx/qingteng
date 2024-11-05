@@ -23,7 +23,12 @@
             <el-menu-item
               index="2-1"
               @click="handleChange('change','Examine')"
-              >考核</el-menu-item
+              >管理员考核</el-menu-item
+            >
+            <el-menu-item
+              index="2-3"
+              @click="handleChange('change','UserExamine')"
+              >用户考核</el-menu-item
             >
             <el-menu-item index="2-2" @click="handleChange('change','Resources')">资源</el-menu-item>
           </el-menu-item-group>

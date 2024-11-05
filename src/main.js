@@ -12,9 +12,19 @@ import '../theme/index.css'
 import VueRouter from 'vue-router'
 import router from './router'
 
+//引入懒加载库
+import VueLazyload from 'vue-lazyload';
+
 //使用UI组件库
 Vue.use(ElementUI);
 Vue.use(VueRouter);
+
+//使用懒加载库
+
+Vue.use(VueLazyload, {
+  preLoad: 1.3, // 预加载倍数，当图片距离视口 1.3 倍高度时开始加载
+  attempt: 2 // 尝试加载的次数
+});
 
 Vue.config.productionTip = false
 

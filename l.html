@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<!-- 
+ 
+
+
+
 <html lang="en">
 
 <head>
@@ -121,4 +125,35 @@
 
 </script>
 
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Scroll Example</title>
+    <style>
+        body {
+            height: 2000px; /* 为了测试滚动效果，这里设置了较高的高度 */
+            width: 2000px; /* 为了测试滚动效果，这里设置了较宽的宽度 */
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <p>This is an example of auto-scrolling to 30% of the page width on load.</p>
+
+    <script>
+        // 页面加载完成后执行滚动操作
+        window.onload = function() {
+            // 获取窗口的宽度
+            const windowWidth = window.innerWidth;
+            // 计算30%的宽度
+            const scrollPosition = windowWidth * 0.8;
+            // 滚动到指定位置
+            window.scrollTo(scrollPosition, 0);
+        };
+    </script>
+</body>
 </html>

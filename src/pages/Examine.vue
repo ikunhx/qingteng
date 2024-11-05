@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="exam-box">
     <div class="header">
       <h1 class="exam-title">管理员考核</h1>
       <el-popover
@@ -54,6 +54,7 @@
       width="40%"
       title="编辑考核"
       @close="closeEdit"
+      class="exam-dialog"
     >
       <div style="height: 500px; text-align: center">
         <!--需要弹出的内容部分-->
@@ -116,6 +117,7 @@
       width="40%"
       title="新建考核"
       @close="closeAdd"
+      class="exam-dialog"
     >
       <div style="height: 500px; text-align: center">
         <!--需要弹出的内容部分-->
@@ -436,6 +438,7 @@ export default {
       commentTable: false, //是否展示评论窗口
       examID:'',
       commentType:'0',
+      lastTime:'',
       answerUrls: [],
       exams: [
         //考核列表
@@ -665,7 +668,7 @@ export default {
           }
         )
         .then((response) => {
-          this.rankingData = response.data;
+          this.rankingData = response.data.data;
         })
         .catch((error) => {
           this.$message.error("ERROR："+error.message);
@@ -684,7 +687,7 @@ export default {
           }
         )
         .then((response) => {
-          this.scoreData = response.data;
+          this.scoreData = response.data.data;
         })
         .catch((error) => {
           this.$message.error("ERROR："+error.message);
@@ -697,7 +700,7 @@ export default {
       
     },
     getComments(){
-      const endTime =this.comments.length?this.comments[0].data: Date.now()
+      const endTime =this.comments.length?this.lastTime: Date.now()
       const discussId =0
       const formData = new FormData();
       formData.append('examID',this.examID);
@@ -708,15 +711,15 @@ export default {
           'Content-Type': 'application/json',
         },
       }).then(response=>{
-        this.comments.unshift(...response.newComments);
-        
+        this.comments.unshift(...response.data.data.discussVOList);
+        this.lastTime = response.data.data.endTime
       }).catch(error=>{
         this.$message.error("ERROR："+error.message);
       })
     },
     getReplays(id){
       const targetId =this.comments.findIndex(item => item.id === id)
-      const endTime =this.comments[targetId].replays.length?this.comments[targetId].data: Date.now()
+      const endTime =this.comments[targetId].replays.length?this.lastTime: Date.now()
       const discussId =id
       const formData = new FormData();
       formData.append('examID', this.examID);
@@ -727,8 +730,8 @@ export default {
           'Content-Type': 'application/json',
         },
       }).then(response=>{
-        this.comments[targetId].replays.unshift(...response.newComments);
-        
+        this.comments[targetId].replays.unshift(...response.data.data.discussVOList);
+        this.lastTime = response.data.data.endTime 
       }).catch(error=>{
         this.$message.error("ERROR："+error.message);
       })
@@ -762,12 +765,12 @@ export default {
       this.$refs.upload.submit();
     },
     handleSuccessEdit(response) {
-      const fileUrl = response.fileUrl;
+      const fileUrl = response.data.data.fileUrl;
       // 提交表单
       this.submitFormEdit(fileUrl);
     },
     handleSuccessAdd(response) {
-      const fileUrl = response.fileUrl;
+      const fileUrl = response.data.data.fileUrl;
       // 提交表单
       this.submitFormAdd(fileUrl);
     },
@@ -962,7 +965,7 @@ export default {
           }
         )
         .then((response) => {
-          this.exams = response.data;
+          this.exams = response.data.data;
         })
         .catch((error) => {
           this.$message.error("ERROR："+error.message);
@@ -1073,7 +1076,7 @@ export default {
 .btn-comment {
   background-color: #7550db;
 }
-/deep/ .el-form-item__label {
+.el-form>>> .el-form-item__label {
   font-size: 17px;
 }
 .el-upload__text {
@@ -1095,13 +1098,13 @@ export default {
   margin-top: 70px;
   border-radius: 10px;
 }
-/deep/ .el-dialog {
+.exam-dialog >>>.el-dialog{
   border-radius: 20px;
 }
-/deep/ .el-dialog__headerbtn {
+.exam-dialog >>>.el-dialog__headerbtn {
   font-size: 25px;
 }
-/deep/ .el-badge__content.is-fixed {
+.item >>> .el-badge__content.is-fixed {
   top: 10px;
   right: 25px;
 }
