@@ -33,8 +33,10 @@ export default {
   },
   mounted() {
       this.$bus.$on("change", this.changePath);
+      
   },
 };
+
 </script>
 
 <style>

@@ -1,5 +1,11 @@
 <template>
-  <div class="exam-box">
+  <div
+    class="exam-box"
+    v-loading.fullscreen.lock="fullscreenLoading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.5)"
+  >
     <div class="header">
       <h1 class="exam-title">管理员考核</h1>
       <el-popover
@@ -7,6 +13,7 @@
         width="100"
         trigger="hover"
         content="添加考核"
+        
       >
         <i
           class="el-icon-circle-plus-outline"
@@ -170,7 +177,7 @@
               只能上传pdf文件,且不超过400MB
             </div>
           </el-upload>
-          <button class="btn-upload btn" @click="submitUpload">发 布</button>
+          <button class="btn-upload btn" @click="submitUpload">提 交</button>
         </el-form>
       </div>
     </el-dialog>
@@ -231,12 +238,35 @@
       direction="ltr"
       size="80%"
     >
-      <el-image
-        v-for="url in answerUrls"
-        :key="url"
-        :src="url"
+      <!-- 加载动画 -->
+      <div
+        v-if="!pdfFiles.length && !videoFiles.length"
+        class="loading-container"
+      >
+        <div class="spinner"></div>
+      </div>
+
+      <video
+        v-for="(videoFile, index) in videoFiles"
+        :key="index"
+        :src="videoFile.url"
         fit="fill"
-      ></el-image>
+        controls
+        style="width: 100%"
+      ></video>
+      <div
+        v-for="(pdfFile, index) in pdfFiles"
+        :key="index"
+        class="pdf-container"
+      >
+        <embed
+          :src="pdfFile.url"
+          type="application/pdf"
+          width="100%"
+          height="80vh"
+          class="pdf"
+        />
+      </div>
     </el-drawer>
     <!-- 查看待评分列表 -->
     <el-drawer
@@ -289,13 +319,40 @@
       direction="ltr"
       size="80%"
     >
-      <el-image
-        v-for="url in answerUrls"
-        :key="url"
-        :src="url"
+      <!-- 加载动画 -->
+      <div
+        v-if="!pdfFiles.length && !videoFiles.length"
+        class="loading-container"
+      >
+        <div class="spinner"></div>
+      </div>
+      <video
+        v-for="(videoFile, index) in videoFiles"
+        :key="index"
+        :src="videoFile.url"
         fit="fill"
-      ></el-image>
-      <el-form ref="examScore" :model="examScore" label-width="80px">
+        controls
+        style="width: 100%"
+      ></video>
+      <div
+        v-for="(pdfFile, index) in pdfFiles"
+        :key="index"
+        class="pdf-container"
+      >
+        <embed
+          :src="pdfFile.url"
+          type="application/pdf"
+          width="100%"
+          height="80vh"
+          class="pdf"
+        />
+      </div>
+      <el-form
+        ref="examScore"
+        :model="examScore"
+        label-width="80px"
+        v-if="pdfFiles.length && videoFiles.length"
+      >
         <div class="scoreItem">
           <el-form-item label="分数" id="exam-score">
             <el-input
@@ -320,7 +377,7 @@
       size="30%"
       class="commentDrawer"
     >
-      <div v-for="comment in comments" :key="comment.id" class="comment">
+      <div v-for="comment in comments" :key="comment.id" class="comment" :style=colors[colorId(comment.id)]>
         <el-avatar :size="40" :src="comment.url"></el-avatar>
         <span class="userName">{{ comment.name }}</span>
         <div class="commentContent" :class="{ expanded: comment.expanded }">
@@ -372,22 +429,19 @@
             </div>
           </div>
         </div>
+
         <el-button
           type="text"
           class="btn-moreReplay"
-            v-if="comment.discussNum > 0 || comment.replays.length > 0"
-          @click="toggleReplayVisibility(comment.replays, comment),getReplays(comment.id)"
+          v-if="comment.discussNum > 0 || comment.replays.length > 0"
+          @click="getReplays(comment.id, comment)"
         >
-        {{ comment.replays.length > 0 && comment.discussNum <= 0 ? "收起▴" : "查看回复▾" }}
+          {{ comment.discussNum <= 0 ? "收起▴" : "查看回复▾" }}
         </el-button>
       </div>
-      <el-button
-          type="text"
-          class="btn-moreReplay"
-          @click="getComments"
-        >
-          查看更多评论▾
-        </el-button>
+      <el-button type="text" class="btn-moreReplay" @click="getComments">
+        查看更多评论▾
+      </el-button>
       <div class="inputDiv">
         <el-input
           ref="commentInput"
@@ -421,6 +475,8 @@
 
 <script>
 import axios from "axios";
+import JSZip from "jszip";
+import "pdfjs-dist/web/pdf_viewer.css";
 import { customAlphabet } from "nanoid";
 const numberID = customAlphabet("0123456789", 10);
 export default {
@@ -436,10 +492,21 @@ export default {
       answerTable: false, //是否展示答案框
       markTable: false, //是否展示评分窗口
       commentTable: false, //是否展示评论窗口
-      examID:'',
-      commentType:'0',
-      lastTime:'',
-      answerUrls: [],
+      examID: "",
+      commentType: "0",
+      lastTime: "",
+      answerUrl: "",
+      // pdfFiles: ["https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg","https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg"],
+      // videoFiles: ['https://www.w3schools.com/html/mov_bbb.mp4'],
+      pdfFiles: [],
+      videoFiles: [],
+      fullscreenLoading: false,
+    colors:[
+      'background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);',
+      'background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);',
+      'background-image: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);',
+      'background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);'
+    ],
       exams: [
         //考核列表
         {
@@ -478,10 +545,7 @@ export default {
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           score: 81,
           ranking: 1,
-          answerUrls: [
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-            "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg",
-          ],
+          answerUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
         {
           userID: numberID(),
@@ -491,10 +555,7 @@ export default {
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           score: 98,
           ranking: 1,
-          answerUrls: [
-            "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-            "https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg",
-          ],
+          answerUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
       ],
       scoreData: [
@@ -505,8 +566,7 @@ export default {
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           fileUrl: [
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-            "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg",
+            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip"
           ],
         },
         {
@@ -516,8 +576,7 @@ export default {
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           fileUrl: [
-            "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-            "https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg",
+             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip"
           ],
         },
       ],
@@ -525,6 +584,7 @@ export default {
         score: "",
         userID: "",
       },
+
       comments: [
         {
           id: numberID(),
@@ -535,7 +595,7 @@ export default {
           replayVisible: false, //是否展示回复评论窗口
           showAllReplays: false, //展示所有回复
           content: "考核好难55555555",
-          dis:0 ,
+          discussNum: 0,
           replays: [],
         },
         {
@@ -546,7 +606,7 @@ export default {
           expanded: false,
           replayVisible: false, //是否展示回复评论窗口
           showAllReplays: false, //展示所有回复
-          discussNum: 10,
+          discussNum: 12,
           content:
             "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
           replays: [
@@ -557,7 +617,17 @@ export default {
               data: 1729390765572,
               expanded: false,
               replayVisible: false, //是否展示回复评论窗口
-              discussNum:0 ,
+              discussNum: 0,
+              content: "考核好难55555555",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+              name: "张三",
+              data: 1729390765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
               content: "考核好难55555555",
             },
             {
@@ -567,7 +637,123 @@ export default {
               data: 1729890765572,
               expanded: false,
               replayVisible: false, //是否展示回复评论窗口
-              discussNum:0 ,
+              discussNum: 0,
+              content:
+                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+              name: "张大三",
+              data: 1729890765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content:
+                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+              name: "张三",
+              data: 1729390765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content: "考核好难55555555",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+              name: "张大三",
+              data: 1729890765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content:
+                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+              name: "张三",
+              data: 1729390765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content: "考核好难55555555",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+              name: "张大三",
+              data: 1729890765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content:
+                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+              name: "张三",
+              data: 1729390765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content: "考核好难55555555",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+              name: "张大三",
+              data: 1729890765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content:
+                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+              name: "张三",
+              data: 1729390765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content: "考核好难55555555",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+              name: "张大三",
+              data: 1729890765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content:
+                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+              name: "张三",
+              data: 1729390765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content: "考核好难55555555",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+              name: "张大三",
+              data: 1729890765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
               content:
                 "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
             },
@@ -609,7 +795,6 @@ export default {
           ],
         },
       ],
-      
     };
   },
   methods: {
@@ -655,6 +840,7 @@ export default {
         });
     },
     handleRanking(row) {
+      this.fullscreenLoading = true;
       //查看排名
       this.rankingTable = true;
       axios
@@ -669,13 +855,16 @@ export default {
         )
         .then((response) => {
           this.rankingData = response.data.data;
+          this.fullscreenLoading = false;
         })
         .catch((error) => {
-          this.$message.error("ERROR："+error.message);
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
         });
     },
     handleScore(row) {
       this.scoreTable = true;
+      this.fullscreenLoading = true;
       axios
         .post(
           `https://qingteng-recruitment/ranking?id=${row.userID}`,
@@ -687,54 +876,157 @@ export default {
           }
         )
         .then((response) => {
+          this.fullscreenLoading = false;
           this.scoreData = response.data.data;
         })
         .catch((error) => {
-          this.$message.error("ERROR："+error.message);
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
         });
     },
     handleComment(row) {
       this.commentTable = true;
       this.examID = row.id;
-      getComments()
-      
+      getComments();
     },
-    getComments(){
-      const endTime =this.comments.length?this.lastTime: Date.now()
-      const discussId =0
+    getComments() {
+      this.fullscreenLoading = true;
+      const endTime = this.comments.length ? this.lastTime : Date.now();
+      const discussId = 0;
       const formData = new FormData();
-      formData.append('examID',this.examID);
-      formData.append('end_time',endTime);
-      formData.append('discussId', discussId);
-      axios.post('https://qingteng-recruitment/comment',formData,{
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then(response=>{
-        this.comments.unshift(...response.data.data.discussVOList);
-        this.lastTime = response.data.data.endTime
-      }).catch(error=>{
-        this.$message.error("ERROR："+error.message);
-      })
+      formData.append("examID", this.examID);
+      formData.append("end_time", endTime);
+      formData.append("discussId", discussId);
+      axios
+        .post("https://qingteng-recruitment/comment", formData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          this.comments.unshift(...response.data.data.discussVOList);
+          this.lastTime = response.data.data.endTime;
+          this.fullscreenLoading = false;
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
+        });
     },
-    getReplays(id){
-      const targetId =this.comments.findIndex(item => item.id === id)
-      const endTime =this.comments[targetId].replays.length?this.lastTime: Date.now()
-      const discussId =id
-      const formData = new FormData();
-      formData.append('examID', this.examID);
-      formData.append('end_time',endTime);
-      formData.append('discussId', discussId);
-      axios.post('https://qingteng-recruitment/comment',formData,{
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then(response=>{
-        this.comments[targetId].replays.unshift(...response.data.data.discussVOList);
-        this.lastTime = response.data.data.endTime 
-      }).catch(error=>{
-        this.$message.error("ERROR："+error.message);
-      })
+    // toggleReplayVisibility(comment) {
+    //   if (comment.discussNum <= 0) {
+    //     // 收起所有回复
+    //     comment.discussNum = comment.originalDiscussNum; // 还原 discussNum
+    //     comment.replays.forEach((replay) => {
+    //       replay.replayVisible = false;
+    //     });
+    //     comment.showAllReplays = false;
+    //     comment.replays = [];
+    //     this.num = 0;
+    //     console.log(
+    //       comment.discussNum,
+    //       "----------",
+    //       this.num,
+    //       "-----",
+    //       comment.replays.length
+    //     );
+    //   } else {
+    //     // 展开所有回复
+    //     if (comment.originalDiscussNum === undefined) {
+    //       comment.originalDiscussNum = comment.discussNum;
+    //     }
+    //     comment.discussNum -= 10;
+    //     comment.replays.forEach((replay) => {
+    //       replay.replayVisible = true;
+    //     });
+    //     comment.showAllReplays = true;
+    //     console.log(
+    //       comment.discussNum,
+    //       "----------",
+    //       this.num,
+    //       "-----",
+    //       comment.replays.length
+    //     );
+    //   }
+    // },
+    getReplays(id, comment) {
+      if (comment.discussNum > 0) {
+        this.fullscreenLoading = true;
+        const targetId = this.comments.findIndex((item) => item.id === id);
+        const endTime = this.comments[targetId].replays.length
+          ? this.lastTime
+          : Date.now();
+        const discussId = id;
+        const formData = new FormData();
+        formData.append("examID", this.examID);
+        formData.append("end_time", endTime);
+        formData.append("discussId", discussId);
+        axios
+          .post("https://qingteng-recruitment/comment", formData, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response) => {
+            this.fullscreenLoading = false;
+            this.comments[targetId].replays.unshift(
+              ...response.data.data.discussVOList
+            );
+            this.lastTime = response.data.data.endTime;
+            // 展开所有回复
+            if (comment.originalDiscussNum === undefined) {
+              comment.originalDiscussNum = comment.discussNum;
+            }
+            comment.discussNum -= 10;
+            comment.replays.forEach((replay) => {
+              replay.replayVisible = true;
+            });
+            comment.showAllReplays = true;
+            console.log(
+              comment.discussNum,
+              "----------",
+              this.num,
+              "-----",
+              comment.replays.length
+            );
+          })
+          .catch((error) => {
+            this.fullscreenLoading = false;
+            this.$message.error("ERROR：" + error.message);
+            // 展开所有回复
+            if (comment.originalDiscussNum === undefined) {
+              comment.originalDiscussNum = comment.discussNum;
+            }
+            comment.discussNum -= 10;
+            comment.replays.forEach((replay) => {
+              replay.replayVisible = true;
+            });
+            comment.showAllReplays = true;
+            console.log(
+              comment.discussNum,
+              "----------",
+              this.num,
+              "-----",
+              comment.replays.length
+            );
+          });
+      } else {
+        // 收起所有回复
+        comment.discussNum = comment.originalDiscussNum; // 还原 discussNum
+        comment.replays.forEach((replay) => {
+          replay.replayVisible = false;
+        });
+        comment.showAllReplays = false;
+        comment.replays = [];
+        this.num = 0;
+        console.log(
+          comment.discussNum,
+          "----------",
+          this.num,
+          "-----",
+          comment.replays.length
+        );
+      }
     },
 
     //关闭编辑窗口时事件操作 (表格、表单 同理 需要执行的事件 在此处)
@@ -776,7 +1068,7 @@ export default {
     },
     submitFormEdit(fileUrl) {
       // 这里应该是你的表单提交逻辑
-
+      this.fullscreenLoading = true;
       const formData = new FormData();
       formData.append("name", this.editExam.name);
       formData.append("beginTime", this.editExam.beginTime);
@@ -790,6 +1082,7 @@ export default {
           },
         })
         .then((response) => {
+          this.fullscreenLoading = false;
           this.$message({
             type: "success",
             message: "添加成功!",
@@ -797,12 +1090,13 @@ export default {
           this.closeEdit();
         })
         .catch((error) => {
+          this.fullscreenLoading = false;
           this.$message.error("考核发布失败：" + error.message);
         });
     },
     submitFormAdd(fileUrl) {
       // 这里应该是你的表单提交逻辑
-
+      this.fullscreenLoading = true;
       const formData = new FormData();
       formData.append("name", this.newExam.name);
       formData.append("beginTime", this.newExam.beginTime);
@@ -816,6 +1110,7 @@ export default {
           },
         })
         .then((response) => {
+          this.fullscreenLoading = false;
           this.$message({
             type: "success",
             message: "提交成功!",
@@ -823,6 +1118,7 @@ export default {
           this.closeEdit();
         })
         .catch((error) => {
+          this.fullscreenLoading = false;
           this.$message.error("考核添加失败：" + error.message);
         });
     },
@@ -874,89 +1170,128 @@ export default {
     },
     showAnswer(row) {
       this.answerTable = true;
-      this.answerUrls = row.answerUrls || [];
+      this.fetchAndUnzip(row.answerUrl);
     },
     giveScore(row) {
       this.markTable = true;
-      this.answerUrls = row.fileUrl || [];
-      this.examScore.userID = row.userID 
+      this.examScore.userID = row.userID;
+      this.fetchAndUnzip(row.fileUrl);
     },
 
     submitScore() {
+      this.fullscreenLoading = true;
       const scoreData = this.examScore;
-      axios.post('https://qingteng-recruitment/ranking_score',scoreData,{
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then(response=>{
-        this.$message({
+      axios
+        .post("https://qingteng-recruitment/ranking_score", scoreData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          this.fullscreenLoading = false;
+          this.$message({
             type: "success",
             message: "评分成功",
           });
-      }).catch(error=>{
-        this.$message.error("评分失败："+error.message);
-      })
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("评分失败：" + error.message);
+        });
     },
     toggleExpand(comment) {
       comment.expanded = !comment.expanded;
     },
-    showReplay(replays) {
-      replays.forEach((replay) => {
-        replay.replayVisible = !replay.replayVisible;
-      });
-    },
-    toggleReplayVisibility(replays, comment) {
-      comment.discussNum-=10
-      console.log(comment.discussNum);
-      
-      if (replays.length>0&&comment.discussNum+10<=0) {
-        console.log(8);
-        // 收起所有回复
-        replays.forEach((replay) => {
-          replay.replayVisible = false;
-        });
-        comment.showAllReplays = false;
-      } else {
-        // 展开所有回复
-        console.log(6);
-        
-        replays.forEach((replay) => {
-          replay.replayVisible = true;
-        });
-        comment.showAllReplays = true;
-      }
-    },
+    // showReplay(replays) {
+    //   replays.forEach((replay) => {
+    //     replay.replayVisible = !replay.replayVisible;
+    //   });
+    // },
+    // toggleReplayVisibility(replays, comment) {
+    //   comment.discussNum -= 10;
+    //   this.num+=10;
+    //   console.log(comment.discussNum,'-----',num);
+
+    //   if (replays.length > 0 && comment.discussNum + 10 <= 0) {
+    //     console.log(8);
+    //     // 收起所有回复
+    //     replays.forEach((replay) => {
+    //       replay.replayVisible = false;
+    //     });
+    //     comment.showAllReplays = false;
+    //   } else {
+    //     // 展开所有回复
+    //     console.log(6);
+
+    //     replays.forEach((replay) => {
+    //       replay.replayVisible = true;
+    //     });
+    //     comment.showAllReplays = true;
+    //   }
+    // },
+
+    //   toggleReplayVisibility(replays, comment) {
+    //   if (comment.showAllReplays) {
+    //     // 收起所有回复
+    //     replays.forEach((replay) => {
+    //       replay.replayVisible = false;
+    //     });
+    //     comment.showAllReplays = false;
+    //     comment.discussNum = comment.replays.length; // 重置 discussNum
+    //   } else {
+    //     // 展开最多 10 条回复
+    //     const maxReplaysToShow = Math.min(10, comment.replays.length);
+    //     comment.replays.slice(0, maxReplaysToShow).forEach((replay) => {
+    //       replay.replayVisible = true;
+    //     });
+    //     comment.showAllReplays = true;
+
+    //     if (maxReplaysToShow < comment.replays.length) {
+    //       // 如果还有更多回复，设置 discussNum 为剩余回复数
+    //       comment.discussNum = comment.replays.length - maxReplaysToShow;
+    //     } else {
+    //       // 如果没有更多回复，重置 discussNum
+    //       comment.discussNum = 0;
+    //     }
+    //   }
+    // },
     sendComment() {
+      this.fullscreenLoading = true;
       const commentData = {
         content: this.textarea,
         discussId: this.commentType,
-        examId:this.examID
+        examId: this.examID,
       };
-      axios.post('https://qingteng-recruitment/comment', commentData,{
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then(response=>{
-        this.$message({
+      axios
+        .post("https://qingteng-recruitment/comment", commentData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          this.fullscreenLoading = false;
+          this.$message({
             type: "success",
             message: "评论成功!",
           });
-          this.commentType = '0'
-      }).catch(error=>{
-        this.$message.error("ERROR："+error.message);
-        this.commentType = '0'
-      })
+          this.commentType = "0";
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
+          this.commentType = "0";
+        });
       this.textarea = "";
     },
     makeReplay(comment) {
       this.$refs.commentInput.focus(); // 跳转到输入框
-      this.commentType = comment.id; 
-      
+      this.commentType = comment.id;
     },
     showExams() {
+      this.fullscreenLoading = true;
       axios
         .post(
-          "https://qingteng-recruitment/examine",
+          "https://qingteng-recruitment/root/display_exam",
           {},
           {
             headers: {
@@ -965,10 +1300,12 @@ export default {
           }
         )
         .then((response) => {
+          this.fullscreenLoading = false;
           this.exams = response.data.data;
         })
         .catch((error) => {
-          this.$message.error("ERROR："+error.message);
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
         });
     },
     getRanking() {},
@@ -976,6 +1313,7 @@ export default {
       this.addExamVisible = true;
     },
     deleteExam(id) {
+      this.fullscreenLoading = true;
       axios
         .post(
           `https://qingteng-recruitment/examine_delete?id=${id}`,
@@ -987,6 +1325,7 @@ export default {
           }
         )
         .then((response) => {
+          this.fullscreenLoading = false;
           this.$message({
             type: "success",
             message: "删除成功!",
@@ -994,15 +1333,69 @@ export default {
           this.showExams();
         })
         .catch((error) => {
-          this.$message.error("删除失败："+error.message);
+          this.fullscreenLoading = false;
+          this.$message.error("删除失败：" + error.message);
         });
     },
-    sendReplay() {},
-    reduce10(num){
-      const commentNum = num;
-      
-      return commentNum-10<=0
+   
+    async fetchAndUnzip(zipUrl) {
+      try {
+       
+        // 使用 axios 下载文件
+        const response = await axios({
+          url: zipUrl,
+          method: "GET",
+          responseType: "arraybuffer", // 获取二进制数据
+        });
+
+        if (response.status !== 200) {
+          throw new Error(`请求失败，状态码: ${response.status}`);
+        }
+
+        // 使用 JSZip 解压压缩包
+        const zip = new JSZip();
+        const content = await zip.loadAsync(response.data);
+
+        // 清空现有的文件列表
+        this.pdfFiles = [];
+        this.videoFiles = [];
+
+        // 遍历压缩包中的文件
+        content.forEach((relativePath, file) => {
+          if (file.dir) return; // 忽略目录
+
+          // 将文件转换为 Blob 对象，并指定 MIME 类型
+          file.async("blob").then(async (blob) => {
+            const fileUrl = URL.createObjectURL(blob);
+            console.log(`Generated URL for ${file.name}: ${fileUrl}`); // 打印生成的 URL
+            const fileType = file.name.split(".").pop().toLowerCase();
+
+            let mimeType;
+            if (fileType === "pdf") {
+              mimeType = "application/pdf";
+            } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
+              mimeType = "video/" + fileType;
+            } else {
+              mimeType = "application/octet-stream"; // 默认 MIME 类型
+            }
+
+            const typedBlob = new Blob([blob], { type: mimeType });
+            const typedFileUrl = URL.createObjectURL(typedBlob);
+
+            if (fileType === "pdf") {
+              this.pdfFiles.push({ name: file.name, url: typedFileUrl });
+            } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
+              this.videoFiles.push({ name: file.name, url: typedFileUrl });
+            }
+          });
+        });
+      } catch (error) {
+        console.error("解压失败:", error.message);
+      }
     },
+    colorId(id) {
+      return id%4
+    }
   },
   computed: {
     iconClass() {
@@ -1011,6 +1404,7 @@ export default {
         "icon-color-filled": this.textarea !== "",
       };
     },
+   
   },
   mounted() {
     this.showExams();
@@ -1019,6 +1413,17 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.pdf-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.pdf-canvas {
+  width: 100%;
+  height: 100%;
+}
 .exam-title {
   font-size: 34px;
   margin-left: 10px;
@@ -1076,7 +1481,7 @@ export default {
 .btn-comment {
   background-color: #7550db;
 }
-.el-form>>> .el-form-item__label {
+.el-form >>> .el-form-item__label {
   font-size: 17px;
 }
 .el-upload__text {
@@ -1098,21 +1503,15 @@ export default {
   margin-top: 70px;
   border-radius: 10px;
 }
-.exam-dialog >>>.el-dialog{
+.exam-dialog >>> .el-dialog {
   border-radius: 20px;
 }
-.exam-dialog >>>.el-dialog__headerbtn {
+.exam-dialog >>> .el-dialog__headerbtn {
   font-size: 25px;
 }
 .item >>> .el-badge__content.is-fixed {
   top: 10px;
   right: 25px;
-}
-.el-table >>> .warning-row {
-  background: #ccffcc;
-}
-.el-table >>> .success-row {
-  background: #90ee90;
 }
 .el-image {
   width: 100%;
@@ -1204,5 +1603,34 @@ export default {
 .el-icon-circle-plus-outline:hover {
   color: #2ba257;
   transform: scale(1.1);
+}
+.pdf {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+/* 加载动画样式 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #000;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

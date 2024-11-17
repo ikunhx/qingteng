@@ -1,5 +1,10 @@
 <template>
-  <div>
+    <div
+    v-loading.fullscreen.lock="fullscreenLoading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.5)"
+  >
     <div class="first box">
       <img src="@/assets/exam-bck/computer.png" class="computer" />
       <img src="@/assets/exam-bck/computer-ball.png" class="computer-ball" />
@@ -23,6 +28,10 @@
           邂逅<strong>青藤</strong>考核题，踏上技术<strong>提升</strong>之旅
         </p>
       </div>
+      <button class="start hvr-underline-from-center" @click="scrollToDown">
+        快速开始
+      </button>
+      <i class="el-icon-bottom icon-bottom"></i>
       <img src="@/assets/exam-bck/doughnut.png" class="doughnut" />
     </div>
     <div class="second box">
@@ -156,17 +165,319 @@
         </p>
       </div>
     </div>
-    <div class="fourth box"></div>
-    <div class="fifth box"></div>
+    <div class="fourth box">
+      <div class="fourth-title">
+        <h1>青 藤 工 作 室 考 核</h1>
+      </div>
+      <div class="exams">
+        <div class="exam" v-for="exam in exams" :key="exam.id">
+          <div class="information">
+            <div class="exam-name">{{ exam.name }}</div>
+          </div>
+          <div class="time">
+            <div class="begin">{{ showDate(exam.beginTime) }}</div>
+            <div class="connect-icon">—</div>
+            <div class="end">{{showDate(exam.endTime) }}</div>
+          </div>
+          <div class="operate">
+            <div class="icon-container">
+              <i
+                class="iconfont icon-yunxiazai"
+                @click="downloadExam(exam.id)"
+              ></i>
+            </div>
+            <div class="icon-container">
+              <i
+                class="iconfont icon-yunshangchuan"
+                @click="addExam(exam)"
+              ></i>
+            </div>
+            <div class="icon-container">
+              <i class="iconfont icon-chengji" @click="viewScore(exam)"></i>
+            </div>
+            <div class="icon-container">
+              <i class="iconfont icon-rank-full" @click="handleRanking(exam)"></i>
+            </div>
+            <div class="icon-container">
+              <i class="iconfont icon-pinglun" @click="handleComment(exam.id)"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 提交答案 -->
+    <el-dialog
+      :visible.sync="addExamVisible"
+      width="30%"
+      title="提交答案"
+      @close="closeAdd"
+      class="exam-dialog"
+    >
+      <div style="height: 350px; text-align: center">
+        <!--需要弹出的内容部分-->
+        <el-form ref="userAnswer" :model="userAnswer" label-width="80px">
+          <el-upload
+            class="upload-demo"
+            ref="upload"
+            drag
+            action="https://jsonplaceholder.typicode.com/posts/"
+            multiple
+            accept=".pdf"
+            :before-upload="beforeAvatarUpload"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :on-success="handleSuccessAdd"
+            :before-remove="beforeRemove"
+            :auto-upload="false"
+            :limit="1"
+            :on-exceed="handleExceed"
+          >
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">
+              将文件拖到此处，或<em>点击上传</em>
+            </div>
+            <div class="el-upload__tip" slot="tip">
+              只能上传zip文件,且不超过400MB
+            </div>
+          </el-upload>
+          <button class="btn-upload btn" @click="submitUpload">提 交</button>
+        </el-form>
+      </div>
+    </el-dialog>
+    <!-- 查看分数 -->
+    <el-dialog
+      :visible.sync="isViewScoreVisible"
+      width="30%"
+      title="我的分数"
+      @close="closeView"
+      class="score-box"
+    >
+      <div style="height: 350px; text-align: center">
+        <!--需要弹出的内容部分-->
+        <img src="@/assets/exam-bck/score.png" class="score-img" />
+        <h1>{{ score }} 分</h1>
+      </div>
+    </el-dialog>
+    <!-- 没出成绩时 -->
+    <el-dialog
+      :visible.sync="isViewScoreVisible2"
+      width="30%"
+      title="我的分数"
+      @close="closeView2"
+      class="score-box"
+    >
+      <div style="height: 350px; text-align: center">
+        <!--需要弹出的内容部分-->
+        <h1>成绩还未出炉，再等等吧</h1>
+      </div>
+    </el-dialog>
+     <!-- 查看排名窗口 -->
+     <el-drawer
+      :with-header="false"
+      :visible.sync="rankingTable"
+      direction="rtl"
+      size="41.5%"
+    >
+      <el-table
+        :data="rankingData"
+        height="100%"
+        :row-class-name="rowColor"
+        :row-style="rowStyle"
+        :header-row-style="headerStyle"
+      >
+        <el-table-column property="avatarUrl" label="" width="50">
+          <template slot-scope="scope">
+            <el-avatar
+              :size="40"
+              :src="scope.row.avatarUrl"
+            ></el-avatar> </template
+        ></el-table-column>
+        <el-table-column
+          property="name"
+          label="姓名"
+          width="140"
+        ></el-table-column>
+        <el-table-column
+          property="classes"
+          label="班级"
+          width="170"
+        ></el-table-column>
+        <el-table-column property="score" label="分数" width="150">
+        </el-table-column>
+        <el-table-column
+          property="ranking"
+          label="排名"
+          width="100"
+        ></el-table-column>
+        <el-table-column label="操作" width="90">
+          <template slot-scope="scope">
+            <el-button
+              @click="showAnswer(scope.row)"
+              type="text"
+              class="btn btn-edit"
+              >查看</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-drawer>
+    <!-- 评论区展示 -->
+    <el-drawer
+      :with-header="false"
+      :visible.sync="commentTable"
+      direction="rtl"
+      size="30%"
+      class="commentDrawer"
+    >
+      <div v-for="comment in comments" :key="comment.id" class="comment">
+        <el-avatar :size="40" :src="comment.url"></el-avatar>
+        <span class="userName">{{ comment.name }}</span>
+        <div class="commentContent" :class="{ expanded: comment.expanded }">
+          {{
+            comment.expanded ? comment.content : comment.content.slice(0, 100)
+          }}
+          <span v-if="comment.content.length > 100 && !comment.expanded"
+            >...&nbsp;&nbsp;&nbsp;</span
+          >
+          <el-button
+            v-if="comment.content.length > 100"
+            type="text"
+            @click="toggleExpand(comment)"
+          >
+            {{ comment.expanded ? "收起" : "展开" }}
+          </el-button>
+        </div>
+        <div class="commentDate">
+          {{ showTime(comment.data) }}
+          <el-button type="text" class="btn-replay" @click="makeReplay(comment)"
+            >回复</el-button
+          >
+        </div>
+        <div
+          v-for="replay in comment.replays"
+          :key="replay.id"
+          class="comment replayComment"
+        >
+          <div v-if="replay.replayVisible">
+            <el-avatar :size="35" :src="replay.url"></el-avatar>
+            <span class="userName">{{ replay.name }}</span>
+            <div class="commentContent" :class="{ expanded: replay.expanded }">
+              {{
+                replay.expanded ? replay.content : replay.content.slice(0, 100)
+              }}
+              <span v-if="replay.content.length > 100 && !replay.expanded"
+                >...&nbsp;&nbsp;&nbsp;</span
+              >
+              <el-button
+                v-if="replay.content.length > 100"
+                type="text"
+                @click="toggleExpand(replay)"
+              >
+                {{ replay.expanded ? "收起" : "展开" }}
+              </el-button>
+            </div>
+            <div class="commentDate">
+              {{ showTime(replay.data) }}
+            </div>
+          </div>
+        </div>
+
+        <el-button
+          type="text"
+          class="btn-moreReplay"
+          v-if="comment.discussNum > 0 || comment.replays.length > 0"
+          @click="getReplays(comment.id, comment)"
+        >
+          {{ comment.discussNum <= 0 ? "收起▴" : "查看回复▾" }}
+        </el-button>
+      </div>
+      <el-button type="text" class="btn-moreReplay" @click="getComments">
+        查看更多评论▾
+      </el-button>
+      <div class="inputDiv">
+        <el-input
+          ref="commentInput"
+          placeholder="说点啥吧"
+          v-model="textarea"
+          class="commentInput"
+        >
+          <el-tooltip
+            slot="suffix"
+            class="item"
+            effect="light"
+            content="还没说呢"
+            placement="top-end"
+            v-show="this.textarea === ''"
+          >
+            <i :class="iconClass" class="el-icon-s-promotion"></i>
+          </el-tooltip>
+          <i
+            slot="suffix"
+            :class="iconClass"
+            class="el-icon-s-promotion"
+            v-show="this.textarea !== ''"
+            @click="sendComment()"
+          ></i>
+        </el-input>
+      </div>
+      <div style="height: 40px"></div>
+    </el-drawer>
+    <!-- 排名里查看考核答案窗口 -->
+    <el-drawer
+      :with-header="false"
+      :visible.sync="answerTable"
+      direction="ltr"
+      size="80%"
+    >
+      <!-- 加载动画 -->
+      <div
+        v-if="!pdfFiles.length && !videoFiles.length"
+        class="loading-container"
+      >
+        <div class="spinner"></div>
+      </div>
+
+      <video
+        v-for="(videoFile, index) in videoFiles"
+        :key="index"
+        :src="videoFile.url"
+        fit="fill"
+        controls
+        style="width: 100%"
+      ></video>
+      <div
+        v-for="(pdfFile, index) in pdfFiles"
+        :key="index"
+        class="pdf-container"
+      >
+        <embed
+          :src="pdfFile.url"
+          type="application/pdf"
+          width="100%"
+          height="80vh"
+          class="pdf"
+        />
+      </div>
+    </el-drawer>
   </div>
+  
 </template>
 
 <script>
+import "@/assets/icon/iconfont.css";
+import "@/assets/css/hover.css";
+
 import "animate.css";
+import axios from "axios";
+import JSZip from "jszip";
+import "pdfjs-dist/web/pdf_viewer.css";
+import { customAlphabet } from "nanoid";
+const numberID = customAlphabet("0123456789", 10);
 export default {
   name: "UserExamine",
   data() {
     return {
+      textarea: "", // 输入框中的文字
       isTrue: false,
       isSecondTitle: false,
       isSecondSentence: false,
@@ -183,21 +494,267 @@ export default {
       isAdvantage4: false,
       isQuestion: false,
       isAnswer: false,
+      answerTable: false, //是否展示答案框
+      addExamVisible: false, //是否展示添加考核框
       colors: ["#fff", "#2ba257"], // 颜色数组
       currentIndex: 0, // 当前颜色索引
       color: "#fff", // 初始颜色
+      score: 99, //分数
+      isViewScoreVisible: false, //是否展示分数框
+      isViewScoreVisible2: false, //是否展示分数框
+      fullscreenLoading: false,
+      rankingTable: false,//是否展示排名窗口
+      commentTable: false, //是否展示评论窗口
+      examID: "",
+      pdfFiles: [],
+      videoFiles: [],
+      exams: [
+        //考核列表
+        {
+          id: numberID(),
+          name: "第一次考核",
+          beginTime: 1728613183630,
+          endTime: 2728613524152,
+        },
+        {
+          id: numberID(),
+          name: "第二次考核",
+          beginTime: 1728635736858,
+          endTime: 1728696238545,
+        },
+      ],
+      examId: "",
+      userAnswer: {
+        name: "",
+        classes: "",
+        studentId: "",
+      },
+      rankingData: [
+        {
+          userID: numberID(),
+          name: "张三",
+          classes: "软件2401",
+          avatarUrl:
+            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+          score: 81,
+          ranking: 1,
+          answerUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+        },
+        {
+          userID: numberID(),
+          name: "张三",
+          classes: "软件2401",
+          avatarUrl:
+            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+          score: 98,
+          ranking: 1,
+          answerUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+        },
+      ],
+      comments: [
+        {
+          id: numberID(),
+          url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+          name: "张三",
+          data: 1729390765572,
+          expanded: false,
+          replayVisible: false, //是否展示回复评论窗口
+          showAllReplays: false, //展示所有回复
+          content: "考核好难55555555",
+          dis: 0,
+          replays: [],
+        },
+        {
+          id: numberID(),
+          url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+          name: "张大三",
+          data: 1729890765572,
+          expanded: false,
+          replayVisible: false, //是否展示回复评论窗口
+          showAllReplays: false, //展示所有回复
+          discussNum: 10,
+          content:
+            "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+          replays: [
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+              name: "张三",
+              data: 1729390765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content: "考核好难55555555",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+              name: "张大三",
+              data: 1729890765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum: 0,
+              content:
+                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+            },
+          ],
+        },
+        {
+          id: numberID(),
+          url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+          name: "张大三",
+          data: 1729890765572,
+          expanded: false,
+          replayVisible: false, //是否展示回复评论窗口
+          discussNum: 2,
+          showAllReplays: false, //展示所有回复
+          content:
+            "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+          replays: [
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+              name: "张三",
+              data: 1729390765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum:0 ,
+              content: "考核好难55555555",
+            },
+            {
+              id: numberID(),
+              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+              name: "张大三",
+              data: 1729890765572,
+              expanded: false,
+              replayVisible: false, //是否展示回复评论窗口
+              discussNum:0 ,
+              content:
+                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+            },
+          ],
+        },
+      ],
     };
   },
   computed: {
     offset2() {
       return -this.offset; // offset2 始终等于负的 offset
     },
+    iconClass() {
+      return {
+        "icon-color-empty": this.textarea === "",
+        "icon-color-filled": this.textarea !== "",
+      };
+    },
   },
   methods: {
-    test() {
-      console.log(666);
+    addExam(exam) {
+      let now =Date.now();
+      if(now>exam.endTime){
+        this.$message.warning("考核已截至!");
+        return;
+      }else{
+        this.addExamVisible = true;
+        this.examId = exam.id;
+      }
+      
     },
+    submitUpload() {
+      //提交文件到服务器
+      this.$refs.upload.submit();
+    },
+    handleExceed(files, fileList) {
+      //处理文件超出三个的情况
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
+          files.length + fileList.length
+        } 个文件`
+      );
+    },
+    beforeRemove(file, fileList) {
+      //提示是否移除
+      return this.$confirm(`确定移除 ${file.name}?`);
+    },
+    handleSuccessAdd(response) {
+      const fileUrl = response.data.data.fileUrl;
+      // 提交表单
+      this.submitFormAdd(fileUrl);
+    },
+    submitFormAdd(fileUrl) {
+      // 这里应该是你的表单提交逻辑
+      this.fullscreenLoading = true;
+      const formData = new FormData();
+      const id = this.examId;
+      formData.append("name", this.$store.state.userName);
+      formData.append("classes", this.$store.state.classes);
+      formData.append("studentId", this.$store.state.studentId);
+      formData.append("fileUrl", fileUrl);
+      const url = `https://qingteng-recruitment/user/examine_upload?id=${id}`;
+      axios
+        .post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          this.fullscreenLoading = false;
+          this.$message({
+            type: "success",
+            message: "提交成功!",
+          });
+          this.closeEdit();
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("考核上传失败：" + error.message);
+        });
+    },
+    handleRemove(file, fileList) {
+      //移除考核文件
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      //预览考核文件
+      console.log(file);
+    },
+    beforeAvatarUpload(file) {
+      //限制大小
+      const isLt400M = file.size / 1024 / 1024 <= 400;
 
+      if (!isLt400M) {
+        this.$message.error("上传文档大小不能超过 400MB!");
+      }
+      return isLt400M;
+    },
+    closeAdd() {
+      this.editExam.name = "";
+      this.editExam.beginTime = "";
+      this.editExam.endTime = "";
+      this.fileList = [];
+      this.editExamVisible = false;
+      this.editExam.id = "";
+    },
+    test() {
+      console.log(this.$store.state.userName);
+    },
+    showDate(timeString) {
+      //传入时间戳，转化为具体时间
+      let year = new Date(timeString).getFullYear();
+      let month = new Date(timeString).getMonth();
+      let day = new Date(timeString).getDate();
+      return `${year}-${month + 1}-${day}`;
+    },
+    showTime(timeString) {
+      //传入时间戳，转化为具体时间
+      let year = new Date(timeString).getFullYear();
+      let month = new Date(timeString).getMonth();
+      let day = new Date(timeString).getDate();
+      let hour = new Date(timeString).getHours();
+      let minute = new Date(timeString).getMinutes();
+      let second = new Date(timeString).getSeconds();
+      return `${year}-${month + 1}-${day} ${hour}:${minute}:${second}`;
+    },
     //自动往右滚动
     scrollToRight() {
       // 获取窗口的宽度
@@ -206,6 +763,15 @@ export default {
       const scrollPosition = windowWidth * 0.3;
       // 滚动到指定位置
       window.scrollTo(scrollPosition, 0);
+    },
+    //自动往下滚动
+    scrollToDown() {
+      // 获取窗口的宽度
+      const windowHeight = window.innerHeight;
+      // 计算30%的宽度
+      const scrollPosition = windowHeight * 3.41;
+      // 滚动到指定位置
+      window.scrollTo(scrollPosition, scrollPosition);
     },
     //节流函数
     throttle(func, limit) {
@@ -254,14 +820,11 @@ export default {
         } else {
           this.offset = 35;
         }
-        console.log(this.offset);
       } else {
         if (this.offset == -35) {
         } else {
           this.offset = -35;
         }
-
-        console.log(this.offset);
       }
     },
     //该变颜色
@@ -269,14 +832,345 @@ export default {
       this.currentIndex = (this.currentIndex + 1) % this.colors.length;
       this.color = this.colors[this.currentIndex];
     },
+    downloadExam(id) {
+      this.fullscreenLoading = true;
+      axios
+        .post(
+          `https://qingteng-recruitment/user/examine_download?id=${id}`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          this.fullscreenLoading = false;
+          // 下载
+          window.location = response.data.link;
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
+        });
+    },
+    showExams() {
+      this.fullscreenLoading = true;
+      axios
+        .post(
+          "https://qingteng-recruitment/root/display_exam",
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          this.fullscreenLoading = false;
+          this.exams = response.data.data;
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
+        });
+    },
+    closeEdit() {
+      this.userAnswer.name = "";
+      this.userAnswer.classes = "";
+      this.userAnswer.studentId = "";
+      this.fileList = [];
+      this.addExamVisible = false;
+    },
+    viewScore(exam) {
+      let now = Date.now();
+      if(now<exam.endTime){
+        this.$message.warning("考核结束才能开始查看成绩");
+        return;
+      }else{
+        this.fullscreenLoading = true;
+      axios
+        .post(
+          `https://qingteng-recruitment/user/examine_score?id=${exam.id}`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          this.score = response.data.data;
+          //添加判断，出成绩和还没出成绩
+          if (this.score.score === null) {
+            this.isViewScoreVisible = false;
+            this.isViewScoreVisible2 = true;
+          } else {
+            this.isViewScoreVisible = true;
+            this.isViewScoreVisible2 = false;
+          }
+          this.fullscreenLoading = false;
+        })
+        .catch((error) => {
+          this.isViewScoreVisible = true;
+          this.fullscreenLoading = false;
+        });
+      }
+      
+    },
+    closeView() {
+      this.isViewScoreVisible = false;
+    },
+    closeView2() {
+      this.isViewScoreVisible2 = false;
+    },
+    handleRanking(exam) {
+      let now =Date.now();
+      if(now<exam.endTime){
+        this.$message.warning("考核结束才能开始查看排名");
+        return;
+      }else{
+        this.fullscreenLoading = true;
+      //查看排名
+      this.rankingTable = true;
+      axios
+        .post(
+          `https://qingteng-recruitment/examine_ranking?id=${exam.userID}`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          this.rankingData = response.data.data;
+          this.fullscreenLoading = false;
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
+        });
+      }
+      
+    },
+    handleComment(id){
+      this.commentTable = true;
+      this.examID = id;
+      getComments();
+    },
+    getComments() {
+      this.fullscreenLoading = true;
+      const endTime = this.comments.length ? this.lastTime : Date.now();
+      const discussId = 0;
+      const formData = new FormData();
+      formData.append("examID", this.examID);
+      formData.append("end_time", endTime);
+      formData.append("discussId", discussId);
+      axios
+        .post("https://qingteng-recruitment/comment", formData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          this.comments.unshift(...response.data.data.discussVOList);
+          this.lastTime = response.data.data.endTime;
+          this.fullscreenLoading = false;
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
+        });
+    },
+    getReplays(id, comment) {
+      if (comment.discussNum > 0) {
+        this.fullscreenLoading = true;
+        const targetId = this.comments.findIndex((item) => item.id === id);
+        const endTime = this.comments[targetId].replays.length
+          ? this.lastTime
+          : Date.now();
+        const discussId = id;
+        const formData = new FormData();
+        formData.append("examID", this.examID);
+        formData.append("end_time", endTime);
+        formData.append("discussId", discussId);
+        axios
+          .post("https://qingteng-recruitment/comment", formData, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response) => {
+            this.fullscreenLoading = false;
+            this.comments[targetId].replays.unshift(
+              ...response.data.data.discussVOList
+            );
+            this.lastTime = response.data.data.endTime;
+            // 展开所有回复
+            if (comment.originalDiscussNum === undefined) {
+              comment.originalDiscussNum = comment.discussNum;
+            }
+            comment.discussNum -= 10;
+            comment.replays.forEach((replay) => {
+              replay.replayVisible = true;
+            });
+            comment.showAllReplays = true;
+            console.log(
+              comment.discussNum,
+              "----------",
+              this.num,
+              "-----",
+              comment.replays.length
+            );
+          })
+          .catch((error) => {
+            this.fullscreenLoading = false;
+            this.$message.error("ERROR：" + error.message);
+          });
+      } else {
+        // 收起所有回复
+        comment.discussNum = comment.originalDiscussNum; // 还原 discussNum
+        comment.replays.forEach((replay) => {
+          replay.replayVisible = false;
+        });
+        comment.showAllReplays = false;
+        comment.replays = [];
+        this.num = 0;
+        console.log(
+          comment.discussNum,
+          "----------",
+          this.num,
+          "-----",
+          comment.replays.length
+        );
+      }
+    },
+    rowColor({ row, rowIndex }) {
+      if (rowIndex % 2 === 1) {
+        return "warning-row";
+      } else {
+        return "success-row";
+      }
+    },
+    sendComment() {
+      this.fullscreenLoading = true;
+      const commentData = {
+        content: this.textarea,
+        discussId: this.commentType,
+        examId: this.examID,
+      };
+      axios
+        .post("https://qingteng-recruitment/comment", commentData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          this.fullscreenLoading = false;
+          this.$message({
+            type: "success",
+            message: "评论成功!",
+          });
+          this.commentType = "0";
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("ERROR：" + error.message);
+          this.commentType = "0";
+        });
+      this.textarea = "";
+    },
+    makeReplay(comment) {
+      this.$refs.commentInput.focus(); // 跳转到输入框
+      this.commentType = comment.id;
+    },
+    toggleExpand(comment) {
+      comment.expanded = !comment.expanded;
+    },
+    rowStyle() {
+      return {
+        height: "60px",
+        fontSize: "17px",
+        color: "rgba(0,0,0,0.8)",
+        fontWeight: "500",
+      };
+    },
+    headerStyle() {
+      return {
+        height: "60px",
+        fontSize: "18px",
+        color: "rgba(0,0,0,0.8)",
+      };
+    },
+    showAnswer(row) {
+      this.answerTable = true;
+      this.fetchAndUnzip(row.answerUrl);
+    },
+    async fetchAndUnzip(zipUrl) {
+      try {
+        // 使用 axios 下载文件
+        const response = await axios({
+          url: zipUrl,
+          method: "GET",
+          responseType: "arraybuffer", // 获取二进制数据
+        });
+
+        if (response.status !== 200) {
+          throw new Error(`请求失败，状态码: ${response.status}`);
+        }
+
+        // 使用 JSZip 解压压缩包
+        const zip = new JSZip();
+        const content = await zip.loadAsync(response.data);
+
+        // 清空现有的文件列表
+        this.pdfFiles = [];
+        this.videoFiles = [];
+
+        // 遍历压缩包中的文件
+        content.forEach((relativePath, file) => {
+          if (file.dir) return; // 忽略目录
+          console.log(666);
+          
+          // 将文件转换为 Blob 对象，并指定 MIME 类型
+          file.async("blob").then(async (blob) => {
+            const fileUrl = URL.createObjectURL(blob);
+            console.log(`Generated URL for ${file.name}: ${fileUrl}`); // 打印生成的 URL
+            const fileType = file.name.split(".").pop().toLowerCase();
+
+            let mimeType;
+            if (fileType === "pdf") {
+              mimeType = "application/pdf";
+            } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
+              mimeType = "video/" + fileType;
+            } else {
+              mimeType = "application/octet-stream"; // 默认 MIME 类型
+            }
+
+            const typedBlob = new Blob([blob], { type: mimeType });
+            const typedFileUrl = URL.createObjectURL(typedBlob);
+
+            if (fileType === "pdf") {
+              this.pdfFiles.push({ name: file.name, url: typedFileUrl });
+            } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
+              this.videoFiles.push({ name: file.name, url: typedFileUrl });
+            }
+          });
+        });
+      } catch (error) {
+        console.error("解压失败:", error.message);
+      }
+    },
   },
   mounted() {
     this.handleScroll = this.throttle(this.handleScroll, 100); // 节流处理
-    this.scrollToRight();
+    this.scrollToRight();//自动右移
     window.addEventListener("scroll", this.handleScroll);
     this.handleWheel = this.throttle(this.handleWheel, 100);
     window.addEventListener("wheel", this.handleWheel);
     setInterval(this.changeColor, 1200);
+    this.showExams();
   },
 };
 </script>
@@ -307,11 +1201,30 @@ export default {
 }
 
 .fourth {
-  background-color: blue;
+  background-color: rgb(246, 245, 241);
 }
-
-.fifth {
-  background-color: purple;
+.start {
+  width: 180px;
+  height: 56px;
+  padding: 17px 36px;
+  font-size: 20px;
+  line-height: 30px;
+  color: #2ba257;
+  border-radius: 28px;
+  box-sizing: border-box !important;
+  transition: all 0.3s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 8px 16px 0 rgba(40, 55, 255, 0.4),
+    inset 0 -3px 4px 2px rgba(0, 95, 252, 0.3), inset 0 3px 4px 2px #fff;
+  position: absolute;
+  left: 40vw;
+  bottom: 30vh;
+  animation: floatUp 1.8s ease-in-out forwards;
 }
 
 .computer {
@@ -337,6 +1250,14 @@ export default {
   50% {
     transform: translateY(2vh) scale(1.02);
   }
+}
+.icon-bottom {
+  font-size: 5vw;
+  position: absolute;
+  bottom: 1vh;
+  left: 47vw;
+  color: #fff;
+  animation: floatUp 1.8s ease-in-out forwards;
 }
 .text1,
 .text2 {
@@ -377,6 +1298,12 @@ export default {
     opacity: 1;
     transform: translateY(0);
   }
+}
+.pdf-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  margin-bottom: 20px;
 }
 .title {
   margin: 0;
@@ -895,4 +1822,219 @@ export default {
   animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.85);
   animation-fill-mode: forwards;
 }
+.fourth-title {
+  margin: 6vh auto 3vh;
+}
+.fourth-title h1 {
+  color: #2ba257;
+  text-align: center;
+  padding: 2vh 0;
+  font-size: 5vw;
+  font-weight: 600;
+  font-family: "Courier New", Courier, monospace;
+}
+.exam {
+  width: 80%;
+  height: 8vh;
+  display: flex;
+  margin: 5vh auto 5vh;
+  justify-content: center;
+  align-items: center;
+  border-bottom: rgba(0, 0, 0, 0.15) 1.5px solid;
+  position: relative;
+}
+.information {
+  position: absolute;
+  left: 3vw;
+}
+.time {
+  display: flex;
+  margin: 10px 0 10px;
+  position: absolute;
+  left: 32vw;
+  bottom: 0.2vh;
+}
+.operate {
+  position: absolute;
+  right: 3vw;
+  bottom: 1vh;
+  display: flex;
+}
+.end,
+.begin {
+  margin-left: 0.8vw;
+  margin-right: 0.8vw;
+  color: rgba(0, 0, 0, 0.3);
+}
+.exam-name {
+  font-size: 2vw;
+  color: rgba(0, 0, 0, 0.5);
+}
+.icon-container {
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+  color: #2ba257;
+  cursor: pointer;
+  width: 2vw;
+  height: 3vh;
+  margin-left: 0.5vw;
+  margin-right: 0.5vw;
+}
+.iconfont {
+  font-size: 1.5vw;
+  color: rgba(0, 0, 0, 0.5);
+  transition: 0.3s;
+  position: relative;
+}
+.iconfont:hover {
+  color: #2ba257;
+}
+.icon-container:hover {
+  transform: scale(1.2);
+  color: #2ba257;
+  cursor: pointer;
+}
+.btn {
+  margin-right: 15px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.25s;
+  color: #fff;
+}
+.btn:hover {
+  transform: scale(1.1);
+}
+.btn-upload:hover {
+  box-shadow: 0 0 8px rgba(43, 162, 87, 0.8);
+}
+.btn-upload {
+  background-color: #2ba257;
+  border: none;
+  color: #fff;
+  width: 70px;
+  height: 35px;
+  font-size: 17px;
+  margin-top: 9vh;
+  border-radius: 10px;
+}
+.btn-edit {
+  background-color: #2ba257;
+}
+.exam-dialog >>> .el-dialog {
+  border-radius: 20px;
+}
+.exam-dialog >>> .el-dialog__headerbtn {
+  font-size: 25px;
+}
+.score-box h1 {
+  font-size: 4vw;
+}
+.score-img {
+  width: 20vw;
+  margin-left: 8vw;
+}
+.comment {
+  margin-top: 15px;
+  margin-left: 25px;
+}
+.userName {
+  font-size: 12px;
+  margin-left: 50px;
+  display: block;
+  margin-top: -42px;
+  color: gray;
+}
+.commentContent {
+  margin-left: 49px;
+  width: 70%;
+  overflow-wrap: break-word; /* 允许长单词和 URL 断开换行 */
+  line-height: 27px;
+  transition: 2s;
+}
+.commentDate {
+  font-size: 12px;
+  color: gray;
+  margin-left: 50px;
+}
+.btn-replay {
+  margin-left: 15px;
+  font-size: 12px;
+}
+.btn-moreReplay {
+  margin-left: 50px;
+}
+.replayComment {
+  margin-left: 50px;
+}
+.commentInput >>> .el-input__inner {
+  border-radius: 15px;
+  background-color: #e0f2e9;
+  bottom: 0px;
+  position: fixed;
+  width: 30%;
+}
+.el-icon-s-promotion {
+  font-size: 30px;
+  margin-right: 10px;
+  position: fixed;
+  right: 0.5%;
+  bottom: 4px;
+  border-radius: 100%;
+  background-color: #fff;
+  cursor: pointer;
+}
+.icon-color-empty {
+  color: gray; /* 无文字时的颜色 */
+}
+
+.icon-color-filled {
+  color: #2ba257; /* 有文字时的颜色 */
+}
+.el-icon-circle-plus-outline {
+  font-size: 40px;
+  font-weight: 0;
+  margin-top: -50px;
+  margin-right: 10px;
+  float: right;
+  transition: 0.4s;
+
+  color: #90ee90;
+  cursor: pointer;
+}
+.el-icon-circle-plus-outline:hover {
+  color: #2ba257;
+  transform: scale(1.1);
+}.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #000;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}/* 加载动画样式 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.pdf {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
 </style>
