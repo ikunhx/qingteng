@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <Aside class="aside" />
+    <!-- <aha /> -->
     <div class="box">
       
       <router-view></router-view>
@@ -10,10 +11,12 @@
 
 <script>
 import Aside from "./components/Aside.vue";
+import aha from "./components/aha.vue";
 export default {
   name: "App",
   components: {
     Aside,
+    aha,
   },
   methods: {
     changePath(url) {//路由跳转
