@@ -94,7 +94,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://localhost:8080/jsonplaceholder.typicode.com/posts/"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -137,7 +137,7 @@
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
-                v-model="newExam.beginTime"
+                v-model="newExam.start_date"
                 style="width: 100%"
                 class="date-picker"
               ></el-date-picker>
@@ -147,7 +147,7 @@
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
-                v-model="newExam.endTime"
+                v-model="newExam.end_time"
                 style="width: 100%"
                 class="date-picker"
               ></el-date-picker>
@@ -157,7 +157,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://localhost:8080/jsonplaceholder.typicode.com/posts/"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -177,8 +177,9 @@
               只能上传pdf文件,且不超过400MB
             </div>
           </el-upload>
-          <button class="btn-upload btn" @click="submitUpload">提 交</button>
+          
         </el-form>
+        <button class="btn-upload btn" @click="submitUpload">提 交</button>
       </div>
     </el-dialog>
     <!-- 查看排名窗口 -->
@@ -496,8 +497,8 @@ export default {
       commentType: "0",
       lastTime: "",
       answerUrl: "",
-      // pdfFiles: ["https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg","https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg"],
-      // videoFiles: ['https://www.w3schools.com/html/mov_bbb.mp4'],
+      // pdfFiles: ["http://localhost:8080/fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg","http://localhost:8080/fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg"],
+      // videoFiles: ['http://localhost:8080/www.w3schools.com/html/mov_bbb.mp4'],
       pdfFiles: [],
       videoFiles: [],
       fullscreenLoading: false,
@@ -533,8 +534,8 @@ export default {
         //新考核
         id: numberID(),
         name: "",
-        beginTime: "",
-        endTime: "",
+        start_date: "",
+        end_time: "",
       },
       rankingData: [
         {
@@ -773,7 +774,7 @@ export default {
           replays: [
             // {
             //   id: numberID(),
-            //   url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+            //   url: "http://localhost:8080/fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
             //   name: "张三",
             //   data: 1729390765572,
             //   expanded: false,
@@ -783,7 +784,7 @@ export default {
             // },
             // {
             //   id: numberID(),
-            //   url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+            //   url: "http://localhost:8080/fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
             //   name: "张大三",
             //   data: 1729890765572,
             //   expanded: false,
@@ -845,11 +846,11 @@ export default {
       this.rankingTable = true;
       axios
         .post(
-          `https://qingteng-recruitment/examine_ranking?id=${row.userID}`,
+          `http://localhost:8080/qingteng-recruitment/examine_ranking?id=${row.userID}`,
           {},
           {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -867,11 +868,11 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          `https://qingteng-recruitment/ranking?id=${row.userID}`,
+          `http://localhost:8080/qingteng-recruitment/ranking?id=${row.userID}`,
           {},
           {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -898,9 +899,9 @@ export default {
       formData.append("end_time", endTime);
       formData.append("discussId", discussId);
       axios
-        .post("https://qingteng-recruitment/comment", formData, {
+        .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
           headers: {
-            "Content-Type": "application/json",
+           "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -962,9 +963,9 @@ export default {
         formData.append("end_time", endTime);
         formData.append("discussId", discussId);
         axios
-          .post("https://qingteng-recruitment/comment", formData, {
+          .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           })
           .then((response) => {
@@ -1074,11 +1075,11 @@ export default {
       formData.append("beginTime", this.editExam.beginTime);
       formData.append("endTime", this.editExam.endTime);
       formData.append("fileUrl", fileUrl);
-      const url = "https://qingteng-recruitment/examine_add";
+      const url = "http://localhost:8080/qingteng-recruitment/examine_add";
       axios
         .post(url, formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1099,14 +1100,14 @@ export default {
       this.fullscreenLoading = true;
       const formData = new FormData();
       formData.append("name", this.newExam.name);
-      formData.append("beginTime", this.newExam.beginTime);
-      formData.append("endTime", this.newExam.endTime);
+      formData.append("beginTime", this.newExam.start_date);
+      formData.append("endTime", this.newExam.end_time);
       formData.append("fileUrl", fileUrl);
-      const url = `https://qingteng-recruitment/examine_put?id=${this.newExam.id}`;
+      const url = `http://localhost:8080/qingteng-recruitment/examine_put?id=${this.newExam.id}`;
       axios
         .post(url, formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1124,8 +1125,8 @@ export default {
     },
     closeEdit() {
       this.newExam.name = "";
-      this.newExam.beginTime = "";
-      this.newExam.endTime = "";
+      this.newExam.start_date = "";
+      this.newExam.end_time = "";
       this.fileList = [];
       this.addExamVisible = false;
     },
@@ -1182,9 +1183,9 @@ export default {
       this.fullscreenLoading = true;
       const scoreData = this.examScore;
       axios
-        .post("https://qingteng-recruitment/ranking_score", scoreData, {
+        .post("http://localhost:8080/qingteng-recruitment/ranking_score", scoreData, {
           headers: {
-            "Content-Type": "application/json",
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1263,9 +1264,9 @@ export default {
         examId: this.examID,
       };
       axios
-        .post("https://qingteng-recruitment/comment", commentData, {
+        .post("http://localhost:8080/qingteng-recruitment/comment", commentData, {
           headers: {
-            "Content-Type": "application/json",
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1291,11 +1292,11 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          "https://qingteng-recruitment/root/display_exam",
+          "http://localhost:8080/qingteng-recruitment/root/display_exam",
           {},
           {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -1316,11 +1317,11 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          `https://qingteng-recruitment/examine_delete?id=${id}`,
+          `http://localhost:8080/qingteng-recruitment/examine_delete?id=${id}`,
           {},
           {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           }
         )

@@ -27,7 +27,9 @@ Vue.use(VueLazyload, {
 });
 
 Vue.config.productionTip = false
-
+Vue.prototype.$globalVar = {
+  admin: 1  // 初始化为 null 或者 0/1
+}
 new Vue({
   store,
   el: '#app',

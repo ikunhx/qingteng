@@ -96,9 +96,9 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%); */
+  /* background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);  */
   /* background-color: #d8d1c8; */
-  border-radius: 50%;
+  /* border-radius: 50%; */
 }
 .eye-container {
   width: 100%;

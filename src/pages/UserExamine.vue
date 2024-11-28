@@ -220,7 +220,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://localhost:8080/jsonplaceholder.typicode.com/posts/"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -690,11 +690,11 @@ export default {
       formData.append("classes", this.$store.state.classes);
       formData.append("studentId", this.$store.state.studentId);
       formData.append("fileUrl", fileUrl);
-      const url = `https://qingteng-recruitment/user/examine_upload?id=${id}`;
+      const url = `http://localhost:8080/qingteng-recruitment/user/examine_upload?id=${id}`;
       axios
         .post(url, formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -836,11 +836,11 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          `https://qingteng-recruitment/user/examine_download?id=${id}`,
+          `http://localhost:8080/qingteng-recruitment/user/examine_download?id=${id}`,
           {},
           {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -858,11 +858,11 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          "https://qingteng-recruitment/root/display_exam",
+          "http://localhost:8080/qingteng-recruitment/root/display_exam",
           {},
           {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -891,11 +891,11 @@ export default {
         this.fullscreenLoading = true;
       axios
         .post(
-          `https://qingteng-recruitment/user/examine_score?id=${exam.id}`,
+          `http://localhost:8080/qingteng-recruitment/user/examine_score?id=${exam.id}`,
           {},
           {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -935,11 +935,11 @@ export default {
       this.rankingTable = true;
       axios
         .post(
-          `https://qingteng-recruitment/examine_ranking?id=${exam.userID}`,
+          `http://localhost:8080/qingteng-recruitment/examine_ranking?id=${exam.userID}`,
           {},
           {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -968,9 +968,9 @@ export default {
       formData.append("end_time", endTime);
       formData.append("discussId", discussId);
       axios
-        .post("https://qingteng-recruitment/comment", formData, {
+        .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
           headers: {
-            "Content-Type": "application/json",
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -996,9 +996,9 @@ export default {
         formData.append("end_time", endTime);
         formData.append("discussId", discussId);
         axios
-          .post("https://qingteng-recruitment/comment", formData, {
+          .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
             headers: {
-              "Content-Type": "application/json",
+              "token": `${this.$store.state.token}`,
             },
           })
           .then((response) => {
@@ -1061,9 +1061,9 @@ export default {
         examId: this.examID,
       };
       axios
-        .post("https://qingteng-recruitment/comment", commentData, {
+        .post("http://localhost:8080/qingteng-recruitment/comment", commentData, {
           headers: {
-            "Content-Type": "application/json",
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
