@@ -125,12 +125,16 @@ export default {
     };
   },
   mounted() {
-    this.judge();
+    // this.judge();
     this.fetchUsers();
   },
   methods: {
     judge() {
-      if (this.$store.state.token === "") this.$router.push("/User");
+      if (this.$store.state.token === "") {
+        if (this.$router.path !== "/User") {
+          this.$router.push("/User");
+        }
+      }
     },
     tableRowClassName({ row, rowIndex }) {
       if (rowIndex === 1) {

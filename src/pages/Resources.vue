@@ -24,11 +24,15 @@ export default {
   },
   methods: {
     judge() {
-      if (this.$store.state.token === "") this.$router.push("/User");
+      if (this.$store.state.token === "") {
+        if (this.$router.path !== "/User") {
+          this.$router.push("/User");
+        }
+      }
     },
   },
   mounted() {
-    this.judge();
+    // this.judge();
   },
   beforeDestroy() {
     this.$store.dispatch("setToken", "");

@@ -171,12 +171,16 @@ export default {
     };
   },
   mounted() {
-    this.judge();
+    // this.judge();
     this.fetchUserInfo();
   },
   methods: {
     judge() {
-      if (this.$store.state.token === "") this.$router.push("/User");
+      if (this.$store.state.token === "") {
+        if (this.$router.path !== "/User") {
+          this.$router.push("/User");
+        }
+      }
     },
     fetchUserInfo() {
       axios
@@ -185,7 +189,7 @@ export default {
           {}, // 如果没有请求体，可以保留为空对象
           {
             headers: {
-              token: `${this.$store.state.token}`, // 设置 Authorization 头
+              "token": `${this.$store.state.token}`, // 设置 Authorization 头
             },
           }
         )
@@ -216,7 +220,7 @@ export default {
           this.userInformation,
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )

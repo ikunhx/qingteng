@@ -74,11 +74,11 @@ export default {
     },
     //url跳转路由名，不要加斜杠，name为触发事件名
     handleChange(name, url) {
-      if (url === "Introduction") this.$bus.$emit(name, url);
-      else {
-        if (this.$store.state.token !== "") this.$bus.$emit(name, url);
-        else this.$bus.$emit("change", "User");
-      }
+      this.$bus.$emit(name, url);
+      // else {
+      //   if (this.$store.state.token !== "") this.$bus.$emit(name, url);
+      //   else this.$bus.$emit("change", "User");
+      // }
     },
   },
 };

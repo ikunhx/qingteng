@@ -65,7 +65,11 @@ export default {
   },
   methods: {
     judge() {
-      if (this.$store.state.token === "") this.$router.push("/User");
+      if (this.$store.state.token === "") {
+        if (this.$router.path !== "/User") {
+          this.$router.push("/User");
+        }
+      }
     },
     async fetchResources() {
       try {
@@ -126,7 +130,7 @@ export default {
   },
 
   mounted() {
-    this.judge();
+    // this.judge();
     this.fetchResources(); // 页面加载时获取资源
     this.scrollToRight();
   },

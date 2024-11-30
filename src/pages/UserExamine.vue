@@ -654,7 +654,11 @@ export default {
   },
   methods: {
     judge() {
-      if (this.$store.state.token === "") this.$router.push("/User");
+      if (this.$store.state.token === "") {
+        if (this.$router.path !== "/User") {
+          this.$router.push("/User");
+        }
+      }
     },
     addExam(exam) {
       let now = Date.now();
@@ -700,7 +704,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            token: `${this.$store.state.token}`,
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -846,7 +850,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -868,7 +872,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -901,7 +905,7 @@ export default {
             {},
             {
               headers: {
-                token: `${this.$store.state.token}`,
+                "token": `${this.$store.state.token}`,
               },
             }
           )
@@ -944,7 +948,7 @@ export default {
             {},
             {
               headers: {
-                token: `${this.$store.state.token}`,
+                "token": `${this.$store.state.token}`,
               },
             }
           )
@@ -974,7 +978,7 @@ export default {
       axios
         .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
           headers: {
-            token: `${this.$store.state.token}`,
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1005,7 +1009,7 @@ export default {
             formData,
             {
               headers: {
-                token: `${this.$store.state.token}`,
+                "token": `${this.$store.state.token}`,
               },
             }
           )
@@ -1074,7 +1078,7 @@ export default {
           commentData,
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -1176,7 +1180,7 @@ export default {
     },
   },
   mounted() {
-    this.judge();
+    // this.judge();
     this.handleScroll = this.throttle(this.handleScroll, 100); // 节流处理
     this.scrollToRight(); //自动右移
     window.addEventListener("scroll", this.handleScroll);

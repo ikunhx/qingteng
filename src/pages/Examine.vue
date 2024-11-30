@@ -93,7 +93,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="http://localhost:8080/jsonplaceholder.typicode.com/posts/"
+            action="http://localhost/qingteng-recruitment/user/common/upload"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -156,7 +156,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="http://localhost:8080/jsonplaceholder.typicode.com/posts/"
+            action="http://localhost/qingteng-recruitment/user/common/upload"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -167,6 +167,7 @@
             :auto-upload="false"
             :limit="1"
             :on-exceed="handleExceed"
+             :http-request="customUpload"
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
@@ -805,7 +806,15 @@ export default {
   },
   methods: {
     judge() {
-      if (this.$store.state.token === "") this.$router.push("/User");
+      console.log('Checking token:', this.$store.getters.getToken); // 使用 getter 获取 token
+      if (this.$store.state.token === '') {
+        // if (this.$router.path !== "/User") {
+        //   this.$router.push("/User");
+        // }
+        alert(1)
+      }else{
+        alert(2)
+      }
     },
     showDate(timeString) {
       //传入时间戳，转化为具体时间
@@ -856,7 +865,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -878,7 +887,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -907,7 +916,7 @@ export default {
       axios
         .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
           headers: {
-            token: `${this.$store.state.token}`,
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -974,7 +983,7 @@ export default {
             formData,
             {
               headers: {
-                token: `${this.$store.state.token}`,
+                "token": `${this.$store.state.token}`,
               },
             }
           )
@@ -1063,6 +1072,24 @@ export default {
       //提示是否移除
       return this.$confirm(`确定移除 ${file.name}?`);
     },
+    customUpload(options) {
+      const formData = new FormData();
+      formData.append('file', options.file);
+
+      axios.post(options.action, formData, {
+        headers: {
+          "token": `${this.$store.state.token}`,
+        }
+      })
+      .then(response => {
+        // 成功处理
+        options.onSuccess && options.onSuccess(response.data);
+      })
+      .catch(error => {
+        // 错误处理
+        options.onError && options.onError(error);
+      });
+    },
     submitUpload() {
       //提交文件到服务器
       this.$refs.upload.submit();
@@ -1089,7 +1116,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            token: `${this.$store.state.token}`,
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1117,7 +1144,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            token: `${this.$store.state.token}`,
+            "token": `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1198,7 +1225,7 @@ export default {
           scoreData,
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -1283,7 +1310,7 @@ export default {
           commentData,
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -1314,7 +1341,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -1341,7 +1368,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              "token": `${this.$store.state.token}`,
             },
           }
         )
@@ -1426,7 +1453,7 @@ export default {
     },
   },
   mounted() {
-    this.judge();
+    // this.judge();
     this.showExams();
   },
   beforeDestroy() {
