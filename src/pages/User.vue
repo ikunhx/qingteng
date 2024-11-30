@@ -271,9 +271,9 @@ export default {
     // this.judge();
     this.scrollToRight();
   },
-  beforeDestroy() {
-    this.$store.dispatch("setToken", "");
-  },
+  // beforeDestroy() {
+  //   this.$store.dispatch("setToken", "");
+  // },
 };
 </script>
 

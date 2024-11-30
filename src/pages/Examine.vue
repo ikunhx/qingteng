@@ -93,7 +93,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="http://localhost/qingteng-recruitment/user/common/upload"
+            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -156,7 +156,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="http://localhost/qingteng-recruitment/user/common/upload"
+            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -1462,9 +1462,9 @@ export default {
     // this.judge();
     this.showExams();
   },
-  beforeDestroy() {
-    this.$store.dispatch("setToken", "");
-  },
+  // beforeDestroy() {
+  //   this.$store.dispatch("setToken", "");
+  // },
 };
 </script>
 

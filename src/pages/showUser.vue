@@ -241,9 +241,9 @@ export default {
         });
     },
   },
-  beforeDestroy() {
-    this.$store.dispatch("setToken", "");
-  },
+//   beforeDestroy() {
+//     this.$store.dispatch("setToken", "");
+//   },
 };
 </script>
 

@@ -1189,9 +1189,9 @@ export default {
     setInterval(this.changeColor, 1200);
     this.showExams();
   },
-  beforeDestroy() {
-    this.$store.dispatch("setToken", "");
-  },
+  // beforeDestroy() {
+  //   this.$store.dispatch("setToken", "");
+  // },
 };
 </script>
 

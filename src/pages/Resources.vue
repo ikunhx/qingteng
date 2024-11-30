@@ -34,9 +34,9 @@ export default {
   mounted() {
     // this.judge();
   },
-  beforeDestroy() {
-    this.$store.dispatch("setToken", "");
-  },
+  // beforeDestroy() {
+  //   this.$store.dispatch("setToken", "");
+  // },
 };
 </script>
 

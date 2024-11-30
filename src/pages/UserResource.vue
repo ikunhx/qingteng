@@ -134,9 +134,9 @@ export default {
     this.fetchResources(); // 页面加载时获取资源
     this.scrollToRight();
   },
-  beforeDestroy() {
-    this.$store.dispatch("setToken", "");
-  },
+//   beforeDestroy() {
+//     this.$store.dispatch("setToken", "");
+//   },
 };
 </script>  
   

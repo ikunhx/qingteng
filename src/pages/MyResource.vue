@@ -335,9 +335,9 @@ export default {
     // this.judge();
     this.fetchResources(); // 页面加载时获取资源
   },
-  beforeDestroy() {
-    this.$store.dispatch("setToken", "");
-  },
+  // beforeDestroy() {
+  //   this.$store.dispatch("setToken", "");
+  // },
 };
 </script>
 
