@@ -3,7 +3,6 @@
     <Aside class="aside" />
     <!-- <aha /> -->
     <div class="box">
-      
       <router-view></router-view>
     </div>
   </div>
@@ -19,32 +18,32 @@ export default {
     aha,
   },
   methods: {
-    changePath(url) {//路由跳转
-      if (url == "Introduction") {//首页兼简介页
-        if (this.$route.path !== '/Introduction' && this.$router.path !== '/') {
+    changePath(url) {
+      //路由跳转
+      if (url == "Introduction") {
+        //首页兼简介页
+        if (this.$route.path !== "/Introduction" && this.$router.path !== "/") {
           this.$router.push({
             name: url,
           });
         }
-      } else if (this.$route.path !== `/${url}`) {//其他页面
+      } else if (this.$route.path !== `/${url}`) {
+        //其他页面
         this.$router.push({
           name: url,
         });
       }
     },
-
   },
   mounted() {
-      this.$bus.$on("change", this.changePath);
-      
+    this.$bus.$on("change", this.changePath);
   },
 };
-
 </script>
 
 <style>
 .aside {
-width: 16.05%;
+  width: 16.05%;
   float: left;
   margin-right: 30px;
 }

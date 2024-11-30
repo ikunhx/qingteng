@@ -13,7 +13,6 @@
         width="100"
         trigger="hover"
         content="添加考核"
-        
       >
         <i
           class="el-icon-circle-plus-outline"
@@ -177,7 +176,6 @@
               只能上传pdf文件,且不超过400MB
             </div>
           </el-upload>
-          
         </el-form>
         <button class="btn-upload btn" @click="submitUpload">提 交</button>
       </div>
@@ -378,7 +376,12 @@
       size="30%"
       class="commentDrawer"
     >
-      <div v-for="comment in comments" :key="comment.id" class="comment" :style=colors[colorId(comment.id)]>
+      <div
+        v-for="comment in comments"
+        :key="comment.id"
+        class="comment"
+        :style="colors[colorId(comment.id)]"
+      >
         <el-avatar :size="40" :src="comment.url"></el-avatar>
         <span class="userName">{{ comment.name }}</span>
         <div class="commentContent" :class="{ expanded: comment.expanded }">
@@ -502,12 +505,12 @@ export default {
       pdfFiles: [],
       videoFiles: [],
       fullscreenLoading: false,
-    colors:[
-      'background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);',
-      'background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);',
-      'background-image: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);',
-      'background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);'
-    ],
+      colors: [
+        "background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);",
+        "background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);",
+        "background-image: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);",
+        "background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);",
+      ],
       exams: [
         //考核列表
         {
@@ -546,7 +549,8 @@ export default {
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           score: 81,
           ranking: 1,
-          answerUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+          answerUrl:
+            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
         {
           userID: numberID(),
@@ -556,7 +560,8 @@ export default {
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           score: 98,
           ranking: 1,
-          answerUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+          answerUrl:
+            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
       ],
       scoreData: [
@@ -567,7 +572,7 @@ export default {
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           fileUrl: [
-            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip"
+            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
           ],
         },
         {
@@ -577,7 +582,7 @@ export default {
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           fileUrl: [
-             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip"
+            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
           ],
         },
       ],
@@ -799,6 +804,9 @@ export default {
     };
   },
   methods: {
+    judge() {
+      if (this.$store.state.token === "") this.$router.push("/User");
+    },
     showDate(timeString) {
       //传入时间戳，转化为具体时间
       let year = new Date(timeString).getFullYear();
@@ -824,20 +832,18 @@ export default {
       this.editExam.id = row.id;
     },
     handleDelete(row) {
-      //删除考核
-      this.$confirm("此操作将永久删除该考核, 是否继续?", "删除考核", {
+      // 删除考核
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          deleteExam(row.id);
+          return this.deleteExam(row.id); // 返回 Promise
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
+        .then(() => {})
+        .catch((error) => {
+          console.error("删除失败:", error);
         });
     },
     handleRanking(row) {
@@ -850,7 +856,7 @@ export default {
           {},
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -872,7 +878,7 @@ export default {
           {},
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -901,7 +907,7 @@ export default {
       axios
         .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
           headers: {
-           "token": `${this.$store.state.token}`,
+            token: `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -963,11 +969,15 @@ export default {
         formData.append("end_time", endTime);
         formData.append("discussId", discussId);
         axios
-          .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
-            headers: {
-              "token": `${this.$store.state.token}`,
-            },
-          })
+          .post(
+            "http://localhost:8080/qingteng-recruitment/comment",
+            formData,
+            {
+              headers: {
+                token: `${this.$store.state.token}`,
+              },
+            }
+          )
           .then((response) => {
             this.fullscreenLoading = false;
             this.comments[targetId].replays.unshift(
@@ -1079,7 +1089,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            "token": `${this.$store.state.token}`,
+            token: `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1107,7 +1117,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            "token": `${this.$store.state.token}`,
+            token: `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1183,11 +1193,15 @@ export default {
       this.fullscreenLoading = true;
       const scoreData = this.examScore;
       axios
-        .post("http://localhost:8080/qingteng-recruitment/ranking_score", scoreData, {
-          headers: {
-            "token": `${this.$store.state.token}`,
-          },
-        })
+        .post(
+          "http://localhost:8080/qingteng-recruitment/ranking_score",
+          scoreData,
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        )
         .then((response) => {
           this.fullscreenLoading = false;
           this.$message({
@@ -1264,11 +1278,15 @@ export default {
         examId: this.examID,
       };
       axios
-        .post("http://localhost:8080/qingteng-recruitment/comment", commentData, {
-          headers: {
-            "token": `${this.$store.state.token}`,
-          },
-        })
+        .post(
+          "http://localhost:8080/qingteng-recruitment/comment",
+          commentData,
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        )
         .then((response) => {
           this.fullscreenLoading = false;
           this.$message({
@@ -1296,7 +1314,7 @@ export default {
           {},
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -1314,6 +1332,8 @@ export default {
       this.addExamVisible = true;
     },
     deleteExam(id) {
+      console.log(id);
+
       this.fullscreenLoading = true;
       axios
         .post(
@@ -1321,7 +1341,7 @@ export default {
           {},
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -1338,10 +1358,9 @@ export default {
           this.$message.error("删除失败：" + error.message);
         });
     },
-   
+
     async fetchAndUnzip(zipUrl) {
       try {
-       
         // 使用 axios 下载文件
         const response = await axios({
           url: zipUrl,
@@ -1395,8 +1414,8 @@ export default {
       }
     },
     colorId(id) {
-      return id%4
-    }
+      return id % 4;
+    },
   },
   computed: {
     iconClass() {
@@ -1405,10 +1424,13 @@ export default {
         "icon-color-filled": this.textarea !== "",
       };
     },
-   
   },
   mounted() {
+    this.judge();
     this.showExams();
+  },
+  beforeDestroy() {
+    this.$store.dispatch("setToken", "");
   },
 };
 </script>

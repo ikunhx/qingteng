@@ -1,5 +1,5 @@
 <template>
-    <div
+  <div
     v-loading.fullscreen.lock="fullscreenLoading"
     element-loading-text="拼命加载中"
     element-loading-spinner="el-icon-loading"
@@ -177,7 +177,7 @@
           <div class="time">
             <div class="begin">{{ showDate(exam.beginTime) }}</div>
             <div class="connect-icon">—</div>
-            <div class="end">{{showDate(exam.endTime) }}</div>
+            <div class="end">{{ showDate(exam.endTime) }}</div>
           </div>
           <div class="operate">
             <div class="icon-container">
@@ -187,19 +187,22 @@
               ></i>
             </div>
             <div class="icon-container">
-              <i
-                class="iconfont icon-yunshangchuan"
-                @click="addExam(exam)"
-              ></i>
+              <i class="iconfont icon-yunshangchuan" @click="addExam(exam)"></i>
             </div>
             <div class="icon-container">
               <i class="iconfont icon-chengji" @click="viewScore(exam)"></i>
             </div>
             <div class="icon-container">
-              <i class="iconfont icon-rank-full" @click="handleRanking(exam)"></i>
+              <i
+                class="iconfont icon-rank-full"
+                @click="handleRanking(exam)"
+              ></i>
             </div>
             <div class="icon-container">
-              <i class="iconfont icon-pinglun" @click="handleComment(exam.id)"></i>
+              <i
+                class="iconfont icon-pinglun"
+                @click="handleComment(exam.id)"
+              ></i>
             </div>
           </div>
         </div>
@@ -271,8 +274,8 @@
         <h1>成绩还未出炉，再等等吧</h1>
       </div>
     </el-dialog>
-     <!-- 查看排名窗口 -->
-     <el-drawer
+    <!-- 查看排名窗口 -->
+    <el-drawer
       :with-header="false"
       :visible.sync="rankingTable"
       direction="rtl"
@@ -460,7 +463,6 @@
       </div>
     </el-drawer>
   </div>
-  
 </template>
 
 <script>
@@ -503,7 +505,7 @@ export default {
       isViewScoreVisible: false, //是否展示分数框
       isViewScoreVisible2: false, //是否展示分数框
       fullscreenLoading: false,
-      rankingTable: false,//是否展示排名窗口
+      rankingTable: false, //是否展示排名窗口
       commentTable: false, //是否展示评论窗口
       examID: "",
       pdfFiles: [],
@@ -538,7 +540,8 @@ export default {
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           score: 81,
           ranking: 1,
-          answerUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+          answerUrl:
+            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
         {
           userID: numberID(),
@@ -548,7 +551,8 @@ export default {
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           score: 98,
           ranking: 1,
-          answerUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+          answerUrl:
+            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
       ],
       comments: [
@@ -618,7 +622,7 @@ export default {
               data: 1729390765572,
               expanded: false,
               replayVisible: false, //是否展示回复评论窗口
-              discussNum:0 ,
+              discussNum: 0,
               content: "考核好难55555555",
             },
             {
@@ -628,7 +632,7 @@ export default {
               data: 1729890765572,
               expanded: false,
               replayVisible: false, //是否展示回复评论窗口
-              discussNum:0 ,
+              discussNum: 0,
               content:
                 "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
             },
@@ -649,16 +653,18 @@ export default {
     },
   },
   methods: {
+    judge() {
+      if (this.$store.state.token === "") this.$router.push("/User");
+    },
     addExam(exam) {
-      let now =Date.now();
-      if(now>exam.endTime){
+      let now = Date.now();
+      if (now > exam.endTime) {
         this.$message.warning("考核已截至!");
         return;
-      }else{
+      } else {
         this.addExamVisible = true;
         this.examId = exam.id;
       }
-      
     },
     submitUpload() {
       //提交文件到服务器
@@ -694,7 +700,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            "token": `${this.$store.state.token}`,
+            token: `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -840,7 +846,7 @@ export default {
           {},
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -862,7 +868,7 @@ export default {
           {},
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -884,39 +890,38 @@ export default {
     },
     viewScore(exam) {
       let now = Date.now();
-      if(now<exam.endTime){
+      if (now < exam.endTime) {
         this.$message.warning("考核结束才能开始查看成绩");
         return;
-      }else{
+      } else {
         this.fullscreenLoading = true;
-      axios
-        .post(
-          `http://localhost:8080/qingteng-recruitment/user/examine_score?id=${exam.id}`,
-          {},
-          {
-            headers: {
-              "token": `${this.$store.state.token}`,
-            },
-          }
-        )
-        .then((response) => {
-          this.score = response.data.data;
-          //添加判断，出成绩和还没出成绩
-          if (this.score.score === null) {
-            this.isViewScoreVisible = false;
-            this.isViewScoreVisible2 = true;
-          } else {
+        axios
+          .post(
+            `http://localhost:8080/qingteng-recruitment/user/examine_score?id=${exam.id}`,
+            {},
+            {
+              headers: {
+                token: `${this.$store.state.token}`,
+              },
+            }
+          )
+          .then((response) => {
+            this.score = response.data.data;
+            //添加判断，出成绩和还没出成绩
+            if (this.score.score === null) {
+              this.isViewScoreVisible = false;
+              this.isViewScoreVisible2 = true;
+            } else {
+              this.isViewScoreVisible = true;
+              this.isViewScoreVisible2 = false;
+            }
+            this.fullscreenLoading = false;
+          })
+          .catch((error) => {
             this.isViewScoreVisible = true;
-            this.isViewScoreVisible2 = false;
-          }
-          this.fullscreenLoading = false;
-        })
-        .catch((error) => {
-          this.isViewScoreVisible = true;
-          this.fullscreenLoading = false;
-        });
+            this.fullscreenLoading = false;
+          });
       }
-      
     },
     closeView() {
       this.isViewScoreVisible = false;
@@ -925,36 +930,35 @@ export default {
       this.isViewScoreVisible2 = false;
     },
     handleRanking(exam) {
-      let now =Date.now();
-      if(now<exam.endTime){
+      let now = Date.now();
+      if (now < exam.endTime) {
         this.$message.warning("考核结束才能开始查看排名");
         return;
-      }else{
+      } else {
         this.fullscreenLoading = true;
-      //查看排名
-      this.rankingTable = true;
-      axios
-        .post(
-          `http://localhost:8080/qingteng-recruitment/examine_ranking?id=${exam.userID}`,
-          {},
-          {
-            headers: {
-              "token": `${this.$store.state.token}`,
-            },
-          }
-        )
-        .then((response) => {
-          this.rankingData = response.data.data;
-          this.fullscreenLoading = false;
-        })
-        .catch((error) => {
-          this.fullscreenLoading = false;
-          this.$message.error("ERROR：" + error.message);
-        });
+        //查看排名
+        this.rankingTable = true;
+        axios
+          .post(
+            `http://localhost:8080/qingteng-recruitment/examine_ranking?id=${exam.userID}`,
+            {},
+            {
+              headers: {
+                token: `${this.$store.state.token}`,
+              },
+            }
+          )
+          .then((response) => {
+            this.rankingData = response.data.data;
+            this.fullscreenLoading = false;
+          })
+          .catch((error) => {
+            this.fullscreenLoading = false;
+            this.$message.error("ERROR：" + error.message);
+          });
       }
-      
     },
-    handleComment(id){
+    handleComment(id) {
       this.commentTable = true;
       this.examID = id;
       getComments();
@@ -970,7 +974,7 @@ export default {
       axios
         .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
           headers: {
-            "token": `${this.$store.state.token}`,
+            token: `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -996,11 +1000,15 @@ export default {
         formData.append("end_time", endTime);
         formData.append("discussId", discussId);
         axios
-          .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
-            headers: {
-              "token": `${this.$store.state.token}`,
-            },
-          })
+          .post(
+            "http://localhost:8080/qingteng-recruitment/comment",
+            formData,
+            {
+              headers: {
+                token: `${this.$store.state.token}`,
+              },
+            }
+          )
           .then((response) => {
             this.fullscreenLoading = false;
             this.comments[targetId].replays.unshift(
@@ -1061,11 +1069,15 @@ export default {
         examId: this.examID,
       };
       axios
-        .post("http://localhost:8080/qingteng-recruitment/comment", commentData, {
-          headers: {
-            "token": `${this.$store.state.token}`,
-          },
-        })
+        .post(
+          "http://localhost:8080/qingteng-recruitment/comment",
+          commentData,
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        )
         .then((response) => {
           this.fullscreenLoading = false;
           this.$message({
@@ -1132,7 +1144,7 @@ export default {
         content.forEach((relativePath, file) => {
           if (file.dir) return; // 忽略目录
           console.log(666);
-          
+
           // 将文件转换为 Blob 对象，并指定 MIME 类型
           file.async("blob").then(async (blob) => {
             const fileUrl = URL.createObjectURL(blob);
@@ -1164,13 +1176,17 @@ export default {
     },
   },
   mounted() {
+    this.judge();
     this.handleScroll = this.throttle(this.handleScroll, 100); // 节流处理
-    this.scrollToRight();//自动右移
+    this.scrollToRight(); //自动右移
     window.addEventListener("scroll", this.handleScroll);
     this.handleWheel = this.throttle(this.handleWheel, 100);
     window.addEventListener("wheel", this.handleWheel);
     setInterval(this.changeColor, 1200);
     this.showExams();
+  },
+  beforeDestroy() {
+    this.$store.dispatch("setToken", "");
   },
 };
 </script>
@@ -2010,14 +2026,15 @@ export default {
 .el-icon-circle-plus-outline:hover {
   color: #2ba257;
   transform: scale(1.1);
-}.spinner {
+}
+.spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-left-color: #000;
   border-radius: 50%;
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;
-}/* 加载动画样式 */
+} /* 加载动画样式 */
 .loading-container {
   display: flex;
   justify-content: center;
@@ -2036,5 +2053,4 @@ export default {
   border: none;
   display: block;
 }
-
 </style>

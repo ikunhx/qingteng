@@ -30,18 +30,18 @@ const router = new VueRouter({
             name: 'UserExamine'
         },
         {
-            path:'/Resources',
-            name:'Resources',
+            path: '/Resources',
+            name: 'Resources',
             component: () => import('../pages/Resources.vue')
         },
         {
-            path:'/MyResource',
-            name:'MyResource',
+            path: '/MyResource',
+            name: 'MyResource',
             component: () => import('../pages/MyResource.vue')
         },
         {
-            path:'/UserResource',
-            name:'UserResource',
+            path: '/UserResource',
+            name: 'UserResource',
             component: () => import('../pages/UserResource.vue')
         },
         {
@@ -51,13 +51,13 @@ const router = new VueRouter({
         },
         {
             path: '/showUser',
-            component:showUser,
+            component: showUser,
             name: 'showUser'
         },
         {
-            path:'/showAdministrator',
-            component:showAdministrator,
-            name:'showAdministrator'
+            path: '/showAdministrator',
+            component: showAdministrator,
+            name: 'showAdministrator'
         }
 
     ]

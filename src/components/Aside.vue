@@ -8,7 +8,7 @@
         @open="handleOpen"
         @close="handleClose"
       >
-        <el-menu-item index="1" @click="handleChange('change','Introduction')">
+        <el-menu-item index="1" @click="handleChange('change', 'Introduction')">
           <template slot="title">
             <i class="el-icon-document"></i>
             <span>简介</span>
@@ -22,21 +22,35 @@
           <el-menu-item-group>
             <el-menu-item
               index="2-1"
-              @click="handleChange('change','Examine')"
+              @click="handleChange('change', 'Examine')"
+              v-if="this.$store.state.admin === 0"
               >管理员考核</el-menu-item
             >
             <el-menu-item
               index="2-3"
-              @click="handleChange('change','UserExamine')"
+              @click="handleChange('change', 'UserExamine')"
+              v-if="this.$store.state.admin === 1"
               >用户考核</el-menu-item
             >
-            <el-menu-item index="2-2" @click="handleChange('change','Resources')">资源</el-menu-item>
-            <el-menu-item index="/MyResource" @click="handleChange('change','MyResource')">管理员资源</el-menu-item>
-            <el-menu-item index="/UserResource" @click="handleChange('change','UserResource')">用户资源</el-menu-item>
+            <el-menu-item
+              index="2-2"
+              @click="handleChange('change', 'Resources')"
+              >资源</el-menu-item
+            >
+            <el-menu-item
+              index="/MyResource"
+              @click="handleChange('change', 'MyResource')"
+              >管理员资源</el-menu-item
+            >
+            <el-menu-item
+              index="/UserResource"
+              @click="handleChange('change', 'UserResource')"
+              >用户资源</el-menu-item
+            >
           </el-menu-item-group>
         </el-submenu>
 
-        <el-menu-item index="3" @click="handleChange('change','User')">
+        <el-menu-item index="3" @click="handleChange('change', 'User')">
           <i class="el-icon-user"></i>
           <span slot="title">用户</span>
         </el-menu-item>
@@ -49,9 +63,7 @@
 export default {
   name: "Aside",
   data() {
-    return {
-     
-    };
+    return {};
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -61,10 +73,13 @@ export default {
       // console.log(key, keyPath);
     },
     //url跳转路由名，不要加斜杠，name为触发事件名
-    handleChange(name,url) {
-      this.$bus.$emit(name, url);
+    handleChange(name, url) {
+      if (url === "Introduction") this.$bus.$emit(name, url);
+      else {
+        if (this.$store.state.token !== "") this.$bus.$emit(name, url);
+        else this.$bus.$emit("change", "User");
+      }
     },
-                             
   },
 };
 </script>
