@@ -1142,8 +1142,8 @@ export default {
       const beginTime = this.showTime(new Date(this.newExam.start_date).getTime())
       const endTime= this.showTime(new Date(this.newExam.end_time).getTime())
       formData.append("name", this.newExam.name);
-      formData.append("beginTime",beginTime);
-      formData.append("endTime",endTime);
+      formData.append("begin_Time",beginTime);
+      formData.append("end_Time",endTime);
       formData.append("fileUrl", fileUrl);
       const url ="http://localhost:8080/qingteng-recruitment/root/edit_exam";
       axios
