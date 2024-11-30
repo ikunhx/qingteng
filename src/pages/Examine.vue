@@ -863,7 +863,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              token: `${this.$store.state.Token}`,
             },
           }
         )
@@ -885,7 +885,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              token: `${this.$store.state.Token}`,
             },
           }
         )
@@ -914,7 +914,7 @@ export default {
       axios
         .post("http://localhost:8080/qingteng-recruitment/root/discuss/select", formData, {
           headers: {
-            token: `${this.$store.state.token}`,
+            token: `${this.$store.state.Token}`,
           },
         })
         .then((response) => {
@@ -981,7 +981,7 @@ export default {
             formData,
             {
               headers: {
-                token: `${this.$store.state.token}`,
+                token: `${this.$store.state.Token}`,
               },
             }
           )
@@ -1076,7 +1076,7 @@ export default {
 
       axios.post(options.action, formData, {
         headers: {
-          token: `${this.$store.state.token}`,
+          token: `${this.$store.state.Token}`,
         }
       })
       .then(response => {
@@ -1119,7 +1119,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            token: `${this.$store.state.token}`,
+            token: `${this.$store.state.Token}`,
           },
         })
         .then((response) => {
@@ -1149,7 +1149,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            token: `${this.$store.state.token}`,
+            token: `${this.$store.state.Token}`,
           },
         })
         .then((response) => {
@@ -1230,7 +1230,7 @@ export default {
           scoreData,
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              token: `${this.$store.state.Token}`,
             },
           }
         )
@@ -1315,7 +1315,7 @@ export default {
           commentData,
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              token: `${this.$store.state.Token}`,
             },
           }
         )
@@ -1340,13 +1340,14 @@ export default {
     },
     showExams() {
       this.fullscreenLoading = true;
+      alert(this.$store.state.Token)
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/display_exam",
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              token: `${this.$store.state.Token}`,
             },
           }
         )
@@ -1373,7 +1374,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.token}`,
+              token: `${this.$store.state.Token}`,
             },
           }
         )
@@ -1458,7 +1459,7 @@ export default {
     },
   },
   mounted() {
-    this.judge();
+    // this.judge();
     this.showExams();
   },
   beforeDestroy() {
