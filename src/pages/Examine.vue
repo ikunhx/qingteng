@@ -162,7 +162,7 @@
             :before-upload="beforeAvatarUpload"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
-            :on-success="handleSuccessAdd"
+            
             :before-remove="beforeRemove"
             :auto-upload="false"
             :limit="1"
@@ -1081,7 +1081,7 @@ export default {
       })
       .then(response => {
         // 成功处理
-        options.onSuccess && options.onSuccess(response.data);
+        this.handleSuccessAdd(response.data.data)
       })
       .catch(error => {
         // 错误处理
@@ -1100,8 +1100,7 @@ export default {
       // 提交表单
       this.submitFormEdit(fileUrl);
     },
-    handleSuccessAdd(response) {
-      const fileUrl = response.data.data.fileUrl;
+    handleSuccessAdd(fileUrl) {
       // 提交表单
       this.submitFormAdd(fileUrl);
     },
