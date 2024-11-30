@@ -1077,6 +1077,7 @@ export default {
       axios.post(options.action, formData, {
         headers: {
           token: `${this.$store.state.Token}`,
+
         }
       })
       .then(response => {
@@ -1149,6 +1150,7 @@ export default {
         .post(url, formData, {
           headers: {
             token: `${this.$store.state.Token}`,
+             "Content-Type":"application/json"
           },
         })
         .then((response) => {
