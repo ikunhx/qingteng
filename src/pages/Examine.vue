@@ -806,14 +806,12 @@ export default {
   },
   methods: {
     judge() {
-      console.log('Checking token:', this.$store.getters.getToken); // 使用 getter 获取 token
-      if (this.$store.state.token === '') {
-        // if (this.$router.path !== "/User") {
-        //   this.$router.push("/User");
-        // }
-        alert(1)
-      }else{
-        alert(2)
+      console.log('Checking token:', this.$store.state.Token); // 使用 getter 获取 token
+      if (this.$store.state.Token === '') {
+        if (this.$router.path !== "/User") {
+          this.$router.push("/User");
+        }
+        
       }
     },
     showDate(timeString) {
@@ -1093,6 +1091,9 @@ export default {
     submitUpload() {
       //提交文件到服务器
       this.$refs.upload.submit();
+    console.log
+    (this.editExam);
+      
     },
     handleSuccessEdit(response) {
       const fileUrl = response.data.data.fileUrl;
@@ -1108,9 +1109,11 @@ export default {
       // 这里应该是你的表单提交逻辑
       this.fullscreenLoading = true;
       const formData = new FormData();
+      const beginTime=this.showTime(new Date(this.editExam.beginTime).getTime());
+      const endTime=this.showTime(new Date(this.editExam.endTime).getTime());
       formData.append("name", this.editExam.name);
-      formData.append("beginTime", this.editExam.beginTime);
-      formData.append("endTime", this.editExam.endTime);
+      formData.append("beginTime",beginTime);
+      formData.append("endTime", endTime);
       formData.append("fileUrl", fileUrl);
       const url = "http://localhost:8080/qingteng-recruitment/root/edit_exam";
       axios
@@ -1136,9 +1139,11 @@ export default {
       // 这里应该是你的表单提交逻辑
       this.fullscreenLoading = true;
       const formData = new FormData();
+      const beginTime = this.showTime(new Date(this.newExam.start_date).getTime())
+      const endTime= this.showTime(new Date(this.newExam.end_time).getTime())
       formData.append("name", this.newExam.name);
-      formData.append("beginTime", this.newExam.start_date);
-      formData.append("endTime", this.newExam.end_time);
+      formData.append("beginTime",beginTime);
+      formData.append("endTime",endTime);
       formData.append("fileUrl", fileUrl);
       const url ="http://localhost:8080/qingteng-recruitment/root/edit_exam";
       axios
@@ -1453,7 +1458,7 @@ export default {
     },
   },
   mounted() {
-    // this.judge();
+    this.judge();
     this.showExams();
   },
   beforeDestroy() {
