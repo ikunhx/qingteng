@@ -861,7 +861,7 @@ export default {
       this.rankingTable = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/examine_ranking?id=${row.userID}`,
+          `http://localhost:8080/qingteng-recruitment/examine_ranking`,
           {},
           {
             headers: {
@@ -883,7 +883,7 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/ranking?id=${row.userID}`,
+          `http://localhost:8080/qingteng-recruitment/ranking`,
           {},
           {
             headers: {
@@ -914,7 +914,7 @@ export default {
       formData.append("end_time", endTime);
       formData.append("discussId", discussId);
       axios
-        .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
+        .post("http://localhost:8080/qingteng-recruitment/root/discuss/select", formData, {
           headers: {
             "token": `${this.$store.state.token}`,
           },
@@ -979,7 +979,7 @@ export default {
         formData.append("discussId", discussId);
         axios
           .post(
-            "http://localhost:8080/qingteng-recruitment/comment",
+            "http://localhost:8080/qingteng-recruitment/root/discuss/select",
             formData,
             {
               headers: {
@@ -1112,7 +1112,7 @@ export default {
       formData.append("beginTime", this.editExam.beginTime);
       formData.append("endTime", this.editExam.endTime);
       formData.append("fileUrl", fileUrl);
-      const url = "http://localhost:8080/qingteng-recruitment/examine_add";
+      const url = "http://localhost:8080/qingteng-recruitment/root/edit_exam";
       axios
         .post(url, formData, {
           headers: {
@@ -1140,7 +1140,7 @@ export default {
       formData.append("beginTime", this.newExam.start_date);
       formData.append("endTime", this.newExam.end_time);
       formData.append("fileUrl", fileUrl);
-      const url = `http://localhost:8080/qingteng-recruitment/examine_put?id=${this.newExam.id}`;
+      const url ="http://localhost:8080/qingteng-recruitment/root/edit_exam";
       axios
         .post(url, formData, {
           headers: {
@@ -1221,7 +1221,7 @@ export default {
       const scoreData = this.examScore;
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/ranking_score",
+          "http://localhost:8080/qingteng-recruitment/root/score",
           scoreData,
           {
             headers: {
@@ -1306,7 +1306,7 @@ export default {
       };
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/comment",
+          "http://localhost:8080/qingteng-recruitment/root/discuss/save",
           commentData,
           {
             headers: {
@@ -1364,7 +1364,7 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/examine_delete?id=${id}`,
+          `http://localhost:8080/qingteng-recruitment/root/examine_delete?id=${id}`,
           {},
           {
             headers: {
