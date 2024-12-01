@@ -11,8 +11,8 @@ export default new Vuex.Store({
     classes: '软件2401',
     studentId: '6020241790',
     avatarUrl: 'https://profile-avatar.csdnimg.cn/869f73aba88141568df7e17f17ed575c_qq_56989560.jpg!1',
-    admin: 0,
-    Token:'1489486666',
+    admin: 1,
+    token:'1489486666',
 
     userData: {
       ranking: '',

@@ -39,3 +39,9 @@ new Vue({
     Vue.prototype.$bus = this
   }
 });
+// 添加全局的 beforeunload 事件监听器
+// window.addEventListener('beforeunload', function (event) {
+//   // 清除 Vuex store 中的 token
+//   store.commit('setToken', '');
+
+// });

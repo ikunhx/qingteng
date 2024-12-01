@@ -806,8 +806,8 @@ export default {
   },
   methods: {
     judge() {
-      console.log('Checking token:', this.$store.state.Token); // 使用 getter 获取 token
-      if (this.$store.state.Token === '') {
+      console.log('Checking token:', this.$store.state.token); // 使用 getter 获取 token
+      if (this.$store.state.token === '') {
         if (this.$router.path !== "/User") {
           this.$router.push("/User");
         }
@@ -863,7 +863,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.Token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -885,7 +885,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.Token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -914,7 +914,7 @@ export default {
       axios
         .post("http://localhost:8080/qingteng-recruitment/root/discuss/select", formData, {
           headers: {
-            token: `${this.$store.state.Token}`,
+            token: `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -981,7 +981,7 @@ export default {
             formData,
             {
               headers: {
-                token: `${this.$store.state.Token}`,
+                token: `${this.$store.state.token}`,
               },
             }
           )
@@ -1076,7 +1076,7 @@ export default {
 
       axios.post(options.action, formData, {
         headers: {
-          token: `${this.$store.state.Token}`,
+          token: `${this.$store.state.token}`,
 
         }
       })
@@ -1119,7 +1119,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            token: `${this.$store.state.Token}`,
+            token: `${this.$store.state.token}`,
           },
         })
         .then((response) => {
@@ -1149,7 +1149,7 @@ export default {
       axios
         .post(url, formData, {
           headers: {
-            token: `${this.$store.state.Token}`,
+            token: `${this.$store.state.token}`,
              "Content-Type":"application/json"
           },
         })
@@ -1231,7 +1231,7 @@ export default {
           scoreData,
           {
             headers: {
-              token: `${this.$store.state.Token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -1316,7 +1316,7 @@ export default {
           commentData,
           {
             headers: {
-              token: `${this.$store.state.Token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -1341,14 +1341,14 @@ export default {
     },
     showExams() {
       this.fullscreenLoading = true;
-      alert(this.$store.state.Token)
+      alert(this.$store.state.token)
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/display_exam",
           {},
           {
             headers: {
-              token: `${this.$store.state.Token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -1375,7 +1375,7 @@ export default {
           {},
           {
             headers: {
-              token: `${this.$store.state.Token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
