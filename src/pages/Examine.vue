@@ -162,12 +162,11 @@
             :before-upload="beforeAvatarUpload"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
-            
             :before-remove="beforeRemove"
             :auto-upload="false"
             :limit="1"
             :on-exceed="handleExceed"
-             :http-request="customUpload"
+            :http-request="customUpload"
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
@@ -806,12 +805,11 @@ export default {
   },
   methods: {
     judge() {
-      console.log('Checking token:', this.$store.state.token); // 使用 getter 获取 token
-      if (this.$store.state.token === '') {
+      console.log("Checking token:", this.$store.state.token); // 使用 getter 获取 token
+      if (this.$store.state.token === "") {
         if (this.$router.path !== "/User") {
           this.$router.push("/User");
         }
-        
       }
     },
     showDate(timeString) {
@@ -822,14 +820,29 @@ export default {
       return `${year}-${month + 1}-${day}`;
     },
     showTime(timeString) {
-      //传入时间戳，转化为具体时间
-      let year = new Date(timeString).getFullYear();
-      let month = new Date(timeString).getMonth();
-      let day = new Date(timeString).getDate();
-      let hour = new Date(timeString).getHours();
-      let minute = new Date(timeString).getMinutes();
-      let second = new Date(timeString).getSeconds();
-      return `${year}-${month + 1}-${day} ${hour}:${minute}:${second}`;
+      // 创建一个新的Date对象
+      let date = new Date(timeString);
+
+      // 获取年份
+      let year = date.getFullYear();
+
+      // 获取月份，注意：getMonth() 返回的是0-11，所以需要加1
+      let month = String(date.getMonth() + 1).padStart(2, "0");
+
+      // 获取日
+      let day = String(date.getDate()).padStart(2, "0");
+
+      // 获取小时
+      let hour = String(date.getHours()).padStart(2, "0");
+
+      // 获取分钟
+      let minute = String(date.getMinutes()).padStart(2, "0");
+
+      // 获取秒
+      let second = String(date.getSeconds()).padStart(2, "0");
+
+      // 按照指定格式返回时间字符串
+      return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
     },
     //点击按钮时,触发弹出效果
     handleEdit(row) {
@@ -912,11 +925,15 @@ export default {
       formData.append("end_time", endTime);
       formData.append("discussId", discussId);
       axios
-        .post("http://localhost:8080/qingteng-recruitment/root/discuss/select", formData, {
-          headers: {
-            token: `${this.$store.state.token}`,
-          },
-        })
+        .post(
+          "http://localhost:8080/qingteng-recruitment/root/discuss/select",
+          formData,
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        )
         .then((response) => {
           this.comments.unshift(...response.data.data.discussVOList);
           this.lastTime = response.data.data.endTime;
@@ -1072,29 +1089,27 @@ export default {
     },
     customUpload(options) {
       const formData = new FormData();
-      formData.append('file', options.file);
+      formData.append("file", options.file);
 
-      axios.post(options.action, formData, {
-        headers: {
-          token: `${this.$store.state.token}`,
-
-        }
-      })
-      .then(response => {
-        // 成功处理
-        this.handleSuccessAdd(response.data.data)
-      })
-      .catch(error => {
-        // 错误处理
-        options.onError && options.onError(error);
-      });
+      axios
+        .post(options.action, formData, {
+          headers: {
+            token: `${this.$store.state.token}`,
+          },
+        })
+        .then((response) => {
+          // 成功处理
+          this.handleSuccessAdd(response.data.data);
+        })
+        .catch((error) => {
+          // 错误处理
+          options.onError && options.onError(error);
+        });
     },
     submitUpload() {
       //提交文件到服务器
       this.$refs.upload.submit();
-    console.log
-    (this.editExam);
-      
+      console.log(this.editExam);
     },
     handleSuccessEdit(response) {
       const fileUrl = response.data.data.fileUrl;
@@ -1109,10 +1124,12 @@ export default {
       // 这里应该是你的表单提交逻辑
       this.fullscreenLoading = true;
       const formData = new FormData();
-      const beginTime=this.showTime(new Date(this.editExam.beginTime).getTime());
-      const endTime=this.showTime(new Date(this.editExam.endTime).getTime());
+      const beginTime = this.showTime(
+        new Date(this.editExam.beginTime).getTime()
+      );
+      const endTime = this.showTime(new Date(this.editExam.endTime).getTime());
       formData.append("name", this.editExam.name);
-      formData.append("beginTime",beginTime);
+      formData.append("beginTime", beginTime);
       formData.append("endTime", endTime);
       formData.append("fileUrl", fileUrl);
       const url = "http://localhost:8080/qingteng-recruitment/root/edit_exam";
@@ -1139,18 +1156,20 @@ export default {
       // 这里应该是你的表单提交逻辑
       this.fullscreenLoading = true;
       const formData = new FormData();
-      const beginTime = this.showTime(new Date(this.newExam.start_date).getTime())
-      const endTime= this.showTime(new Date(this.newExam.end_time).getTime())
+      const beginTime = this.showTime(
+        new Date(this.newExam.start_date).getTime()
+      );
+      const endTime = this.showTime(new Date(this.newExam.end_time).getTime());
       formData.append("name", this.newExam.name);
-      formData.append("beginTime",beginTime);
-      formData.append("endTime",endTime);
+      formData.append("beginTime", beginTime);
+      formData.append("endTime", endTime);
       formData.append("fileUrl", fileUrl);
-      const url ="http://localhost:8080/qingteng-recruitment/root/edit_exam";
+      const url = "http://localhost:8080/qingteng-recruitment/root/edit_exam";
       axios
         .post(url, formData, {
           headers: {
             token: `${this.$store.state.token}`,
-             "Content-Type":"application/json"
+            "Content-Type": "application/json",
           },
         })
         .then((response) => {
@@ -1341,7 +1360,7 @@ export default {
     },
     showExams() {
       this.fullscreenLoading = true;
-      alert(this.$store.state.token)
+      alert(this.$store.state.token);
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/display_exam",
