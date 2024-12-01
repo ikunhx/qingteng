@@ -99,7 +99,7 @@
             :before-upload="beforeAvatarUpload"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
-            :on-success="handleSuccessEdit"
+            :http-request="customUploadEdit"
             :before-remove="beforeRemove"
             :auto-upload="false"
             :limit="1"
@@ -348,14 +348,13 @@
       </div>
       <el-form
         ref="examScore"
-        :model="examScore"
         label-width="80px"
         v-if="pdfFiles.length && videoFiles.length"
       >
         <div class="scoreItem">
           <el-form-item label="分数" id="exam-score">
             <el-input
-              v-model="examScore.score"
+              v-model="grades"
               class="scoreInput"
               type="number"
               max="100"
@@ -496,10 +495,11 @@ export default {
       answerTable: false, //是否展示答案框
       markTable: false, //是否展示评分窗口
       commentTable: false, //是否展示评论窗口
-      examID: "",
+      examID: "0",
       commentType: "0",
       lastTime: "",
       answerUrl: "",
+      grades:'',
       // pdfFiles: ["http://localhost:8080/fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg","http://localhost:8080/fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg"],
       // videoFiles: ['http://localhost:8080/www.w3schools.com/html/mov_bbb.mp4'],
       pdfFiles: [],
@@ -586,10 +586,6 @@ export default {
           ],
         },
       ],
-      examScore: {
-        score: "",
-        userID: "",
-      },
 
       comments: [
         {
@@ -892,10 +888,13 @@ export default {
     handleScore(row) {
       this.scoreTable = true;
       this.fullscreenLoading = true;
+      this.examID = row.id;
+      console.log(this.examID);
+
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/ranking`,
-          {},
+          `http://localhost:8080//qingteng-recruitment/root/select_exam`,
+          { id: this.examID },
           {
             headers: {
               token: `${this.$store.state.token}`,
@@ -914,22 +913,22 @@ export default {
     handleComment(row) {
       this.commentTable = true;
       this.examID = row.id;
-      getComments();
+      this.getComments();
     },
     getComments() {
       this.fullscreenLoading = true;
       const endTime = this.comments.length ? this.lastTime : Date.now();
       const discussId = 0;
-      const formData = new FormData();
-      formData.append("examID", this.examID);
-      formData.append("end_time", endTime);
-      formData.append("discussId", discussId);
-      console.log(formData);
-      
+      const commentData = {
+        exam_id: this.examID,
+        end_time: endTime,
+        discuss_id: discussId,
+      };
+
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/discuss/select",
-          formData,
+          commentData,
           {
             headers: {
               token: `${this.$store.state.token}`,
@@ -1108,13 +1107,30 @@ export default {
           options.onError && options.onError(error);
         });
     },
+    customUploadEdit(options) {
+      const formData = new FormData();
+      formData.append("file", options.file);
+
+      axios
+        .post(options.action, formData, {
+          headers: {
+            token: `${this.$store.state.token}`,
+          },
+        })
+        .then((response) => {
+          // 成功处理
+          this.handleSuccessEdit(response.data.data);
+        })
+        .catch((error) => {
+          // 错误处理
+          options.onError && options.onError(error);
+        });
+    },
     submitUpload() {
       //提交文件到服务器
       this.$refs.upload.submit();
-      console.log(this.editExam);
     },
-    handleSuccessEdit(response) {
-      const fileUrl = response.data.data.fileUrl;
+    handleSuccessEdit(fileUrl) {
       // 提交表单
       this.submitFormEdit(fileUrl);
     },
@@ -1130,9 +1146,11 @@ export default {
         new Date(this.editExam.beginTime).getTime()
       );
       const endTime = this.showTime(new Date(this.editExam.endTime).getTime());
+
+      formData.append("id", this.editExam.id);
       formData.append("name", this.editExam.name);
-      formData.append("beginTime", beginTime);
-      formData.append("endTime", endTime);
+      formData.append("begin_time", beginTime);
+      formData.append("end_time", endTime);
       formData.append("fileUrl", fileUrl);
       const url = "http://localhost:8080/qingteng-recruitment/root/edit_exam";
       axios
@@ -1239,13 +1257,17 @@ export default {
     },
     giveScore(row) {
       this.markTable = true;
-      this.examScore.userID = row.userID;
       this.fetchAndUnzip(row.fileUrl);
     },
 
     submitScore() {
       this.fullscreenLoading = true;
-      const scoreData = this.examScore;
+      console.log(this.examID);
+
+      const scoreData = { grades: this.grades, examId: this.examID };
+
+      console.log(scoreData);
+
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/score",
@@ -1271,59 +1293,7 @@ export default {
     toggleExpand(comment) {
       comment.expanded = !comment.expanded;
     },
-    // showReplay(replays) {
-    //   replays.forEach((replay) => {
-    //     replay.replayVisible = !replay.replayVisible;
-    //   });
-    // },
-    // toggleReplayVisibility(replays, comment) {
-    //   comment.discussNum -= 10;
-    //   this.num+=10;
-    //   console.log(comment.discussNum,'-----',num);
-
-    //   if (replays.length > 0 && comment.discussNum + 10 <= 0) {
-    //     console.log(8);
-    //     // 收起所有回复
-    //     replays.forEach((replay) => {
-    //       replay.replayVisible = false;
-    //     });
-    //     comment.showAllReplays = false;
-    //   } else {
-    //     // 展开所有回复
-    //     console.log(6);
-
-    //     replays.forEach((replay) => {
-    //       replay.replayVisible = true;
-    //     });
-    //     comment.showAllReplays = true;
-    //   }
-    // },
-
-    //   toggleReplayVisibility(replays, comment) {
-    //   if (comment.showAllReplays) {
-    //     // 收起所有回复
-    //     replays.forEach((replay) => {
-    //       replay.replayVisible = false;
-    //     });
-    //     comment.showAllReplays = false;
-    //     comment.discussNum = comment.replays.length; // 重置 discussNum
-    //   } else {
-    //     // 展开最多 10 条回复
-    //     const maxReplaysToShow = Math.min(10, comment.replays.length);
-    //     comment.replays.slice(0, maxReplaysToShow).forEach((replay) => {
-    //       replay.replayVisible = true;
-    //     });
-    //     comment.showAllReplays = true;
-
-    //     if (maxReplaysToShow < comment.replays.length) {
-    //       // 如果还有更多回复，设置 discussNum 为剩余回复数
-    //       comment.discussNum = comment.replays.length - maxReplaysToShow;
-    //     } else {
-    //       // 如果没有更多回复，重置 discussNum
-    //       comment.discussNum = 0;
-    //     }
-    //   }
-    // },
+   
     sendComment() {
       this.fullscreenLoading = true;
       const commentData = {
@@ -1331,6 +1301,8 @@ export default {
         discussId: this.commentType,
         examId: this.examID,
       };
+      console.log(commentData);
+
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/discuss/save",
@@ -1362,7 +1334,6 @@ export default {
     },
     showExams() {
       this.fullscreenLoading = true;
-      alert(this.$store.state.token);
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/display_exam",
@@ -1392,8 +1363,8 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/root/examine_delete?id=${id}`,
-          {},
+          "http://localhost:8080/qingteng-recruitment/root/examine_delete",
+          {id:id},
           {
             headers: {
               token: `${this.$store.state.token}`,
