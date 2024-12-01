@@ -924,6 +924,8 @@ export default {
       formData.append("examID", this.examID);
       formData.append("end_time", endTime);
       formData.append("discussId", discussId);
+      console.log(formData);
+      
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/discuss/select",

@@ -40,8 +40,27 @@ new Vue({
   }
 });
 // 添加全局的 beforeunload 事件监听器
-// window.addEventListener('beforeunload', function (event) {
-//   // 清除 Vuex store 中的 token
-//   store.commit('setToken', '');
+document.addEventListener('DOMContentLoaded', function () {
+  // 设置一个唯一标识符以识别页面刷新
+  let pageSessionId = sessionStorage.getItem('pageSessionId');
+  
+  if (!pageSessionId) {
+    // 如果没有找到标识符，表示可能是新的会话或第一次加载
+    // 清除 token (可选)
+    store.commit('setToken', '');
+    
+    // 创建一个新的标识符并存入 sessionStorage
+    pageSessionId = 'session_' + new Date().getTime();
+    sessionStorage.setItem('pageSessionId', pageSessionId);
+  }
+  
+  // 检查是否有 token 需要恢复 (如果您的应用需要的话)
+  // 这里可以根据实际情况调整逻辑
+});
 
-// });
+// 添加全局的 beforeunload 事件监听器
+window.addEventListener('beforeunload', function (event) {
+  // 不在这里清除 token
+  
+  // 注意: 直接清除 token 的逻辑被移除了
+});
