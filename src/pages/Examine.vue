@@ -379,7 +379,6 @@
         v-for="comment in comments"
         :key="comment.id"
         class="comment"
-        :style="colors[colorId(comment.id)]"
       >
         <el-avatar :size="40" :src="comment.url"></el-avatar>
         <span class="userName">{{ comment.name }}</span>
@@ -505,12 +504,7 @@ export default {
       pdfFiles: [],
       videoFiles: [],
       fullscreenLoading: false,
-      colors: [
-        "background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);",
-        "background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);",
-        "background-image: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);",
-        "background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);",
-      ],
+     
       exams: [
         //考核列表
         {
@@ -843,6 +837,7 @@ export default {
     //点击按钮时,触发弹出效果
     handleEdit(row) {
       //编辑考核
+      alert(1)
       //触发点击时,让其显示
       this.editExamVisible = true;
       this.editExam.id = row.id;
@@ -1049,6 +1044,7 @@ export default {
       } else {
         // 收起所有回复
         comment.discussNum = comment.originalDiscussNum; // 还原 discussNum
+        comment.originalDiscussNum=undefined
         comment.replays.forEach((replay) => {
           replay.replayVisible = false;
         });

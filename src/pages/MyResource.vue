@@ -1,6 +1,19 @@
+
 <template>
   <div>
     <h2>管理端资源功能</h2>
+    <el-popover
+      placement="top-start"
+      width="100"
+      trigger="hover"
+      content="发布资源"
+    >
+      <i
+        class="el-icon-circle-plus-outline"
+        slot="reference"
+        @click="publishResource"
+      ></i>
+    </el-popover>
     <el-card class="box-card" style="width: 1100px">
       <el-table :data="resources" style="width: 100%">
         <el-table-column prop="id" label="资源ID"></el-table-column>
@@ -13,14 +26,9 @@
               >打开</el-button
             >
             <el-button
-              @click="editResources(scope.row.id)"
+              @click="editResources(scope.row)"
               style="color: blue; cursor: pointer"
               >编辑</el-button
-            >
-            <el-button
-              @click="publishResource(scope.row.id)"
-              style="color: #ff9000; cursor: pointer"
-              >发布</el-button
             >
             <el-button
               @click="deleteResource(scope.row.id)"
@@ -31,36 +39,70 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <el-dialog title="编辑资源" :visible.sync="dialogVisible">
       <el-form :model="form">
         <el-form-item label="资源名">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-
         <el-form-item label="资源文件">
           <el-upload
             class="upload-demo"
             drag
-            action="#"
+            multiple
+            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
             :on-change="handleFileChange"
+            ref="upload"
+            accept=".zip"
             :file-list="fileList"
+            :auto-upload="false"
+            :limit="1"
+            :http-request="customUpload"
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
               将文件拖到这里，或<em>点击上传</em>
             </div>
-            <div class="el-upload__tip" slot="tip">只支持docx格式文件</div>
+            <div class="el-upload__tip" slot="tip">只支持zip格式文件</div>
           </el-upload>
         </el-form-item>
       </el-form>
-
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="updateResource">确 定</el-button>
+        <el-button type="primary" @click="submitUpload">确 定</el-button>
       </span>
     </el-dialog>
-
+    <el-dialog title="发布资源" :visible.sync="newDialogVisible">
+      <el-form :model="newForm">
+        <el-form-item label="资源名">
+          <el-input v-model="newForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="资源文件">
+          <el-upload
+            class="upload-demo"
+            drag
+            multiple
+            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
+            :on-change="handleFileChange"
+            ref="upload"
+            accept=".zip"
+            :file-list="fileList"
+            :auto-upload="false"
+            :limit="1"
+            :http-request="newCustomUpload"
+          >
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">
+              将文件拖到这里，或<em>点击上传</em>
+            </div>
+            <div class="el-upload__tip" slot="tip">只支持zip格式文件</div>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="newDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitUpload">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-drawer
       :with-header="false"
       :visible.sync="answerTable"
@@ -74,7 +116,6 @@
       >
         <div class="spinner"></div>
       </div>
-
       <video
         v-for="(videoFile, index) in videoFiles"
         :key="index"
@@ -99,7 +140,6 @@
     </el-drawer>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 import JSZip from "jszip";
@@ -112,13 +152,17 @@ export default {
         { name: "Vue", id: "03", fileUrl: "path/to/vue/file.zip" },
         { name: "Html", id: "04", fileUrl: "path/to/html/file.zip" },
       ],
+      newDialogVisible: false,
       dialogVisible: false,
       form: {
         id: "",
         name: "",
         file: null,
       },
-      filelist: [],
+      newForm: {
+        name: "",
+      },
+      fileList: [],
       answerTable: false,
       fileUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
       pdfFiles: [],
@@ -127,26 +171,18 @@ export default {
     };
   },
   methods: {
-    judge() {
-      if (this.$store.state.token === "") {
-        if (this.$router.path !== "/User") {
-          this.$router.push("/User");
-        }
-      }
-    },
     // 展示资源
     async fetchResources() {
       try {
         const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/root/display_resource",
+          "https://qingteng-recruitment/root/display_resource",
           { code: 1 }
         );
-        this.resources = response.data.data; //获取资源数据
+        this.resources = response.data.data; // 获取资源数据
       } catch (error) {
         console.log("获取资源失败", error);
       }
     },
-
     // 打开资源
     openResource(id) {
       this.answerTable = true;
@@ -157,7 +193,7 @@ export default {
         const fileType = resource.fileUrl.split(".").pop().toLowerCase();
         switch (fileType) {
           case "pdf":
-            window.open(resource.fileUrl, "_blank");
+            // window.open(resource.fileUrl, '_blank');
             break;
           case "zip":
             this.answerTable = true;
@@ -174,36 +210,29 @@ export default {
     async fetchAndUnzip(zipUrl) {
       try {
         console.log(zipUrl);
-
         // 使用 axios 下载文件
         const response = await axios({
           url: zipUrl,
           method: "GET",
           responseType: "arraybuffer", // 获取二进制数据
         });
-
         if (response.status !== 200) {
           throw new Error(`请求失败，状态码: ${response.status}`);
         }
-
         // 使用 JSZip 解压压缩包
         const zip = new JSZip();
         const content = await zip.loadAsync(response.data);
-
         // 清空现有的文件列表
         this.pdfFiles = [];
         this.videoFiles = [];
-
         // 遍历压缩包中的文件
         content.forEach((relativePath, file) => {
           if (file.dir) return; // 忽略目录
-
           // 将文件转换为 Blob 对象，并指定 MIME 类型
           file.async("blob").then(async (blob) => {
             const fileUrl = URL.createObjectURL(blob);
             console.log(`Generated URL for ${file.name}: ${fileUrl}`); // 打印生成的 URL
             const fileType = file.name.split(".").pop().toLowerCase();
-
             let mimeType;
             if (fileType === "pdf") {
               mimeType = "application/pdf";
@@ -212,10 +241,8 @@ export default {
             } else {
               mimeType = "application/octet-stream"; // 默认 MIME 类型
             }
-
             const typedBlob = new Blob([blob], { type: mimeType });
             const typedFileUrl = URL.createObjectURL(typedBlob);
-
             if (fileType === "pdf") {
               this.pdfFiles.push({ name: file.name, url: typedFileUrl });
             } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
@@ -230,114 +257,157 @@ export default {
     colorId(id) {
       return id % 4;
     },
-  },
-
-  // 编辑资源
-  async editResources(id) {
-    const resource = this.resources.find((item) => item.id === id);
-    if (resource) {
-      this.form.id = id;
-      this.form.name = resource.name;
-      // 假设resource对象中有一个fileUrl属性
-      this.form.fileUrl = resource.fileUrl;
+    // 编辑资源
+    editResources(row) {
       this.dialogVisible = true;
-    } else {
-      console.error("未找到指定ID的资源");
-    }
-    // 发送POST请求到服务器更新资源信息
-    try {
-      const response = await axios.post(
-        `http://localhost:8080/qingteng-recruitment/root/resource_edit?id=${id}`,
-        {
-          name: this.form.name,
-          fileUrl: this.form.fileUrl,
+      this.form.id = row.id;
+    },
+    customUpload(options) {
+      const formData = new FormData();
+      formData.append("file", options.file);
+
+      axios
+        .post(options.action, formData, {
+          headers: {
+            token: `${this.$store.state.token}`,
+          },
+        })
+        .then((response) => {
+          // 成功处理
+          this.handleSuccessEdit(response.data.data);
+        })
+        .catch((error) => {
+          // 错误处理
+          options.onError && options.onError(error);
+        });
+    },
+
+    handleSuccessEdit(fileUrl) {
+      // 提交表单
+      this.submitFormEdit(fileUrl);
+    },
+    submitFormEdit(fileUrl) {
+      // 这里应该是你的表单提交逻辑
+      this.fullscreenLoading = true;
+      const formData = new FormData();
+      formData.append("name", this.form.name);
+      formData.append("id", this.form.id);
+      formData.append("fileUrl", fileUrl);
+
+      const url =
+        "http://localhost:8080//qingteng-recruitment/root/resource_edit";
+      axios
+        .post(url, formData, {
+          headers: {
+            token: `${this.$store.state.token}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          this.fullscreenLoading = false;
+          this.$message({
+            type: "success",
+            message: "提交成功!",
+          });
+          this.closeEdit();
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("考核添加失败：" + error.message);
+        });
+    },
+    newCustomUpload(options) {
+      const formData = new FormData();
+      formData.append("file", options.file);
+
+      axios
+        .post(options.action, formData, {
+          headers: {
+            token: `${this.$store.state.token}`,
+          },
+        })
+        .then((response) => {
+          // 成功处理
+          this.handleSuccessAdd(response.data.data);
+        })
+        .catch((error) => {
+          // 错误处理
+          options.onError && options.onError(error);
+        });
+    },
+    handleSuccessAdd(fileUrl) {
+      // 提交表单
+      this.submitFormAdd(fileUrl);
+    },
+    submitFormAdd(fileUrl) {
+      // 这里应该是你的表单提交逻辑
+      this.fullscreenLoading = true;
+      const formData = new FormData();
+      formData.append("name", this.newForm.name);
+      formData.append("fileUrl", fileUrl);
+      const url =
+        "http://localhost:8080//qingteng-recruitment/root/resource_edit";
+      axios
+        .post(url, formData, {
+          headers: {
+            token: `${this.$store.state.token}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          this.fullscreenLoading = false;
+          this.$message({
+            type: "success",
+            message: "提交成功!",
+          });
+          this.closeEdit();
+        })
+        .catch((error) => {
+          this.fullscreenLoading = false;
+          this.$message.error("资源添加失败：" + error.message);
+        });
+    },
+
+    // 文件拖拽
+    handleFileChange(file) {
+      this.fileList.push(file.file);
+      this.form.file = file.file.raw; // 确保文件格式正确
+    },
+    submitUpload() {
+      this.$refs.upload.submit();
+      console.log(this.newForm.name);
+    },
+    
+    publishResource() {
+      this.newDialogVisible = true;
+    },
+  
+    // 删除资源
+    async deleteResource(id) {
+      try {
+        const response = await axios.post(
+          "https://qingteng-recruitment/root/resource_delete",
+          {
+            id: id,
+          },
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        );
+        if (response.data.code === 200) {
+          console.log("资源删除成功");
+          this.fetchResources(); // 刷新资源列表
         }
-      );
-      if (response.status === 200) {
-        console.log("资源编辑成功");
-        // 可以在这里处理成功后的逻辑，比如刷新资源列表
-      } else {
-        console.error("资源编辑失败");
+      } catch (error) {
+        console.error("删除资源失败", error);
       }
-    } catch (error) {
-      console.error("编辑资源请求失败", error);
-    }
+    },
+    mounted() {
+      this.fetchResources(); // 页面加载时获取资源
+    },
   },
-
-  // 文件拖拽
-  handleFileChange(file) {
-    this.filelist.push(file.file);
-    this.form.file = file.file.raw; // 确保文件格式正确
-  },
-
-  // 更新资源
-  async updateResource() {
-    const formData = new FormData();
-    formData.append("name", this.form.name);
-    if (this.form.file) {
-      formData.append("file", this.form.file);
-    }
-
-    try {
-      const response = await axios.post(
-        `http://localhost:8080/qingteng-recruitment/root/resource_edit?id=${this.form.id}`,
-        formData
-      );
-      if (response === 200) {
-        this.dialogVisible = false;
-        this.fetchResources(); // 刷新资源列表
-      }
-    } catch (error) {
-      console.error("编辑资源失败", error);
-    }
-  },
-
-  // 发布资源
-  async publishResource(id) {
-    if (!this.form.file || !this.form.name) {
-      console.error("请先选择文件及填写资源名");
-      return;
-    }
-    const payload = {
-      name: this.form.name,
-      file: this.form.file,
-    };
-
-    try {
-      const response = await axios.post(
-        `http://localhost:8080/qingteng-recruitment/root/resource_put?id=${id}`,
-        payload
-      );
-      if (response.data.code === 200) {
-        console.log("资源发布成功");
-        this.fetchResources(); // 刷新资源列表
-      }
-    } catch (error) {
-      console.error("发布资源失败", error);
-    }
-  },
-
-  // 删除资源
-  async deleteResource(id) {
-    try {
-      const response = await axios.post(
-        `http://localhost:8080/qingteng-recruitment/root/resource_delete?id=${id}`
-      );
-      if (response.data.code === 200) {
-        console.log("资源删除成功");
-        this.fetchResources(); // 刷新资源列表
-      }
-    } catch (error) {
-      console.error("删除资源失败", error);
-    }
-  },
-  mounted() {
-    // this.judge();
-    this.fetchResources(); // 页面加载时获取资源
-  },
-  // beforeDestroy() {
-  //   this.$store.dispatch("setToken", "");
-  // },
 };
 </script>
 
@@ -345,21 +415,18 @@ export default {
 .upload-demo .el-upload__text {
   font-size: 14px;
 }
-
 .pdf {
   width: 100%;
   height: 100%;
   border: none;
   display: block;
 }
-
 .pdf-container {
   width: 100%;
   height: 100%;
   overflow-y: auto;
   margin-bottom: 20px;
 }
-
 /* 加载动画样式 */
 .loading-container {
   display: flex;
@@ -368,7 +435,6 @@ export default {
   height: 100%;
   width: 100%;
 }
-
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-left-color: #000;
@@ -377,10 +443,24 @@ export default {
   height: 50px;
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
+}
+.el-icon-circle-plus-outline {
+  font-size: 40px;
+  font-weight: 0;
+  margin-top: -50px;
+  margin-right: 10px;
+  float: right;
+  transition: 0.4s;
+
+  color: #90ee90;
+  cursor: pointer;
+}
+.el-icon-circle-plus-outline:hover {
+  color: #2ba257;
+  transform: scale(1.1);
 }
 </style>
