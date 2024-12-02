@@ -32,7 +32,6 @@
         快速开始
       </button>
       <i class="el-icon-bottom icon-bottom"></i>
-      <img src="@/assets/exam-bck/doughnut.png" class="doughnut" />
     </div>
     <div class="second box">
       <div class="second-title">
@@ -1189,9 +1188,7 @@ export default {
     setInterval(this.changeColor, 1200);
     this.showExams();
   },
-  // beforeDestroy() {
-  //   this.$store.dispatch("setToken", "");
-  // },
+ 
 };
 </script>
 
@@ -1436,24 +1433,6 @@ export default {
     transform: scale(0.335);
     right: 32vw;
     bottom: 38vh;
-  }
-}
-.doughnut {
-  position: absolute;
-  transform: scale(0.3);
-  left: -15.9vw;
-  bottom: -21.7vh;
-  animation: doughnut 0.7s 1 ease-in-out forwards;
-  animation-delay: 5s;
-}
-@keyframes doughnut {
-  0% {
-    left: -15.9vw;
-    bottom: -21.7vh;
-  }
-  100% {
-    left: -9.9vw;
-    bottom: -15.7vh;
   }
 }
 .second-title {

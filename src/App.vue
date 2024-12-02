@@ -37,6 +37,7 @@ export default {
   },
   mounted() {
     this.$bus.$on("change", this.changePath);
+    console.log(this.$store.state.admin)
   },
 };
 </script>
