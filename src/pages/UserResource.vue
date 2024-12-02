@@ -74,7 +74,10 @@ export default {
     async fetchResources() {
       try {
         const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/resource?code=0"
+          "http://localhost:8080/qingteng-recruitment/user/display_resource",
+          {
+            code: 3
+          }
         );
         this.resources = response.data;
       } catch (error) {
@@ -84,8 +87,9 @@ export default {
     async downloadResource(resource) {
       try {
         const response = await axios.post(
-          `http://localhost:8080/qingteng-recruitment/resource_download?id=${resource.id}`,
+          "http://localhost:8080/qingteng-recruitment/user/resource_download",
           {
+            id: resource.id,
             name: resource.name,
           },
           {
