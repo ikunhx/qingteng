@@ -940,42 +940,7 @@ export default {
           this.$message.error("ERROR：" + error.message);
         });
     },
-    // toggleReplayVisibility(comment) {
-    //   if (comment.discussNum <= 0) {
-    //     // 收起所有回复
-    //     comment.discussNum = comment.originalDiscussNum; // 还原 discussNum
-    //     comment.replays.forEach((replay) => {
-    //       replay.replayVisible = false;
-    //     });
-    //     comment.showAllReplays = false;
-    //     comment.replays = [];
-    //     this.num = 0;
-    //     console.log(
-    //       comment.discussNum,
-    //       "----------",
-    //       this.num,
-    //       "-----",
-    //       comment.replays.length
-    //     );
-    //   } else {
-    //     // 展开所有回复
-    //     if (comment.originalDiscussNum === undefined) {
-    //       comment.originalDiscussNum = comment.discussNum;
-    //     }
-    //     comment.discussNum -= 10;
-    //     comment.replays.forEach((replay) => {
-    //       replay.replayVisible = true;
-    //     });
-    //     comment.showAllReplays = true;
-    //     console.log(
-    //       comment.discussNum,
-    //       "----------",
-    //       this.num,
-    //       "-----",
-    //       comment.replays.length
-    //     );
-    //   }
-    // },
+   
     getReplays(id, comment) {
       if (comment.discussNum > 0) {
         this.fullscreenLoading = true;

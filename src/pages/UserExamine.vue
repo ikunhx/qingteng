@@ -222,13 +222,13 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="http://localhost:8080/jsonplaceholder.typicode.com/posts/"
+            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
             multiple
-            accept=".pdf"
+            accept=".zip"
             :before-upload="beforeAvatarUpload"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
-            :on-success="handleSuccessAdd"
+            :http-request="customUploadEdit"
             :before-remove="beforeRemove"
             :auto-upload="false"
             :limit="1"
@@ -673,6 +673,25 @@ export default {
       //提交文件到服务器
       this.$refs.upload.submit();
     },
+    customUploadEdit(options) {
+      const formData = new FormData();
+      formData.append("file", options.file);
+
+      axios
+        .post(options.action, formData, {
+          headers: {
+            token: `${this.$store.state.token}`,
+          },
+        })
+        .then((response) => {
+          // 成功处理
+          this.handleSuccessAdd(response.data.data);
+        })
+        .catch((error) => {
+          // 错误处理
+          options.onError && options.onError(error);
+        });
+    },
     handleExceed(files, fileList) {
       //处理文件超出三个的情况
       this.$message.warning(
@@ -685,25 +704,25 @@ export default {
       //提示是否移除
       return this.$confirm(`确定移除 ${file.name}?`);
     },
-    handleSuccessAdd(response) {
-      const fileUrl = response.data.data.fileUrl;
+    handleSuccessAdd(fileUrl) {
       // 提交表单
       this.submitFormAdd(fileUrl);
     },
     submitFormAdd(fileUrl) {
       // 这里应该是你的表单提交逻辑
       this.fullscreenLoading = true;
+      let timestamp = new Date().getTime();
       const formData = new FormData();
-      const id = this.examId;
-      formData.append("name", this.$store.state.userName);
-      formData.append("classes", this.$store.state.classes);
-      formData.append("studentId", this.$store.state.studentId);
+      formData.append("exam_id",this.examId );
+      formData.append("time",timestamp);
+      formData.append("user_id", this.$store.state.studentId);
       formData.append("fileUrl", fileUrl);
-      const url = `http://localhost:8080/qingteng-recruitment/user/examine_upload?id=${id}`;
+      const url = "http://localhost:8080/qingteng-recruitment/user/examine_upload";
       axios
         .post(url, formData, {
           headers: {
             "token": `${this.$store.state.token}`,
+            "Content-Type": "application/json",
           },
         })
         .then((response) => {
@@ -716,7 +735,7 @@ export default {
         })
         .catch((error) => {
           this.fullscreenLoading = false;
-          this.$message.error("考核上传失败：" + error.message);
+          this.$message.error("上传失败：" + error.message);
         });
     },
     handleRemove(file, fileList) {
@@ -845,8 +864,8 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/user/examine_download?id=${id}`,
-          {},
+          "http://localhost:8080/qingteng-recruitment/user/examine_download",
+          {id:id},
           {
             headers: {
               "token": `${this.$store.state.token}`,
@@ -900,8 +919,8 @@ export default {
         this.fullscreenLoading = true;
         axios
           .post(
-            `http://localhost:8080/qingteng-recruitment/user/examine_score?id=${exam.id}`,
-            {},
+            "http://localhost:8080//qingteng-recruitment/user/examine_score",
+            {id:exam.id},
             {
               headers: {
                 "token": `${this.$store.state.token}`,
@@ -943,7 +962,7 @@ export default {
         this.rankingTable = true;
         axios
           .post(
-            `http://localhost:8080/qingteng-recruitment/examine_ranking?id=${exam.userID}`,
+            "http://localhost:8080//qingteng-recruitment/root/examine_ranking",
             {},
             {
               headers: {
@@ -975,7 +994,7 @@ export default {
       formData.append("end_time", endTime);
       formData.append("discussId", discussId);
       axios
-        .post("http://localhost:8080/qingteng-recruitment/comment", formData, {
+        .post("http://localhost:8080/qingteng-recruitment/root/discuss/select", formData, {
           headers: {
             "token": `${this.$store.state.token}`,
           },
@@ -1004,7 +1023,7 @@ export default {
         formData.append("discussId", discussId);
         axios
           .post(
-            "http://localhost:8080/qingteng-recruitment/comment",
+            "http://localhost:8080/qingteng-recruitment/root/discuss/select",
             formData,
             {
               headers: {
@@ -1038,6 +1057,7 @@ export default {
           .catch((error) => {
             this.fullscreenLoading = false;
             this.$message.error("ERROR：" + error.message);
+            
           });
       } else {
         // 收起所有回复
@@ -1073,7 +1093,7 @@ export default {
       };
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/comment",
+          "http://localhost:8080/qingteng-recruitment/root/discuss/save",
           commentData,
           {
             headers: {
