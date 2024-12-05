@@ -1413,12 +1413,8 @@ export default {
     },
   },
   mounted() {
-    // this.judge();
     this.showExams();
   },
-  // beforeDestroy() {
-  //   this.$store.dispatch("setToken", "");
-  // },
 };
 </script>
 
