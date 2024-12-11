@@ -1325,7 +1325,7 @@ export default {
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/examine_delete",
-          {id:id},
+          {"id":id},
           {
             headers: {
               token: `${this.$store.state.token}`,
