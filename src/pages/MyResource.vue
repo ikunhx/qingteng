@@ -295,7 +295,7 @@ export default {
       formData.append("fileUrl", fileUrl);
 
       const url =
-        "http://localhost:8080//qingteng-recruitment/root/resource_edit";
+        "http://localhost:8080/qingteng-recruitment/root/resource_edit";
       axios
         .post(url, formData, {
           headers: {
@@ -346,7 +346,7 @@ export default {
       formData.append("name", this.newForm.name);
       formData.append("fileUrl", fileUrl);
       const url =
-        "http://localhost:8080//qingteng-recruitment/root/resource_edit";
+        "http://localhost:8080/qingteng-recruitment/root/resource_edit";
       axios
         .post(url, formData, {
           headers: {
