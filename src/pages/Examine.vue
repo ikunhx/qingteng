@@ -1117,6 +1117,7 @@ export default {
         .post(url, formData, {
           headers: {
             token: `${this.$store.state.token}`,
+            "Content-Type": "application/json",
           },
         })
         .then((response) => {
