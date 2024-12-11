@@ -175,9 +175,21 @@ export default {
     async fetchResources() {
       try {
         const response = await axios.post(
+<<<<<<< HEAD
           "http://localhost:8080/qingteng-recruitment/root/display_resource"
         );
         alert(response.data.data)
+=======
+          "http://localhost:8080/qingteng-recruitment/root/display_resource",
+          {},
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        );
+        alert(response.data.data);
+>>>>>>> 8c498a3f8ea4531bf34e9b5d537f050c99dae830
         this.resources = response.data.data; // 获取资源数据
       } catch (error) {
         console.log("获取资源失败", error);
@@ -377,11 +389,11 @@ export default {
       this.$refs.upload.submit();
       console.log(this.newForm.name);
     },
-    
+
     publishResource() {
       this.newDialogVisible = true;
     },
-  
+
     // 删除资源
     async deleteResource(id) {
       try {
@@ -404,9 +416,9 @@ export default {
         console.error("删除资源失败", error);
       }
     },
-    mounted() {
-      this.fetchResources(); // 页面加载时获取资源
-    },
+  },
+  mounted() {
+    this.fetchResources(); // 页面加载时获取资源
   },
 };
 </script>
