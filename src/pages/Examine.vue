@@ -862,7 +862,7 @@ export default {
       this.rankingTable = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/root/examine_ranking`,
+          "http://localhost:8080/qingteng-recruitment/root/examine_ranking",
           {},
           {
             headers: {
@@ -887,7 +887,7 @@ export default {
 
       axios
         .post(
-          `http://localhost:8080//qingteng-recruitment/root/select_exam`,
+          "http://localhost:8080/qingteng-recruitment/root/select_exam",
           { id: this.examID },
           {
             headers: {
