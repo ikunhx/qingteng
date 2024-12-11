@@ -1320,12 +1320,12 @@ export default {
     },
     deleteExam(id) {
       console.log(id);
-      let examID = id
+      const data = {id:id}
       this.fullscreenLoading = true;
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/root/examine_delete",
-          {id:examID},
+          data,
           {
             headers: {
               token: `${this.$store.state.token}`,
