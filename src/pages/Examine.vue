@@ -509,13 +509,13 @@ export default {
       exams: [
         //考核列表
         {
-          id: numberID(),
+          id: 1234,
           name: "第一次考核",
           beginTime: this.showDate(1728613183630),
           endTime: this.showDate(1728613524152),
         },
         {
-          id: numberID(),
+          id: 2345,
           name: "第二次考核",
           beginTime: this.showDate(1728635736858),
           endTime: this.showDate(1728696238545),
@@ -530,14 +530,14 @@ export default {
       },
       newExam: {
         //新考核
-        id: numberID(),
+        id: 49156,
         name: "",
         start_date: "",
         end_time: "",
       },
       rankingData: [
         {
-          userID: numberID(),
+          userID: 498156,
           name: "张三",
           classes: "软件2401",
           avatarUrl:
@@ -548,7 +548,7 @@ export default {
             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
         {
-          userID: numberID(),
+          userID: 7653,
           name: "张三",
           classes: "软件2401",
           avatarUrl:
@@ -561,7 +561,7 @@ export default {
       ],
       scoreData: [
         {
-          userID: numberID(),
+          userID: 7837835,
           name: "张三",
           classes: "软件2401",
           avatarUrl:
@@ -571,7 +571,7 @@ export default {
           
         },
         {
-          userID: numberID(),
+          userID: 7354,
           name: "张三",
           classes: "软件2401",
           avatarUrl:
@@ -583,7 +583,7 @@ export default {
 
       comments: [
         {
-          id: numberID(),
+          id: 7853205,
           url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           name: "张三",
           data: 1729390765572,
@@ -595,7 +595,7 @@ export default {
           replays: [],
         },
         {
-          id: numberID(),
+          id: 7534478,
           url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
           name: "张大三",
           data: 1729890765572,
@@ -607,7 +607,7 @@ export default {
             "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
           replays: [
             {
-              id: numberID(),
+              id: 753941,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -617,7 +617,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 4534444442,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -627,7 +627,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 453434,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
@@ -638,7 +638,7 @@ export default {
                 "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
             },
             {
-              id: numberID(),
+              id: 453123,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
@@ -649,7 +649,7 @@ export default {
                 "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
             },
             {
-              id: numberID(),
+              id: 4531231,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -659,7 +659,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 4534132,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
@@ -670,7 +670,7 @@ export default {
                 "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
             },
             {
-              id: numberID(),
+              id: 76543456676,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -680,7 +680,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 456547,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
@@ -691,7 +691,7 @@ export default {
                 "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
             },
             {
-              id: numberID(),
+              id: 876542,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -701,7 +701,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 8573454,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
@@ -712,7 +712,7 @@ export default {
                 "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
             },
             {
-              id: numberID(),
+              id: 3475463,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -722,7 +722,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 2374546,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
@@ -733,7 +733,7 @@ export default {
                 "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
             },
             {
-              id: numberID(),
+              id: 2463548,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -743,7 +743,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 743623545,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
@@ -756,7 +756,7 @@ export default {
           ],
         },
         {
-          id: numberID(),
+          id: 237765,
           url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
           name: "张大三",
           data: 1729890765572,
@@ -1109,8 +1109,8 @@ export default {
 
       formData.append("id", this.editExam.id);
       formData.append("name", this.editExam.name);
-      formData.append("begin_time", beginTime);
-      formData.append("end_time", endTime);
+      formData.append("beginTime", beginTime);
+      formData.append("endTime", endTime);
       formData.append("fileUrl", fileUrl);
       const url = "http://localhost:8080/qingteng-recruitment/root/edit_exam";
       axios

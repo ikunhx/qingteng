@@ -512,13 +512,13 @@ export default {
       exams: [
         //考核列表
         {
-          id: numberID(),
+          id: 875346325,
           name: "第一次考核",
           beginTime: 1728613183630,
           endTime: 2728613524152,
         },
         {
-          id: numberID(),
+          id: 987654334,
           name: "第二次考核",
           beginTime: 1728635736858,
           endTime: 1728696238545,
@@ -532,7 +532,7 @@ export default {
       },
       rankingData: [
         {
-          userID: numberID(),
+          userID: 24374635,
           name: "张三",
           classes: "软件2401",
           avatarUrl:
@@ -543,7 +543,7 @@ export default {
             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
         {
-          userID: numberID(),
+          userID: 872435235,
           name: "张三",
           classes: "软件2401",
           avatarUrl:
@@ -556,7 +556,7 @@ export default {
       ],
       comments: [
         {
-          id: numberID(),
+          id: 374635376,
           url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
           name: "张三",
           data: 1729390765572,
@@ -568,7 +568,7 @@ export default {
           replays: [],
         },
         {
-          id: numberID(),
+          id: 98746454,
           url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
           name: "张大三",
           data: 1729890765572,
@@ -580,7 +580,7 @@ export default {
             "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
           replays: [
             {
-              id: numberID(),
+              id: 87426357,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -590,7 +590,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 985347342,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
@@ -603,7 +603,7 @@ export default {
           ],
         },
         {
-          id: numberID(),
+          id: 7635234,
           url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
           name: "张大三",
           data: 1729890765572,
@@ -615,7 +615,7 @@ export default {
             "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
           replays: [
             {
-              id: numberID(),
+              id: 8746354,
               url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
               name: "张三",
               data: 1729390765572,
@@ -625,7 +625,7 @@ export default {
               content: "考核好难55555555",
             },
             {
-              id: numberID(),
+              id: 987354354,
               url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
               name: "张大三",
               data: 1729890765572,
