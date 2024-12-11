@@ -175,7 +175,7 @@ export default {
     async fetchResources() {
       try {
         const response = await axios.post(
-          "http://localhost:8080//qingteng-recruitment/root/display_resource"
+          "http://localhost:8080/qingteng-recruitment/root/display_resource"
         );
         alert(response.data.data)
         this.resources = response.data.data; // 获取资源数据
