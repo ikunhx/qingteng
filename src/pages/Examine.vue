@@ -836,7 +836,6 @@ export default {
     //点击按钮时,触发弹出效果
     handleEdit(row) {
       //编辑考核
-      alert(1)
       //触发点击时,让其显示
       this.editExamVisible = true;
       this.editExam.id = row.id;

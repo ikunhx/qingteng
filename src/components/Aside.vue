@@ -23,7 +23,7 @@
             <el-menu-item
               index="2-1"
               @click="handleChange('change', 'Examine')"
-              v-if="this.$store.state.admin === '1'"
+              v-if="this.$store.state.admin === '2'"
               >管理员考核</el-menu-item
             >
             <el-menu-item
