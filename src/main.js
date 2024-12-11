@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 如果没有找到标识符，表示可能是新的会话或第一次加载
     // 清除 token (可选)
     store.commit('setToken', '');
+    store.commit('setAdmin', '');
     
     // 创建一个新的标识符并存入 sessionStorage
     pageSessionId = 'session_' + new Date().getTime();
