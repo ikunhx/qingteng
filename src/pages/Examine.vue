@@ -1319,8 +1319,9 @@ export default {
       this.addExamVisible = true;
     },
     deleteExam(id) {
-      console.log(id);
+      
       const data = {id:id}
+      console.log(data);
       this.fullscreenLoading = true;
       axios
         .post(
@@ -1329,7 +1330,9 @@ export default {
           {
             headers: {
               token: `${this.$store.state.token}`,
+              "Content-Type":"application/json"
             },
+            
           }
         )
         .then((response) => {
