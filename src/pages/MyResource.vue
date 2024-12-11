@@ -404,10 +404,11 @@ export default {
         console.error("删除资源失败", error);
       }
     },
-    mounted() {
+    
+  },
+  mounted() {
       this.fetchResources(); // 页面加载时获取资源
     },
-  },
 };
 </script>
 
