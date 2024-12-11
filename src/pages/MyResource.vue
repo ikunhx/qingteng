@@ -175,9 +175,9 @@ export default {
     async fetchResources() {
       try {
         const response = await axios.post(
-          "https://qingteng-recruitment/root/display_resource",
-          { code: 1 }
+          "http://localhost:8080/qingteng-recruitment/root/display_resource"
         );
+        alert(response.data.data)
         this.resources = response.data.data; // 获取资源数据
       } catch (error) {
         console.log("获取资源失败", error);
@@ -295,7 +295,7 @@ export default {
       formData.append("fileUrl", fileUrl);
 
       const url =
-        "http://localhost:8080//qingteng-recruitment/root/resource_edit";
+        "http://localhost:8080/qingteng-recruitment/root/resource_edit";
       axios
         .post(url, formData, {
           headers: {
@@ -346,7 +346,7 @@ export default {
       formData.append("name", this.newForm.name);
       formData.append("fileUrl", fileUrl);
       const url =
-        "http://localhost:8080//qingteng-recruitment/root/resource_edit";
+        "http://localhost:8080/qingteng-recruitment/root/resource_edit";
       axios
         .post(url, formData, {
           headers: {
