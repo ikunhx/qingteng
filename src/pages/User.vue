@@ -148,7 +148,7 @@ export default {
         return;
       }
       axios
-        .post("http://localhost:8080/qingteng-recruitment/root/register", {
+        .post("http://localhost:8080/qingteng-recruitment/root/sendEmail", {
           email: this.user.email,
         })
         .then((response) => {
