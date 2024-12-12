@@ -151,6 +151,7 @@ export default {
               : "网络请求失败"
           );
         });
+        this.$router.push('/showAdministrator');
     },
     emailLogin() {
       axios
@@ -432,7 +433,11 @@ input {
 }
 
 .outer {
+<<<<<<< HEAD
+  background-image: url("../assets/itr-png/45.jpg");
+=======
    background-image: url("../../src/assets/itr-png/45.jpg"); 
+>>>>>>> 58f4feea042f75c5ca8189d286ab1059d0999681
   background-size: 100% 100%;
   image-rendering: crisp-edges;
 }
