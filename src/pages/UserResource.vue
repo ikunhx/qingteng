@@ -75,8 +75,11 @@ export default {
       try {
         const response = await axios.post(
           "http://localhost:8080/qingteng-recruitment/user/display_resource",
+          {},
           {
-            code: 3
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
           }
         );
         this.resources = response.data.data;
