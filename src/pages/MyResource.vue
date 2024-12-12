@@ -20,11 +20,11 @@
         <el-table-column prop="name" label="资源名称"></el-table-column>
         <el-table-column label="操作" style="padding-left: 20px">
           <template slot-scope="scope">
-            <el-button
+            <!-- <el-button
               @click="openResource(scope.row.id)"
               style="color: green; cursor: pointer"
               >打开</el-button
-            >
+            > -->
             <el-button
               @click="editResources(scope.row)"
               style="color: blue; cursor: pointer"
@@ -144,12 +144,11 @@
 </template>
 <script>
 import axios from "axios";
-import JSZip from "jszip";
+// import JSZip from "jszip";
 export default {
   data() {
     return {
       resources: [],
-      fileUrls: [],
       newDialogVisible: false,
       dialogVisible: false,
       form: {
@@ -204,80 +203,80 @@ export default {
 
     return isZIP && isLt400M;
   },
-    // 打开资源
-    openResource(id) {
-      const index = this.resources.findIndex(item => item.id === id);
-      this.answerTable = true;
-      this.fetchAndUnzip(this.fileUrl);
-      const resource = this.resources.find((item) => item.id === id);
-      if (index !== -1) {
-        const fileUrl = this.fileUrls[index];
-        // 根据文件类型决定如何打开文件
-        const fileType = resource.fileUrl.split(".").pop().toLowerCase();
-        switch (fileType) {
-          case "pdf":
-            // 预览PDF文件
-            this.previewPdf(fileUrl);
-            break;
-          case "zip":
-            this.answerTable = true;
-            this.fetchAndUnzip(fileUrl);
-            break;
-          default:
-            console.error("不支持的文件类型");
-        }
-      } else {
-        console.error("文件未找到或没有可用的文件链接");
-      }
-    },
-    // 预览资源
-    async fetchAndUnzip(zipUrl) {
-      try {
-        console.log(zipUrl);
-        // 使用 axios 下载文件
-        const response = await axios({
-          url: zipUrl,
-          method: "GET",
-          responseType: "arraybuffer", // 获取二进制数据
-        });
-        if (response.status !== 200) {
-          throw new Error(`请求失败，状态码: ${response.status}`);
-        }
-        // 使用 JSZip 解压压缩包
-        const zip = new JSZip();
-        const content = await zip.loadAsync(response.data);
-        // 清空现有的文件列表
-        this.pdfFiles = [];
-        this.videoFiles = [];
-        // 遍历压缩包中的文件
-        content.forEach((relativePath, file) => {
-          if (file.dir) return; // 忽略目录
-          // 将文件转换为 Blob 对象，并指定 MIME 类型
-          file.async("blob").then(async (blob) => {
-            const fileUrl = URL.createObjectURL(blob);
-            console.log(`Generated URL for ${file.name}: ${fileUrl}`); // 打印生成的 URL
-            const fileType = file.name.split(".").pop().toLowerCase();
-            let mimeType;
-            if (fileType === "pdf") {
-              mimeType = "application/pdf";
-            } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
-              mimeType = "video/" + fileType;
-            } else {
-              mimeType = "application/octet-stream"; // 默认 MIME 类型
-            }
-            const typedBlob = new Blob([blob], { type: mimeType });
-            const typedFileUrl = URL.createObjectURL(typedBlob);
-            if (fileType === "pdf") {
-              this.pdfFiles.push({ name: file.name, url: typedFileUrl });
-            } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
-              this.videoFiles.push({ name: file.name, url: typedFileUrl });
-            }
-          });
-        });
-      } catch (error) {
-        console.error("解压失败:", error.message);
-      }
-    },
+    // // 打开资源
+    // openResource(id) {
+    //   const index = this.resources.findIndex(item => item.id === id);
+    //   this.answerTable = true;
+    //   this.fetchAndUnzip(this.fileUrl);
+    //   const resource = this.resources.find((item) => item.id === id);
+    //   if (index !== -1) {
+    //     const fileUrl = this.fileUrls[index];
+    //     // 根据文件类型决定如何打开文件
+    //     const fileType = resource.fileUrl.split(".").pop().toLowerCase();
+    //     switch (fileType) {
+    //       case "pdf":
+    //         // 预览PDF文件
+    //         this.previewPdf(fileUrl);
+    //         break;
+    //       case "zip":
+    //         this.answerTable = true;
+    //         this.fetchAndUnzip(fileUrl);
+    //         break;
+    //       default:
+    //         console.error("不支持的文件类型");
+    //     }
+    //   } else {
+    //     console.error("文件未找到或没有可用的文件链接");
+    //   }
+    // },
+    // // 预览资源
+    // async fetchAndUnzip(zipUrl) {
+    //   try {
+    //     console.log(zipUrl);
+    //     // 使用 axios 下载文件
+    //     const response = await axios({
+    //       url: zipUrl,
+    //       method: "GET",
+    //       responseType: "arraybuffer", // 获取二进制数据
+    //     });
+    //     if (response.status !== 200) {
+    //       throw new Error(`请求失败，状态码: ${response.status}`);
+    //     }
+    //     // 使用 JSZip 解压压缩包
+    //     const zip = new JSZip();
+    //     const content = await zip.loadAsync(response.data);
+    //     // 清空现有的文件列表
+    //     this.pdfFiles = [];
+    //     this.videoFiles = [];
+    //     // 遍历压缩包中的文件
+    //     content.forEach((relativePath, file) => {
+    //       if (file.dir) return; // 忽略目录
+    //       // 将文件转换为 Blob 对象，并指定 MIME 类型
+    //       file.async("blob").then(async (blob) => {
+    //         const fileUrl = URL.createObjectURL(blob);
+    //         console.log(`Generated URL for ${file.name}: ${fileUrl}`); // 打印生成的 URL
+    //         const fileType = file.name.split(".").pop().toLowerCase();
+    //         let mimeType;
+    //         if (fileType === "pdf") {
+    //           mimeType = "application/pdf";
+    //         } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
+    //           mimeType = "video/" + fileType;
+    //         } else {
+    //           mimeType = "application/octet-stream"; // 默认 MIME 类型
+    //         }
+    //         const typedBlob = new Blob([blob], { type: mimeType });
+    //         const typedFileUrl = URL.createObjectURL(typedBlob);
+    //         if (fileType === "pdf") {
+    //           this.pdfFiles.push({ name: file.name, url: typedFileUrl });
+    //         } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
+    //           this.videoFiles.push({ name: file.name, url: typedFileUrl });
+    //         }
+    //       });
+    //     });
+    //   } catch (error) {
+    //     console.error("解压失败:", error.message);
+    //   }
+    // },
     colorId(id) {
       return id % 4;
     },
