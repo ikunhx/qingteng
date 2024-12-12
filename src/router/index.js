@@ -31,11 +31,6 @@ const router = new VueRouter({
             name: 'UserExamine'
         },
         {
-            path: '/Resources',
-            name: 'Resources',
-            component: () => import('../pages/Resources.vue')
-        },
-        {
             path: '/MyResource',
             name: 'MyResource',
             component: () => import('../pages/MyResource.vue')
