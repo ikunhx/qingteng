@@ -889,8 +889,8 @@ export default {
 
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/select_exam",
-          { id: this.examID },
+          `http://localhost:8080/qingteng-recruitment/root/select_exam?id=${examID}`,
+          { },
           {
             headers: {
               token: `${this.$store.state.token}`,
