@@ -79,7 +79,7 @@ export default {
             code: 3
           }
         );
-        this.resources = response.data;
+        this.resources = response.data.data;
       } catch (error) {
         console.log("获取资源失败", error);
       }
