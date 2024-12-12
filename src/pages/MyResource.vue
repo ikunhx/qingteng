@@ -39,7 +39,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog title="编辑资源" :visible.sync="dialogVisible">
+    <el-dialog title="编辑资源" :visible.sync="dialogVisible" @close="closeEdit">
       <el-form :model="form">
         <el-form-item label="资源名">
           <el-input v-model="form.name"></el-input>
@@ -72,7 +72,7 @@
         <el-button type="primary" @click="submitUpload">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="发布资源" :visible.sync="newDialogVisible">
+    <el-dialog title="发布资源" :visible.sync="newDialogVisible" @close="closeAdd">
       <el-form :model="newForm">
         <el-form-item label="资源名">
           <el-input v-model="newForm.name"></el-input>
@@ -330,11 +330,18 @@ export default {
             type: "success",
             message: "提交成功!",
           });
+          this.closeEdit()
         })
         .catch((error) => {
           this.fullscreenLoading = false;
           this.$message.error("考核添加失败：" + error.message);
+          this.closeEdit()
         });
+    },
+    closeEdit(){
+      this.dialogVisible=false
+      this.form.name=''
+      this.fileList=[]
     },
     newCustomUpload(options) {
       const formData = new FormData();
@@ -380,13 +387,19 @@ export default {
             type: "success",
             message: "提交成功!",
           });
+          this.closeAdd()
         })
         .catch((error) => {
           this.fullscreenLoading = false;
           this.$message.error("资源添加失败：" + error.message);
+          this.closeAdd()
         });
     },
-
+    closeAdd(){
+      this.newDialogVisible=false
+      this.newForm.name=''
+      this.fileList=[]
+    },
     // 文件拖拽
     handleFileChange(file) {
       this.fileList.push(file.file);
