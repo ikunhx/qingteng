@@ -7,97 +7,47 @@
       </div>
       <div class="login" v-if="currentPage === 'login'">
         <div class="user">
-          <el-input
-            v-model="user.email"
-            placeholder="请输入您的QQ邮箱"
-          ></el-input>
+          <el-input v-model="user.email" placeholder="请输入您的QQ邮箱"></el-input>
         </div>
         <div class="password">
-          <el-input
-            v-model="user.password"
-            placeholder="请输入您的密码"
-          ></el-input>
+          <el-input v-model="user.password" placeholder="请输入您的密码"></el-input>
         </div>
-        <el-button class="login-button" @click="login" type="primary"
-          >登录</el-button
-        >
+        <el-button class="login-button" @click="login" type="primary">登录</el-button>
         <div class="register-box">
-          <a class="login-a"
-            >没有账号？<span class="login-span" @click="toRegister"
-              >立即注册</span
-            ></a
-          >
+          <a class="login-a">没有账号？<span class="login-span" @click="toRegister">立即注册</span></a>
         </div>
       </div>
 
       <div class="another-login" v-else-if="currentPage === 'emailLogin'">
         <div class="email1">
-          <el-input
-            v-model="user.email"
-            placeholder="请输入您的QQ邮箱"
-          ></el-input>
-          <button class="send-email" primary @click="sendVerificationCode">
-            发送
-          </button>
+          <el-input v-model="user.email" placeholder="请输入您的QQ邮箱"></el-input>
+          <button class="send-email" primary @click="sendVerificationCode">发送</button>
         </div>
         <div class="password">
-          <el-input
-            v-model="user.code"
-            placeholder="请输入您的验证码"
-          ></el-input>
+          <el-input v-model="user.code" placeholder="请输入您的验证码"></el-input>
         </div>
-        <el-button class="emailLogin-button" @click="emailLogin" type="primary"
-          >登录</el-button
-        >
+        <el-button class="emailLogin-button" @click="emailLogin" type="primary">登录</el-button>
         <div class="register-box">
-          <a class="login-a"
-            >没有账号？<span class="login-span" @click="toRegister"
-              >立即注册</span
-            ></a
-          >
+          <a class="login-a">没有账号？<span class="login-span" @click="toRegister">立即注册</span></a>
         </div>
       </div>
-      <div
-        class="register"
-        v-else-if="currentPage === 'register'"
-        @submit.prevent="register"
-      >
+      <div class="register" v-else-if="currentPage === 'register'" @submit.prevent="register">
         <div class="email">
-          <el-input
-            v-model="user.email"
-            placeholder="请输入您的QQ邮箱"
-          ></el-input>
-          <button class="send-email" primary @click="sendVerificationCode">
-            发送
-          </button>
+          <el-input v-model="user.email" placeholder="请输入您的QQ邮箱"></el-input>
+          <button class="send-email" primary @click="sendVerificationCode">发送</button>
         </div>
         <div class="password">
-          <el-input
-            v-model="user.password"
-            placeholder="请输入您的密码"
-          ></el-input>
+          <el-input v-model="user.password" placeholder="请输入您的密码"></el-input>
         </div>
         <div class="password">
-          <el-input
-            v-model="user.passwords"
-            placeholder="请输入您的密码"
-          ></el-input>
+          <el-input v-model="user.passwords" placeholder="请确认您的密码"></el-input>
         </div>
         <div class="password">
-          <el-input
-            v-model="user.code"
-            placeholder="请输入您的验证码"
-          ></el-input>
+          <el-input v-model="user.code" placeholder="请输入您的验证码"></el-input>
         </div>
-        <el-button class="register-button" @click="register" type="primary"
-          >注册</el-button
-        >
+        <el-button class="register-button" @click="register" type="primary">注册</el-button>
         <div class="register-box">
-          <a class="register-a"
-            >已有账号？<span class="register-span" @click="toLogin"
-              >立即登录</span
-            ></a
-          >
+          <a class="register-a">已有账号？<span class="register-span" @click="toLogin">立即登录</span></a>
         </div>
       </div>
     </div>
@@ -116,6 +66,8 @@ export default {
         password: "",
         passwords: "",
         code: "",
+        isCooldown: false,
+        cooldownTimer: null
       },
     };
   },
@@ -136,11 +88,9 @@ export default {
     },
     toLoginPage() {
       this.currentPage = "login";
-      console.log("login");
     },
     toEmailLoginPage() {
       this.currentPage = "emailLogin";
-      console.log("emailPage");
     },
     sendVerificationCode() {
       if (!this.user.email) {
@@ -148,18 +98,25 @@ export default {
         return;
       }
       axios
-        .post("http://localhost:8080/qingteng-recruitment/root/sendEmail", {
+        .post("http://localhost:8080/qingteng-recruitment/user/sendEmail", {
           email: this.user.email,
         })
         .then((response) => {
           this.$message.success(
             response.data.data || "验证码已发送，请查收邮件"
           );
+          this.startCooldown();
         })
         .catch((error) => {
           console.error("发送验证码失败:", error);
           this.$message.error(error.response.data.error || "发送验证码失败");
         });
+    },
+    startCooldown() {
+      this.isCooldown = true;
+      this.cooldownTimer = setTimeout(() => {
+        this.isCooldown = false;
+      }, 60000);
     },
     login() {
       axios
@@ -171,9 +128,7 @@ export default {
           // 隐藏加载状态
           this.$message.closeAll();
           console.log("Response:", response); // 调试输出
-
           this.$store.dispatch("setToken", response.data.data.token);
-          alert(response.data.data.token);
           this.$store.dispatch("setAdmin", response.data.data.admin);
           if (response && response.data && response.data.data) {
             if (response.data.data.admin === 3) {
@@ -211,10 +166,12 @@ export default {
           this.$store.dispatch("setToken", response.data.data.token);
           this.$store.dispatch("setAdmin", response.data.data.admin);
           if (response && response.data && response.data.data) {
-            if (response.data.data.admin === 0) {
+            if (response.data.data.admin === 3) {
               this.$router.push({ name: "showUser" });
             } else if (response.data.data.admin === 1) {
               this.$router.push({ name: "showAdministrator" });
+            } else if (response.data.data.admin === 2) {
+              this.$router.push({ name: 'showSuperAdministrator' });
             }
             this.$message.success("登录成功");
           } else {
@@ -231,20 +188,19 @@ export default {
               : "网络请求失败"
           );
         });
-      this.$router.push("/showUser");
     },
     async register() {
       try {
         const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/root/register",
+          "http://localhost:8080/qingteng-recruitment/user/register",
           {
             email: this.user.email,
             password: this.user.password,
             passwords: this.user.passwords,
-            key: this.user.key,
+            code: this.user.code,
           }
         );
-        if (response.data.success) {
+        if (response.data.message=="用户注册成功") {
           // 处理注册成功的情况
           this.$message.success(response.data.data || "注册成功");
           this.currentPage = "login";
@@ -274,6 +230,11 @@ export default {
   // beforeDestroy() {
   //   this.$store.dispatch("setToken", "");
   // },
+  beforeDestroy() {
+    if (this.cooldownTimer) {
+      clearTimeout(this.cooldownTimer);
+    }
+  }
 };
 </script>
 
@@ -471,7 +432,7 @@ input {
 }
 
 .outer {
-  background-image: url("../assets/itr-png/14.jpg");
+   background-image: url("../../src/assets/itr-png/45.jpg"); 
   background-size: 100% 100%;
   image-rendering: crisp-edges;
 }
