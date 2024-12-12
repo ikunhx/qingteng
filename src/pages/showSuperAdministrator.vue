@@ -23,7 +23,7 @@
             </div>
             <div class="table-container2" v-else-if="currentPage === 'superAdministrator'">
                 <input v-model="email" placeholder="请输入邮箱" />
-                <el-button type="success" class="button1" @click="handleAdd(scope.$index, scope.row)">添加</el-button>
+                <el-button type="success" class="button1" @click="handleAdd">添加</el-button>
                 <div class="superAdministrattor">
                     <template>
                         <el-table :data="administratorData" height="700" border style="width: 700px">

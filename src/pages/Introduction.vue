@@ -26,8 +26,8 @@
             </div>
         </div>
         <div class="second-content">
-            <img src="../../src/assets/itr-png/14.jpg">
-            <img class="second-content-img" src="../../src/assets/itr-png/15.png">
+            <img src="../../src/assets/itr-png/34.png">
+            <img class="second-content-img" src="../../src/assets/itr-png/35.png">
         </div>
         <div class="third-content">
             <h1 class="third-content-text">主要方向</h1>
@@ -57,9 +57,9 @@ export default {
         return {
             currentIndex: 0, // 当前显示的图片索引
             images: [
-                { src: require('../../src/assets/itr-png/11.jpg') },
-                { src: require('../../src/assets/itr-png/12.png') },
-                { src: require('../../src/assets/itr-png/13.png') },
+                { src: require('../../src/assets/itr-png/30.png') },
+                { src: require('../../src/assets/itr-png/31.png') },
+                { src: require('../../src/assets/itr-png/32.png') },
             ],
             interval: null,
             intervalTime: 3000
@@ -85,15 +85,9 @@ export default {
         },
         stopCarousel() {
             clearInterval(this.interval);
-        },
-        scrollToRight() {
-            const windowWidth = window.innerWidth;
-            const scrollPosition = windowWidth * 0.3;
-            window.scrollTo(scrollPosition, 0);
         }
     },
     mounted() {
-        this.scrollToRight();
         this.startCarousel();
     },
     beforeDestroy() {
@@ -104,7 +98,7 @@ export default {
 
 <style>
 .introduction {
-    width: 1890px;
+    width: 1350px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -177,7 +171,7 @@ export default {
 .text {
     display: flex;
     text-align: center;
-    margin-left: 50vw;
+    margin-left: 27vw;
     margin-top: 15vh;
     width: 150%;
     color: #2BA257;
@@ -202,7 +196,7 @@ export default {
 
 .message1 {
     font-size: 40px;
-    margin-left: 40vw;
+    margin-left: 20vw;
     color: #fff;
 }
 
@@ -216,7 +210,7 @@ export default {
 .text2 {
     font-size: 60px;
     margin-top: 10vw;
-    margin-left: 47vw;
+    margin-left: 25vw;
     color: #fff;
 }
 
@@ -260,14 +254,13 @@ export default {
     height: 558px;
     width: 656px;
     position: absolute;
-    right: 50%;
-    margin-right: 150px;
+    right: 80%;
 }
 
 .content h1 {
     font-size: 40px;
     margin-top: 120px;
-    margin-left: 55vw;
+    margin-left: 30vw;
 }
 
 .content span {
@@ -292,15 +285,15 @@ export default {
     width: 100%;
     height: 900px;
     margin-top: 200px;
-    margin-left: 200px;
+    margin-left: 30px;
 }
 
 .third-content {
     width: 100%;
     height: 900px;
     margin-top: 30px;
-    margin-left: 180px;
-    background-image: url('../../src/assets/itr-png/17.jpg');
+    margin-left: 10px;
+    background-image: url('../../src/assets/itr-png/41.png');
     background-size: 100% 1000px;
 }
 
@@ -365,7 +358,7 @@ export default {
 }
 
 .third-content-text {
-    margin-left: 820px;
+    margin-left: 550px;
     font-size: 60px;
     color: black;
 }
@@ -378,15 +371,15 @@ export default {
 .forth-content {
     width: 100%;
     height: 900px;
-    margin-left: 130px;
-    background-image: url('../../src/assets/itr-png/16.png');
+    margin-left: 30px;
+    background-image: url('../../src/assets/itr-png/39.png');
     background-size: 100% 900px;
 }
 
 .fifth-content {
     width: 100%;
     height: 900px;
-    margin-left: 200px;
+    margin-left: 20px;
     background-image: url('../../src/assets/itr-png/11.jpg');
     background-size: 100% 900px;
     transition: opacity 1s ease-in-out;

@@ -160,7 +160,6 @@ export default {
           this.user
         )
         .then((response) => {
-          alert(1);
           // 隐藏加载状态
           this.$message.closeAll();
           console.log("Response:", response); // 调试输出
