@@ -88,39 +88,38 @@ export default {
       }
     },
     async downloadResource(resource) {
-      try {
-        const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/user/resource_download",
-          {
-            id: resource.id,
-            name: resource.name,
-          },
-          {
-            responseType: "blob", // 处理二进制文件下载
-          }
-        );
-
-        if (response.status === 200) {
-          // 创建一个下载链接并触发点击
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url; // 修正为 href
-          link.setAttribute("download", resource.name);
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link); // 清理临时链接
-          window.URL.revokeObjectURL(url); // 释放创建的 Blob URL
-        }
-      } catch (error) {
-        console.error("下载资源失败", error);
-        // 处理下载错误
-        if (error.response && error.response.status === 401) {
-          this.$message.error("未授权，无法下载资源");
-        } else {
-          this.$message.error("下载失败，请重试");
-        }
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/qingteng-recruitment/user/resource_download",
+      {
+        id: resource.id,
+        name: resource.name,
+      },
+      {
+        responseType: "blob", // 确保响应类型为 blob
       }
-    },
+    );
+    if (response.status === 200) {
+      // 创建一个下载链接并触发点击
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url; // 设置链接的 href 属性为 Blob URL
+      link.setAttribute("download", `${resource.name}.zip`); // 设置下载的文件名
+      document.body.appendChild(link);
+      link.click(); // 触发点击下载
+      document.body.removeChild(link); // 清理临时链接
+      window.URL.revokeObjectURL(url); // 释放创建的 Blob URL
+    }
+  } catch (error) {
+    console.error("下载资源失败", error);
+    // 处理下载错误
+    if (error.response && error.response.status === 401) {
+      this.$message.error("未授权，无法下载资源");
+    } else {
+      this.$message.error("下载失败，请重试");
+    }
+  }
+},
     //自动往右滚动
     scrollToRight() {
       // 获取窗口的宽度
