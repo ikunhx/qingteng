@@ -84,6 +84,7 @@
             action="http://localhost:8080/qingteng-recruitment/user/common/upload"
             :on-change="handleFileChange"
             ref="upload"
+            :before-upload="beforeAvatarUpload"
             accept=".zip"
             :file-list="fileList"
             :auto-upload="false"
@@ -175,11 +176,6 @@ export default {
     async fetchResources() {
       try {
         const response = await axios.post(
-<<<<<<< HEAD
-          "http://localhost:8080/qingteng-recruitment/root/display_resource"
-        );
-        alert(response.data.data)
-=======
           "http://localhost:8080/qingteng-recruitment/root/display_resource",
           {},
           {
@@ -189,12 +185,24 @@ export default {
           }
         );
         alert(response.data.data);
->>>>>>> 8c498a3f8ea4531bf34e9b5d537f050c99dae830
         this.resources = response.data.data; // 获取资源数据
       } catch (error) {
         console.log("获取资源失败", error);
       }
     },
+    beforeAvatarUpload(file) {
+    const isZIP = file.type === 'application/zip';
+    const isLt400M = file.size / 1024 / 1024 < 400;
+
+    if (!isZIP) {
+      this.$message.error('只能上传zip文件!');
+    }
+    if (!isLt400M) {
+      this.$message.error('文件大小不能超过 400MB!');
+    }
+
+    return isZIP && isLt400M;
+  },
     // 打开资源
     openResource(id) {
       this.answerTable = true;
