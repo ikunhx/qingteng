@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="second-content">
-            <img src="../../src/assets/itr-png/14.png">
+            <img src="../../src/assets/itr-png/14.jpg">
             <img class="second-content-img" src="../../src/assets/itr-png/15.png">
         </div>
         <div class="third-content">
@@ -57,7 +57,7 @@ export default {
         return {
             currentIndex: 0, // 当前显示的图片索引
             images: [
-                { src: require('../../src/assets/itr-png/11.png') },
+                { src: require('../../src/assets/itr-png/11.jpg') },
                 { src: require('../../src/assets/itr-png/12.png') },
                 { src: require('../../src/assets/itr-png/13.png') },
             ],
@@ -300,7 +300,7 @@ export default {
     height: 900px;
     margin-top: 30px;
     margin-left: 180px;
-    background-image: url('../../src/assets/itr-png/17.png');
+    background-image: url('../../src/assets/itr-png/17.jpg');
     background-size: 100% 1000px;
 }
 
@@ -387,7 +387,7 @@ export default {
     width: 100%;
     height: 900px;
     margin-left: 200px;
-    background-image: url('../../src/assets/itr-png/1.jpg');
+    background-image: url('../../src/assets/itr-png/11.jpg');
     background-size: 100% 900px;
     transition: opacity 1s ease-in-out;
 }
