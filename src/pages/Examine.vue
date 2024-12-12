@@ -925,7 +925,7 @@ export default {
 
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/discuss/select",
+          "http://localhost:8080/qingteng-recruitment/user/discuss/select",
           commentData,
           {
             headers: {
