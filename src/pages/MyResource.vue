@@ -148,12 +148,8 @@ import JSZip from "jszip";
 export default {
   data() {
     return {
-      resources: [
-        { name: "Java", id: "01", fileUrl: "path/to/java/file.pdf" },
-        { name: "C++", id: "02", fileUrl: "path/to/cpp/file.zip" },
-        { name: "Vue", id: "03", fileUrl: "path/to/vue/file.zip" },
-        { name: "Html", id: "04", fileUrl: "path/to/html/file.zip" },
-      ],
+      resources: [],
+      fileUrls: [],
       newDialogVisible: false,
       dialogVisible: false,
       form: {
@@ -166,7 +162,7 @@ export default {
       },
       fileList: [],
       answerTable: false,
-      fileUrl: "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+      fileUrl: "",
       pdfFiles: [],
       videoFiles: [],
       fullscreenLoading: false,
@@ -187,6 +183,10 @@ export default {
         );
         alert(response.data.data);
         this.resources = response.data.data; // 获取资源数据
+        // 将每个资源的fileUrl添加到fileUrls数组中
+        this.resources.forEach(resource => {
+          this.fileUrls.push(resource.fileUrl);
+        });
       } catch (error) {
         console.log("获取资源失败", error);
       }
@@ -206,19 +206,22 @@ export default {
   },
     // 打开资源
     openResource(id) {
+      const index = this.resources.findIndex(item => item.id === id);
       this.answerTable = true;
       this.fetchAndUnzip(this.fileUrl);
       const resource = this.resources.find((item) => item.id === id);
-      if (resource && resource.fileUrl) {
+      if (index !== -1) {
+        const fileUrl = this.fileUrls[index];
         // 根据文件类型决定如何打开文件
         const fileType = resource.fileUrl.split(".").pop().toLowerCase();
         switch (fileType) {
           case "pdf":
-            // window.open(resource.fileUrl, '_blank');
+            // 预览PDF文件
+            this.previewPdf(fileUrl);
             break;
           case "zip":
             this.answerTable = true;
-            this.fetchAndUnzip(resource.fileUrl);
+            this.fetchAndUnzip(fileUrl);
             break;
           default:
             console.error("不支持的文件类型");
