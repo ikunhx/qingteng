@@ -858,11 +858,13 @@ export default {
     },
     handleRanking(row) {
       this.fullscreenLoading = true;
+      const id = row.id
+      alert(id)
       //查看排名
       this.rankingTable = true;
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/examine_ranking",
+          `http://localhost:8080/qingteng-recruitment/root/examine_ranking?id=${id}`,
           {},
           {
             headers: {
