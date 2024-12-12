@@ -51,6 +51,7 @@
             multiple
             action="http://localhost:8080/qingteng-recruitment/user/common/upload"
             :on-change="handleFileChange"
+            :before-upload="beforeAvatarUpload"
             ref="upload"
             accept=".zip"
             :file-list="fileList"
