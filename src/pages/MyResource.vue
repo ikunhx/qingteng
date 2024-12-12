@@ -407,7 +407,7 @@ export default {
     async deleteResource(id) {
       try {
         const response = await axios.post(
-          "https://qingteng-recruitment/root/resource_delete",
+          "https://localhost:8080/qingteng-recruitment/root/resource_delete",
           {
             id: id,
           },
