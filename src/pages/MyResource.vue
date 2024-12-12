@@ -330,7 +330,6 @@ export default {
             type: "success",
             message: "提交成功!",
           });
-          this.closeEdit();
         })
         .catch((error) => {
           this.fullscreenLoading = false;
@@ -381,7 +380,6 @@ export default {
             type: "success",
             message: "提交成功!",
           });
-          this.closeEdit();
         })
         .catch((error) => {
           this.fullscreenLoading = false;
