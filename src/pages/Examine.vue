@@ -1182,14 +1182,18 @@ export default {
       this.editExam.id = "";
     },
     beforeAvatarUpload(file) {
-      //限制大小
-      const isLt400M = file.size / 1024 / 1024 <= 400;
+    const isPDF = file.type === 'application/pdf';
+    const isLt400M = file.size / 1024 / 1024 < 400;
 
-      if (!isLt400M) {
-        this.$message.error("上传文档大小不能超过 400MB!");
-      }
-      return isLt400M;
-    },
+    if (!isPDF) {
+      this.$message.error('只能上传PDF文件!');
+    }
+    if (!isLt400M) {
+      this.$message.error('文件大小不能超过 400MB!');
+    }
+
+    return isPDF && isLt400M;
+  },c
     rowColor({ row, rowIndex }) {
       if (rowIndex % 2 === 1) {
         return "warning-row";
