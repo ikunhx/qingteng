@@ -1323,9 +1323,6 @@ export default {
       this.addExamVisible = true;
     },
     deleteExam(id) {
-      
-      const data = {id:id}
-      console.log(data);
       this.fullscreenLoading = true;
       axios
         .post(
@@ -1409,6 +1406,7 @@ export default {
     },
     colorId(id) {
       return id % 4;
+      
     },
   },
   computed: {

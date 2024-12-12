@@ -52,6 +52,7 @@
             action="http://localhost:8080/qingteng-recruitment/user/common/upload"
             :on-change="handleFileChange"
             ref="upload"
+            :before-upload="beforeAvatarUpload"
             accept=".zip"
             :file-list="fileList"
             :auto-upload="false"
@@ -84,6 +85,7 @@
             action="http://localhost:8080/qingteng-recruitment/user/common/upload"
             :on-change="handleFileChange"
             ref="upload"
+            :before-upload="beforeAvatarUpload"
             accept=".zip"
             :file-list="fileList"
             :auto-upload="false"
@@ -189,6 +191,19 @@ export default {
         console.log("获取资源失败", error);
       }
     },
+    beforeAvatarUpload(file) {
+    const isZIP = file.type === 'application/zip';
+    const isLt400M = file.size / 1024 / 1024 < 400;
+
+    if (!isZIP) {
+      this.$message.error('只能上传zip文件!');
+    }
+    if (!isLt400M) {
+      this.$message.error('文件大小不能超过 400MB!');
+    }
+
+    return isZIP && isLt400M;
+  },
     // 打开资源
     openResource(id) {
       this.answerTable = true;
