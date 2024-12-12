@@ -1356,7 +1356,7 @@ export default {
       try {
         // 使用 axios 下载文件
         const response = await axios({
-          url: "https://sinomenium.oss-cn-hangzhou.aliyuncs.com/test.zip",
+          url: zipUrl,
           method: "GET",
           responseType: "arraybuffer", // 获取二进制数据
         });
