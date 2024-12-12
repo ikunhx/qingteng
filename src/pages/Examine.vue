@@ -566,7 +566,7 @@ export default {
           classes: "软件2401",
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          fileUrl: 
+          answer: 
             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
           
         },
@@ -576,7 +576,7 @@ export default {
           classes: "软件2401",
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-            fileUrl: 
+            answer: 
             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
       ],
@@ -1224,7 +1224,7 @@ export default {
     },
     giveScore(row) {
       this.markTable = true;
-      this.fetchAndUnzip(row.fileUrl);
+      this.fetchAndUnzip(row.answer);
     },
 
     submitScore() {
