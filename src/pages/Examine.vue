@@ -212,7 +212,7 @@
           label="班级"
           width="170"
         ></el-table-column>
-        <el-table-column property="score" label="分数" width="150">
+        <el-table-column property="average" label="分数" width="150">
         </el-table-column>
         <el-table-column
           property="ranking"
