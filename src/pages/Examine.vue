@@ -566,7 +566,7 @@ export default {
           classes: "软件2401",
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          fileUrl: 
+          answer: 
             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
           
         },
@@ -576,7 +576,7 @@ export default {
           classes: "软件2401",
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-            fileUrl: 
+            answer: 
             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
         },
       ],
@@ -885,12 +885,10 @@ export default {
       this.scoreTable = true;
       this.fullscreenLoading = true;
       this.examID = row.id;
-      console.log(this.examID);
-
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/select_exam",
-          { id: this.examID },
+          `http://localhost:8080/qingteng-recruitment/root/select_exam?id=${this.examID}`,
+          { },
           {
             headers: {
               token: `${this.$store.state.token}`,
@@ -900,10 +898,12 @@ export default {
         .then((response) => {
           this.fullscreenLoading = false;
           this.scoreData = response.data.data;
+          
         })
         .catch((error) => {
           this.fullscreenLoading = false;
           this.$message.error("ERROR：" + error.message);
+          
         });
     },
     handleComment(row) {
@@ -1224,7 +1224,7 @@ export default {
     },
     giveScore(row) {
       this.markTable = true;
-      this.fetchAndUnzip(row.fileUrl);
+      this.fetchAndUnzip(row.answer);
     },
 
     submitScore() {

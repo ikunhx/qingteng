@@ -2,7 +2,6 @@ import Vue from 'vue';
 import VueRouter from "vue-router";
 import Examine from '@/pages/Examine.vue';
 import Introduction from '@/pages/Introduction.vue';
-import Resources from '@/pages/Resources.vue';
 import MyResource from '@/pages/MyResource.vue';
 import UserResource from '@/pages/UserResource.vue';
 import User from '@/pages/User.vue';
@@ -30,11 +29,6 @@ const router = new VueRouter({
             path: '/UserExamine',
             component: UserExamine,
             name: 'UserExamine'
-        },
-        {
-            path: '/Resources',
-            name: 'Resources',
-            component: () => import('../pages/Resources.vue')
         },
         {
             path: '/MyResource',

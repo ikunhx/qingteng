@@ -176,7 +176,7 @@ export default {
           alert(response.data.data.token);
           this.$store.dispatch("setAdmin", response.data.data.admin);
           if (response && response.data && response.data.data) {
-            if (response.data.data.admin === 0) {
+            if (response.data.data.admin === 3) {
               this.$router.push({ name: "showUser" });
             } else if (response.data.data.admin === 1) {
               this.$router.push({ name: "showAdministrator" });

@@ -32,19 +32,17 @@
               v-if="this.$store.state.admin === 3"
               >用户考核</el-menu-item
             >
-            <el-menu-item
-              index="2-2"
-              @click="handleChange('change', 'Resources')"
-              >资源</el-menu-item
-            >
+          
             <el-menu-item
               index="/MyResource"
               @click="handleChange('change', 'MyResource')"
+              v-if="this.$store.state.admin === 1"
               >管理员资源</el-menu-item
             >
             <el-menu-item
               index="/UserResource"
               @click="handleChange('change', 'UserResource')"
+              v-if="this.$store.state.admin === 3"
               >用户资源</el-menu-item
             >
           </el-menu-item-group>
