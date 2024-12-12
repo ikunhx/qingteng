@@ -885,11 +885,9 @@ export default {
       this.scoreTable = true;
       this.fullscreenLoading = true;
       this.examID = row.id;
-      console.log(this.examID);
-
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/root/select_exam?id=${examID}`,
+          `http://localhost:8080/qingteng-recruitment/root/select_exam?id=${this.examID}`,
           { },
           {
             headers: {
@@ -900,10 +898,12 @@ export default {
         .then((response) => {
           this.fullscreenLoading = false;
           this.scoreData = response.data.data;
+          
         })
         .catch((error) => {
           this.fullscreenLoading = false;
           this.$message.error("ERROR：" + error.message);
+          
         });
     },
     handleComment(row) {
