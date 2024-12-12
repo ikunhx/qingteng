@@ -105,10 +105,11 @@ export default {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
           link.href = url; // 修正为 href
-          link.setAttribute("download", resource.name + ".docx");
+          link.setAttribute("download", resource.name);
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link); // 清理临时链接
+          window.URL.revokeObjectURL(url); // 释放创建的 Blob URL
         }
       } catch (error) {
         console.error("下载资源失败", error);
