@@ -1329,8 +1329,8 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/examine_delete",
-          data,
+          `http://localhost:8080/qingteng-recruitment/root/examine_delete?id=${id}`,
+          {},
           {
             headers: {
               token: `${this.$store.state.token}`,
