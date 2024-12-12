@@ -562,6 +562,7 @@ export default {
       scoreData: [
         {
           userID: 7837835,
+          id:23344,
           name: "张三",
           classes: "软件2401",
           avatarUrl:
@@ -572,6 +573,7 @@ export default {
         },
         {
           userID: 7354,
+          id:4324546,
           name: "张三",
           classes: "软件2401",
           avatarUrl:
@@ -1225,6 +1227,7 @@ export default {
     giveScore(row) {
       this.markTable = true;
       this.fetchAndUnzip(row.answer);
+      this.examID=row.id
     },
 
     submitScore() {
