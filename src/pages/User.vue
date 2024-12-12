@@ -98,7 +98,7 @@ export default {
         return;
       }
       axios
-        .post("http://localhost:8080/qingteng-recruitment/user/sendEmail", {
+        .post("http://localhost:8080/qingteng-recruitment/root/sendEmail", {
           email: this.user.email,
         })
         .then((response) => {
@@ -167,7 +167,7 @@ export default {
           this.$store.dispatch("setToken", response.data.data.token);
           this.$store.dispatch("setAdmin", response.data.data.admin);
           if (response && response.data && response.data.data) {
-            if (response.data.data.admin === 3) {
+            if (response.data.data.admin === 0) {
               this.$router.push({ name: "showUser" });
             } else if (response.data.data.admin === 1) {
               this.$router.push({ name: "showAdministrator" });
@@ -193,15 +193,15 @@ export default {
     async register() {
       try {
         const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/user/register",
+          "http://localhost:8080/qingteng-recruitment/root/register",
           {
             email: this.user.email,
             password: this.user.password,
             passwords: this.user.passwords,
-            code: this.user.code,
+            key: this.user.code,
           }
         );
-        if (response.data.message=="用户注册成功") {
+        if (response.data.success) {
           // 处理注册成功的情况
           this.$message.success(response.data.data || "注册成功");
           this.currentPage = "login";
@@ -433,11 +433,7 @@ input {
 }
 
 .outer {
-<<<<<<< HEAD
   background-image: url("../assets/itr-png/45.jpg");
-=======
-   background-image: url("../../src/assets/itr-png/45.jpg"); 
->>>>>>> 58f4feea042f75c5ca8189d286ab1059d0999681
   background-size: 100% 100%;
   image-rendering: crisp-edges;
 }
