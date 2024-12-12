@@ -182,7 +182,7 @@
             <div class="icon-container">
               <i
                 class="iconfont icon-yunxiazai"
-                @click="downloadExam(exam.id)"
+                @click="handleDownload(exam)"
               ></i>
             </div>
             <div class="icon-container">
@@ -461,6 +461,46 @@
         />
       </div>
     </el-drawer>
+    <!-- 预览考核窗口 -->
+    <el-drawer
+      :with-header="false"
+      :visible.sync="examTable"
+      direction="ltr"
+      size="80%"
+    >
+      <!-- 加载动画 -->
+      <div
+        v-if="!pdfFiles.length && !videoFiles.length"
+        class="loading-container"
+      >
+        <div class="spinner"></div>
+      </div>
+
+      <video
+        v-for="(videoFile, index) in videoFiles"
+        :key="index"
+        :src="videoFile.url"
+        fit="fill"
+        controls
+        style="width: 100%"
+      ></video>
+      <div
+        v-for="(pdfFile, index) in pdfFiles"
+        :key="index"
+        class="pdf-container"
+      >
+        <embed
+          :src="pdfFile.url"
+          type="application/pdf"
+          width="100%"
+          height="80vh"
+          class="pdf"
+        />
+      </div>
+      <button class="btn-uploadScore btn-upload btn" @click="downloadExam">
+            下 载
+      </button>
+    </el-drawer>
   </div>
 </template>
 
@@ -472,8 +512,6 @@ import "animate.css";
 import axios from "axios";
 import JSZip from "jszip";
 import "pdfjs-dist/web/pdf_viewer.css";
-import { customAlphabet } from "nanoid";
-const numberID = customAlphabet("0123456789", 10);
 export default {
   name: "UserExamine",
   data() {
@@ -506,6 +544,7 @@ export default {
       fullscreenLoading: false,
       rankingTable: false, //是否展示排名窗口
       commentTable: false, //是否展示评论窗口
+      examTable:false,//是否展示预览考核
       examID: "",
       pdfFiles: [],
       videoFiles: [],
@@ -555,88 +594,88 @@ export default {
         },
       ],
       comments: [
-        {
-          id: 374635376,
-          url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          name: "张三",
-          data: 1729390765572,
-          expanded: false,
-          replayVisible: false, //是否展示回复评论窗口
-          showAllReplays: false, //展示所有回复
-          content: "考核好难55555555",
-          dis: 0,
-          replays: [],
-        },
-        {
-          id: 98746454,
-          url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-          name: "张大三",
-          data: 1729890765572,
-          expanded: false,
-          replayVisible: false, //是否展示回复评论窗口
-          showAllReplays: false, //展示所有回复
-          discussNum: 10,
-          content:
-            "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-          replays: [
-            {
-              id: 87426357,
-              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-              name: "张三",
-              data: 1729390765572,
-              expanded: false,
-              replayVisible: false, //是否展示回复评论窗口
-              discussNum: 0,
-              content: "考核好难55555555",
-            },
-            {
-              id: 985347342,
-              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-              name: "张大三",
-              data: 1729890765572,
-              expanded: false,
-              replayVisible: false, //是否展示回复评论窗口
-              discussNum: 0,
-              content:
-                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-            },
-          ],
-        },
-        {
-          id: 7635234,
-          url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-          name: "张大三",
-          data: 1729890765572,
-          expanded: false,
-          replayVisible: false, //是否展示回复评论窗口
-          discussNum: 2,
-          showAllReplays: false, //展示所有回复
-          content:
-            "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-          replays: [
-            {
-              id: 8746354,
-              url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-              name: "张三",
-              data: 1729390765572,
-              expanded: false,
-              replayVisible: false, //是否展示回复评论窗口
-              discussNum: 0,
-              content: "考核好难55555555",
-            },
-            {
-              id: 987354354,
-              url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-              name: "张大三",
-              data: 1729890765572,
-              expanded: false,
-              replayVisible: false, //是否展示回复评论窗口
-              discussNum: 0,
-              content:
-                "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-            },
-          ],
-        },
+        // {
+        //   id: 374635376,
+        //   url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //   name: "张三",
+        //   data: 1729390765572,
+        //   expanded: false,
+        //   replayVisible: false, //是否展示回复评论窗口
+        //   showAllReplays: false, //展示所有回复
+        //   content: "考核好难55555555",
+        //   dis: 0,
+        //   replays: [],
+        // },
+        // {
+        //   id: 98746454,
+        //   url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+        //   name: "张大三",
+        //   data: 1729890765572,
+        //   expanded: false,
+        //   replayVisible: false, //是否展示回复评论窗口
+        //   showAllReplays: false, //展示所有回复
+        //   discussNum: 10,
+        //   content:
+        //     "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+        //   replays: [
+        //     {
+        //       id: 87426357,
+        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //       name: "张三",
+        //       data: 1729390765572,
+        //       expanded: false,
+        //       replayVisible: false, //是否展示回复评论窗口
+        //       discussNum: 0,
+        //       content: "考核好难55555555",
+        //     },
+        //     {
+        //       id: 985347342,
+        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+        //       name: "张大三",
+        //       data: 1729890765572,
+        //       expanded: false,
+        //       replayVisible: false, //是否展示回复评论窗口
+        //       discussNum: 0,
+        //       content:
+        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+        //     },
+        //   ],
+        // },
+        // {
+        //   id: 7635234,
+        //   url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+        //   name: "张大三",
+        //   data: 1729890765572,
+        //   expanded: false,
+        //   replayVisible: false, //是否展示回复评论窗口
+        //   discussNum: 2,
+        //   showAllReplays: false, //展示所有回复
+        //   content:
+        //     "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+        //   replays: [
+        //     {
+        //       id: 8746354,
+        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //       name: "张三",
+        //       data: 1729390765572,
+        //       expanded: false,
+        //       replayVisible: false, //是否展示回复评论窗口
+        //       discussNum: 0,
+        //       content: "考核好难55555555",
+        //     },
+        //     {
+        //       id: 987354354,
+        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
+        //       name: "张大三",
+        //       data: 1729890765572,
+        //       expanded: false,
+        //       replayVisible: false, //是否展示回复评论窗口
+        //       discussNum: 0,
+        //       content:
+        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
+        //     },
+        //   ],
+        // },
       ],
     };
   },
@@ -860,12 +899,18 @@ export default {
       this.currentIndex = (this.currentIndex + 1) % this.colors.length;
       this.color = this.colors[this.currentIndex];
     },
-    downloadExam(id) {
+    handleDownload(exam){
+      this.examTable=true;
+      this.examID=exam.id
+      this.pdfFiles=this.pdfFiles.unshift(exam.fileUrl)
+    },
+    downloadExam() {
       this.fullscreenLoading = true;
+      const id = this.examID;
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/examine_download",
-          {id:id},
+          `http://localhost:8080/qingteng-recruitment/user/examine_download?id=${id}`,
+          {},
           {
             headers: {
               "token": `${this.$store.state.token}`,
@@ -2055,5 +2100,30 @@ export default {
   height: 100%;
   border: none;
   display: block;
+}
+.btn-uploadScore {
+  margin-top: 2px;
+}
+.btn-upload {
+  background-color: #2ba257;
+  border: none;
+  color: #fff;
+  width: 70px;
+  height: 35px;
+  font-size: 17px;
+  margin-top: 70px;
+  border-radius: 10px;
+}
+.btn {
+  margin-right: 15px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.25s;
+  color: #fff;
 }
 </style>

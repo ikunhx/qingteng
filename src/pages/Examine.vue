@@ -480,8 +480,6 @@
 import axios from "axios";
 import JSZip from "jszip";
 import "pdfjs-dist/web/pdf_viewer.css";
-import { customAlphabet } from "nanoid";
-const numberID = customAlphabet("0123456789", 10);
 export default {
   name: "Examine",
   data() {
