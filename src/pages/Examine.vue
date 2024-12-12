@@ -542,7 +542,7 @@ export default {
           classes: "软件2401",
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          score: 81,
+          average: 81,
           ranking: 1,
           answerUrl:
             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
@@ -553,7 +553,7 @@ export default {
           classes: "软件2401",
           avatarUrl:
             "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          score: 98,
+            average: 98,
           ranking: 1,
           answerUrl:
             "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
