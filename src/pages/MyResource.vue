@@ -192,7 +192,7 @@ export default {
       }
     },
     beforeAvatarUpload(file) {
-    const isZIP = file.type === 'application/zip';
+      const isZIP = file.type === 'application/zip' || file.name.endsWith('.zip');
     const isLt400M = file.size / 1024 / 1024 < 400;
 
     if (!isZIP) {
