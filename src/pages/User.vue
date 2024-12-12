@@ -98,7 +98,7 @@ export default {
         return;
       }
       axios
-        .post("http://localhost:8080/qingteng-recruitment/root/sendEmail", {
+        .post("http://localhost:8080/qingteng-recruitment/user/sendEmail", {
           email: this.user.email,
         })
         .then((response) => {
@@ -167,7 +167,7 @@ export default {
           this.$store.dispatch("setToken", response.data.data.token);
           this.$store.dispatch("setAdmin", response.data.data.admin);
           if (response && response.data && response.data.data) {
-            if (response.data.data.admin === 0) {
+            if (response.data.data.admin === 3) {
               this.$router.push({ name: "showUser" });
             } else if (response.data.data.admin === 1) {
               this.$router.push({ name: "showAdministrator" });
@@ -193,15 +193,15 @@ export default {
     async register() {
       try {
         const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/root/register",
+          "http://localhost:8080/qingteng-recruitment/user/register",
           {
             email: this.user.email,
             password: this.user.password,
             passwords: this.user.passwords,
-            key: this.user.code,
+            code: this.user.code,
           }
         );
-        if (response.data.success) {
+        if (response.data.message=="用户注册成功") {
           // 处理注册成功的情况
           this.$message.success(response.data.data || "注册成功");
           this.currentPage = "login";
