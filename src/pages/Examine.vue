@@ -922,7 +922,8 @@ export default {
         end_time: endTime,
         discuss_id: discussId,
       };
-
+      console.log(commentData);
+      
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/user/discuss/select",
