@@ -1193,7 +1193,7 @@ export default {
     }
 
     return isPDF && isLt400M;
-  },c
+  },
     rowColor({ row, rowIndex }) {
       if (rowIndex % 2 === 1) {
         return "warning-row";
