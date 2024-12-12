@@ -862,7 +862,7 @@ export default {
       this.rankingTable = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/examine_ranking`,
+          "http://localhost:8080/qingteng-recruitment/root/examine_ranking",
           {},
           {
             headers: {
@@ -887,7 +887,7 @@ export default {
 
       axios
         .post(
-          `http://localhost:8080//qingteng-recruitment/root/select_exam`,
+          "http://localhost:8080/qingteng-recruitment/root/select_exam",
           { id: this.examID },
           {
             headers: {
@@ -1182,14 +1182,18 @@ export default {
       this.editExam.id = "";
     },
     beforeAvatarUpload(file) {
-      //限制大小
-      const isLt400M = file.size / 1024 / 1024 <= 400;
+    const isPDF = file.type === 'application/pdf';
+    const isLt400M = file.size / 1024 / 1024 < 400;
 
-      if (!isLt400M) {
-        this.$message.error("上传文档大小不能超过 400MB!");
-      }
-      return isLt400M;
-    },
+    if (!isPDF) {
+      this.$message.error('只能上传PDF文件!');
+    }
+    if (!isLt400M) {
+      this.$message.error('文件大小不能超过 400MB!');
+    }
+
+    return isPDF && isLt400M;
+  },
     rowColor({ row, rowIndex }) {
       if (rowIndex % 2 === 1) {
         return "warning-row";
@@ -1319,17 +1323,20 @@ export default {
       this.addExamVisible = true;
     },
     deleteExam(id) {
-      console.log(id);
+      
       const data = {id:id}
+      console.log(data);
       this.fullscreenLoading = true;
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/examine_delete",
-          data,
+          `http://localhost:8080/qingteng-recruitment/root/examine_delete?id=${id}`,
+          {},
           {
             headers: {
               token: `${this.$store.state.token}`,
+              "Content-Type":"application/json"
             },
+            
           }
         )
         .then((response) => {
