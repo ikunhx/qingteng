@@ -931,7 +931,7 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/display_exam",
+          "http://localhost:8080/qingteng-recruitment/user/display_exam",
           {},
           {
             headers: {
