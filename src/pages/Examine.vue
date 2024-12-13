@@ -28,9 +28,9 @@
       :cell-style="{ fontSize: '18px' }"
     >
       <el-table-column prop="name" label="考核" width="200"> </el-table-column>
-      <el-table-column prop="beginTime" label="开始时间" width="240">
+      <el-table-column prop="start-date" label="开始时间" width="240">
       </el-table-column>
-      <el-table-column prop="endTime" label="结束时间" width="240">
+      <el-table-column prop="end-time" label="结束时间" width="240">
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -381,7 +381,7 @@
         :key="comment.id"
         class="comment"
       >
-        <el-avatar :size="40" :src="comment.url"></el-avatar>
+        <el-avatar :size="40" :src="comment.avatar"></el-avatar>
         <span class="userName">{{ comment.name }}</span>
         <div class="commentContent" :class="{ expanded: comment.expanded }">
           {{
@@ -399,7 +399,7 @@
           </el-button>
         </div>
         <div class="commentDate">
-          {{ showTime(comment.data) }}
+          {{ showTime(comment.createTime) }}
           <el-button type="text" class="btn-replay" @click="makeReplay(comment)"
             >回复</el-button
           >
@@ -507,16 +507,18 @@ export default {
       exams: [
         //考核列表
         {
-          id: 1234,
+          id: 875346325,
           name: "第一次考核",
-          beginTime: this.showDate(1728613183630),
-          endTime: this.showDate(1728613524152),
+          start_date: "2024-02-10 00:00:00",
+          end_time: "2024-04-10 00:00:00",
+          fileUrl: "",
         },
         {
-          id: 2345,
+          id: 987654334,
           name: "第二次考核",
-          beginTime: this.showDate(1728635736858),
-          endTime: this.showDate(1728696238545),
+          start_date: "2024-11-10 00:00:00",
+          end_time: "2024-12-30 00:00:00",
+          fileUrl: "",
         },
       ],
       editExam: {
