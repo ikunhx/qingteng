@@ -546,7 +546,7 @@ export default {
       commentTable: false, //是否展示评论窗口
       examTable:false,//是否展示预览考核
       examID: "",
-      pdfFiles: [],
+      pdfFiles: ['https://sinomenium.oss-cn-hangzhou.aliyuncs.com/f4127b0a-df61-40c8-951c-cb9b5d3c61b6.pdf'],
       videoFiles: [],
       exams: [
         //考核列表
