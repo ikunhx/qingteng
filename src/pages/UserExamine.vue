@@ -543,15 +543,15 @@ export default {
         {
           id: 875346325,
           name: "第一次考核",
-          start_date: 1728613183630,
-          end_time: 2728613524152,
+          start_date: "2024-02-10 00:00:00",
+          end_time: "2024-04-10 00:00:00",
           fileUrl: "",
         },
         {
           id: 987654334,
           name: "第二次考核",
-          start_date: 1728635736858,
-          end_time: 1728696238545,
+          start_date: "2024-11-10 00:00:00",
+          end_time: "2024-12-30 00:00:00",
           fileUrl: "",
         },
       ],
@@ -692,7 +692,8 @@ export default {
     },
     addExam(exam) {
       let now = Date.now();
-      if (now > exam.endTime) {
+      const endTime = new Date(exam.end_time.replace(' ', 'T'));
+      if (now > endTime) {
         this.$message.warning("考核已截至!");
         return;
       } else {
@@ -965,7 +966,8 @@ export default {
     },
     viewScore(exam) {
       let now = Date.now();
-      if (now < exam.endTime) {
+      const endTime = new Date(exam.end_time.replace(' ', 'T'));
+      if (now < endTime) {
         this.$message.warning("考核结束才能开始查看成绩");
         return;
       } else {
@@ -1006,7 +1008,8 @@ export default {
     },
     handleRanking(exam) {
       let now = Date.now();
-      if (now < exam.endTime) {
+      const endTime = new Date(exam.end_time.replace(' ', 'T'));
+      if (now < endTime) {
         this.$message.warning("考核结束才能开始查看排名");
         return;
       } else {
