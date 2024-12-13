@@ -427,7 +427,7 @@
               </el-button>
             </div>
             <div class="commentDate">
-              {{ showTime(replay.data) }}
+              {{ replay.createTime }}
             </div>
           </div>
         </div>
@@ -949,6 +949,7 @@ export default {
     getReplays(id, comment) {
       if (comment.discussNum > 0) {
         this.fullscreenLoading = true;
+        alert(1)
         const targetId = this.comments.findIndex((item) => item.id === id);
         const endTime = this.comments[targetId].replays.length
           ? this.lastTime
@@ -958,6 +959,7 @@ export default {
         formData.append("exam_id", this.examID);
         formData.append("end_time", endTime);
         formData.append("discuss_id", discussId);
+        alert(2)
         axios
           .post(
             "http://localhost:8080/qingteng-recruitment/user/discuss/select",
