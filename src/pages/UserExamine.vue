@@ -744,11 +744,8 @@ export default {
     submitFormAdd(fileUrl) {
       // 这里应该是你的表单提交逻辑
       this.fullscreenLoading = true;
-      let timestamp = new Date().getTime();
       const formData = new FormData();
       formData.append("exam_id", this.examId);
-      formData.append("time", timestamp);
-      formData.append("user_id", this.$store.state.studentId);
       formData.append("fileUrl", fileUrl);
       const url =
         "http://localhost:8080/qingteng-recruitment/user/examine_upload";
@@ -808,14 +805,29 @@ export default {
       return `${year}-${month + 1}-${day}`;
     },
     showTime(timeString) {
-      //传入时间戳，转化为具体时间
-      let year = new Date(timeString).getFullYear();
-      let month = new Date(timeString).getMonth();
-      let day = new Date(timeString).getDate();
-      let hour = new Date(timeString).getHours();
-      let minute = new Date(timeString).getMinutes();
-      let second = new Date(timeString).getSeconds();
-      return `${year}-${month + 1}-${day} ${hour}:${minute}:${second}`;
+      // 创建一个新的Date对象
+      let date = new Date(timeString);
+
+      // 获取年份
+      let year = date.getFullYear();
+
+      // 获取月份，注意：getMonth() 返回的是0-11，所以需要加1
+      let month = String(date.getMonth() + 1).padStart(2, "0");
+
+      // 获取日
+      let day = String(date.getDate()).padStart(2, "0");
+
+      // 获取小时
+      let hour = String(date.getHours()).padStart(2, "0");
+
+      // 获取分钟
+      let minute = String(date.getMinutes()).padStart(2, "0");
+
+      // 获取秒
+      let second = String(date.getSeconds()).padStart(2, "0");
+
+      // 按照指定格式返回时间字符串
+      return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
     },
     //自动往右滚动
     scrollToRight() {
