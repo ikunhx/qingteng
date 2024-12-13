@@ -398,7 +398,7 @@
           </el-button>
         </div>
         <div class="commentDate">
-          {{ showTime(comment.createTime) }}
+          {{ comment.createTime }}
           <el-button type="text" class="btn-replay" @click="makeReplay(comment)"
             >回复</el-button
           >
@@ -937,6 +937,8 @@ export default {
           this.comments.unshift(...response.data.data.discussVOList);
           this.lastTime = response.data.data.endTime;
           this.fullscreenLoading = false;
+          console.log(this.lastTime);
+          
         })
         .catch((error) => {
           this.fullscreenLoading = false;
