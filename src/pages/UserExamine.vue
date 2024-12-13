@@ -23,10 +23,10 @@
         <p>一道青藤考核题，一次成长新机遇，开启成长新契机</p>
       </div>
       <div class="text">
-        <p class="text1">大厂之道，就在其中</p>
-        <p class="text2">
+        <div class="text1">大厂之道，就在其中</div>
+        <div class="text2">
           邂逅<strong>青藤</strong>考核题，踏上技术<strong>提升</strong>之旅
-        </p>
+        </div>
       </div>
       <button class="start hvr-underline-from-center" @click="scrollToDown">
         快速开始
@@ -1351,18 +1351,24 @@ export default {
   color: #fff;
   white-space: nowrap;
 }
+
 .text2 strong {
   color: #ffc400;
   font-weight: inherit;
 }
 .text {
   position: absolute;
-  top: 40vh;
-  left: 5vw;
+  top: 20vh;
+  left: -40vw;
   animation: floatUp 1.5s ease-in-out forwards;
   animation-delay: 0.3s;
   opacity: 0;
   transform: translateY(15px);
+}
+.text2{
+  top: 12vh;
+  left: 0vw;
+position: absolute;
 }
 .tip {
   color: #fff;
@@ -2103,6 +2109,7 @@ export default {
 }
 .btn-uploadScore {
   margin-top: 2px;
+  float: right;
 }
 .btn-upload {
   background-color: #2ba257;
