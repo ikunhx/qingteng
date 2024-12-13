@@ -488,9 +488,8 @@
           class="pdf"
         />
       </div>
-      <button class="btn-uploadScore btn-upload btn" @click="downloadExam">
-        下 载
-      </button>
+      <a :href="downloadUrl"><button class="btn-uploadScore btn-upload btn">下 载</button></a>
+        
     </el-drawer>
   </div>
 </template>
@@ -898,6 +897,7 @@ export default {
       this.examID = exam.id;
       this.pdfFiles = [];
       this.videoFiles = [];
+      this.downloadUrl=exam.fileUrl
       axios
         .get(exam.fileUrl, {
           responseType: "blob", // 确保响应类型是blob
