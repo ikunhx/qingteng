@@ -10,7 +10,9 @@
             <template slot-scope="scope">
               <div>
                 <span>{{ scope.row.name }}</span>
-                <span class="user-classes">{{ scope.row.classes }}</span>
+                <div class="user-class">
+                  <span class="user-classes">{{ scope.row.classes }}</span>
+                </div>
               </div>
             </template>
           </el-table-column>
@@ -106,7 +108,13 @@ export default {
 }
 
 .user-classes {
-  margin-left: 40px;
+  margin-left: -50px;
+}
+
+.user-class {
+  display: flex;
+  margin-left: 60px;
+  margin-top: -23px;
 }
 
 .administrator-button {

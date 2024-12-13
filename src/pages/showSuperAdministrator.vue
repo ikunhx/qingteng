@@ -16,16 +16,18 @@
                     </el-table-column>
                     <el-table-column prop="average" label="考核平均分数">
                     </el-table-column>
+                   
                 </el-table>
                 <div class="toSuperAdministrator-button">
                     <el-button type="primary" @click="toSuperAdministrator">管理员信息<i class="el-icon-arrow-right el-icon--right"></i></el-button>
                 </div>
             </div>
             <div class="table-container2" v-else-if="currentPage === 'superAdministrator'">
-                <input v-model="email" placeholder="请输入邮箱" />
-                <el-button type="success" class="button1" @click="handleAdd">添加</el-button>
-                <div class="superAdministrattor">
-                    <template>
+                <div class="superAdministrator">
+                    <input v-model="email" placeholder="请输入邮箱" />
+                    <el-button type="success" class="button1" @click="handleAdd">添加</el-button>
+                    <div class="superAdministrator-detail">
+                        <template>
                         <el-table :data="administratorData" height="700" border style="width: 700px">
                             <el-table-column prop="name" label="姓名" width="180">
                             </el-table-column>
@@ -41,6 +43,10 @@
                             </el-table-column>
                         </el-table>
                     </template>
+                    </div>
+                    <div class="toAdministrator-button">
+                    <el-button type="primary" @click="toAdministrator">返回<i class="el-icon-arrow-left el-icon--left"></i></el-button>
+                </div>
                 </div>
             </div>
         </div>
@@ -95,12 +101,15 @@ export default {
         };
     },
     mounted() {
-        this.fetchAdministrators();
         this.fetchUsers();
     },
     methods: {
         toSuperAdministrator() {
             this.currentPage = 'superAdministrator';
+            this.fetchAdministrators();
+        },
+        toAdministrator() {
+            this.currentPage = 'administrator';
         },
         fetchUsers() {
             axios.post("http://localhost:8080/qingteng-recruitment/root/select_user",
@@ -137,18 +146,28 @@ export default {
                 });
         },
         handleAdd() {
-            const newAdministrator = {
-                name: 'this.name',
-                studentId: 'this.studentId',
-                email: 'this.email'
-            };
-            axios.post('http://localhost:8080//qingteng-recruitment/root/add_administrator', newAdministrator)
+            axios.post(`http://localhost:8080/qingteng-recruitment/root/add_administrator?email=${this.email}`,
+            {},
+                {
+                    headers: {
+                            "token": `${this.$store.state.token}`,
+                        },
+                
+                }
+            )
                 .then(response => {
+                    if(response.data.code == 200){
                     this.administratorData.push(response.data.data);
                     this.$message({
                         type: 'success',
-                        message: '添加成功!'
+                        message: response.data.message
                     });
+                }else{
+                    this.$message({
+                        type: 'error',
+                        message: '添加失败：' + response.data.message
+                    });
+                }
                 })
                 .catch(error => {
                     this.$message({
@@ -163,13 +182,28 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                axios.post(`http://localhost:8080/qingteng-recruitment/root/delete_administrator`,{studentId:row.studentId})
-                    .then(() => {
-                        this.administratorData.splice(index, 1);
-                        this.$message({
+                axios.post(`http://localhost:8080/qingteng-recruitment/root/delete_administrator?email=${row.email}`,
+                {},
+                {
+                    headers: {
+                        "token": `${this.$store.state.token}`,
+                    },
+                }
+                )
+                    .then((response) => {
+                        if(response.data.code == 200){
+                            this.administratorData.splice(index, 1);
+                            this.$message({
                             type: 'success',
                             message: '删除成功!'
                         });
+                        }else{
+                            this.$message({
+                            type: 'error',
+                            message: '删除失败: ' + error.message
+                        });
+                        }
+                        
                     })
                     .catch(error => {
                         this.$message({
@@ -221,6 +255,13 @@ export default {
     margin-left: -800px;
 }
 
+.toAdministrator-button {
+    width: 150px;
+    height: 60px;
+    margin-top: 10px;
+    margin-left: 400px;
+}
+
 .table-container2 {
     display: flex;
     width: 800px;
@@ -235,8 +276,12 @@ export default {
     margin-left: 50px;
 }
 
-.superAdministrattor {
-    margin-top: 100px;
-    margin-left: -400px;
+.superAdministrator {
+    margin-top: 50px;
+    margin-left: 40px;
+}
+.superAdministrator-detail {
+    margin-top: 20px;
+    margin-left: 10px;
 }
 </style>
