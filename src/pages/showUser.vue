@@ -41,7 +41,7 @@
           </div>
           <div class="detail">
             <div class="detail-aside">
-              <img class="detail-img" src="../../src/assets/itr-png/20.png" />
+              <img class="detail-img" src="../../src/assets/itr-png/4.png" />
               <h4>学号</h4>
             </div>
             <input
@@ -260,7 +260,7 @@ export default {
   width: 100%;
   height: 100%;
   margin-left: 200px;
-  margin-top: 50px;
+  margin-top: 20px;
 }
 
 .top-middle {
@@ -291,9 +291,9 @@ h2 {
   background-color: #fff;
   border: solid 1px #ddd;
   border-radius: 15px;
-  margin-top: 40px;
+  margin-top: 35px;
   width: 80%;
-  height: 645px;
+  height: 670px;
   box-shadow: 1px 1px 1px 1px #65646774;
 }
 
@@ -324,7 +324,7 @@ h3 {
 
 .detail {
   display: flex;
-  margin-top: 40px;
+  margin-top: 30px;
   align-items: center;
   margin-left: 20px;
 }
@@ -368,7 +368,7 @@ h3 {
 
 .edit-button {
   margin-top: 20px;
-  margin-left: 700px;
+  margin-left: 640px;
 }
 
 .cancel-button {
