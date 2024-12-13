@@ -46,11 +46,10 @@
           <button class="btn btn-comment" @click="handleComment(scope.row)">
             评论
           </button>
-          <el-badge :value="rankingData.length" :max="99" class="item">
             <button class="btn-score btn" @click="handleScore(scope.row)">
               评分
             </button>
-          </el-badge>
+    
         </template>
       </el-table-column>
     </el-table>
