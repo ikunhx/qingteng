@@ -470,20 +470,11 @@
     >
       <!-- 加载动画 -->
       <div
-        v-if="!pdfFiles.length && !videoFiles.length"
+        v-if="!pdfFiles.length"
         class="loading-container"
       >
         <div class="spinner"></div>
       </div>
-
-      <video
-        v-for="(videoFile, index) in videoFiles"
-        :key="index"
-        :src="videoFile.url"
-        fit="fill"
-        controls
-        style="width: 100%"
-      ></video>
       <div
         v-for="(pdfFile, index) in pdfFiles"
         :key="index"
@@ -498,7 +489,7 @@
         />
       </div>
       <button class="btn-uploadScore btn-upload btn" @click="downloadExam">
-            下 载
+        下 载
       </button>
     </el-drawer>
   </div>
@@ -544,9 +535,9 @@ export default {
       fullscreenLoading: false,
       rankingTable: false, //是否展示排名窗口
       commentTable: false, //是否展示评论窗口
-      examTable:false,//是否展示预览考核
+      examTable: false, //是否展示预览考核
       examID: "",
-      pdfFiles: ['https://sinomenium.oss-cn-hangzhou.aliyuncs.com/f4127b0a-df61-40c8-951c-cb9b5d3c61b6.pdf'],
+      pdfFiles: [],
       videoFiles: [],
       exams: [
         //考核列表
@@ -555,14 +546,14 @@ export default {
           name: "第一次考核",
           start_date: 1728613183630,
           end_time: 2728613524152,
-          fileUrl:''
+          fileUrl: "",
         },
         {
           id: 987654334,
           name: "第二次考核",
           start_date: 1728635736858,
           end_time: 1728696238545,
-          fileUrl:''
+          fileUrl: "",
         },
       ],
       examId: "",
@@ -754,15 +745,16 @@ export default {
       this.fullscreenLoading = true;
       let timestamp = new Date().getTime();
       const formData = new FormData();
-      formData.append("exam_id",this.examId );
-      formData.append("time",timestamp);
+      formData.append("exam_id", this.examId);
+      formData.append("time", timestamp);
       formData.append("user_id", this.$store.state.studentId);
       formData.append("fileUrl", fileUrl);
-      const url = "http://localhost:8080/qingteng-recruitment/user/examine_upload";
+      const url =
+        "http://localhost:8080/qingteng-recruitment/user/examine_upload";
       axios
         .post(url, formData, {
           headers: {
-            "token": `${this.$store.state.token}`,
+            token: `${this.$store.state.token}`,
             "Content-Type": "application/json",
           },
         })
@@ -901,10 +893,24 @@ export default {
       this.currentIndex = (this.currentIndex + 1) % this.colors.length;
       this.color = this.colors[this.currentIndex];
     },
-    handleDownload(exam){
-      this.examTable=true;
-      this.examID=exam.id
-      // this.pdfFiles = [exam.fileUrl, ...this.pdfFiles];
+    handleDownload(exam) {
+      this.examTable = true;
+      this.examID = exam.id;
+      this.pdfFiles = [];
+      this.videoFiles = [];
+      axios
+        .get(exam.fileUrl, {
+          responseType: "blob", // 确保响应类型是blob
+        })
+        .then((response) => {
+          const blob = response.data;
+          const fileUrl = URL.createObjectURL(blob);
+          this.pdfFiles.unshift(fileUrl);
+        })
+        .catch((error) => {
+          this.$message.error("ERROR：" + error.message);
+          console.error(error.message);
+        });
     },
     downloadExam() {
       this.fullscreenLoading = true;
@@ -915,7 +921,7 @@ export default {
           {},
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -937,7 +943,7 @@ export default {
           {},
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -967,10 +973,10 @@ export default {
         axios
           .post(
             "http://localhost:8080//qingteng-recruitment/user/examine_score",
-            {id:exam.id},
+            { id: exam.id },
             {
               headers: {
-                "token": `${this.$store.state.token}`,
+                token: `${this.$store.state.token}`,
               },
             }
           )
@@ -1013,7 +1019,7 @@ export default {
             {},
             {
               headers: {
-                "token": `${this.$store.state.token}`,
+                token: `${this.$store.state.token}`,
               },
             }
           )
@@ -1041,11 +1047,15 @@ export default {
       formData.append("end_time", endTime);
       formData.append("discussId", discussId);
       axios
-        .post("http://localhost:8080/qingteng-recruitment/root/discuss/select", formData, {
-          headers: {
-            "token": `${this.$store.state.token}`,
-          },
-        })
+        .post(
+          "http://localhost:8080/qingteng-recruitment/root/discuss/select",
+          formData,
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        )
         .then((response) => {
           this.comments.unshift(...response.data.data.discussVOList);
           this.lastTime = response.data.data.endTime;
@@ -1074,7 +1084,7 @@ export default {
             formData,
             {
               headers: {
-                "token": `${this.$store.state.token}`,
+                token: `${this.$store.state.token}`,
               },
             }
           )
@@ -1104,7 +1114,6 @@ export default {
           .catch((error) => {
             this.fullscreenLoading = false;
             this.$message.error("ERROR：" + error.message);
-            
           });
       } else {
         // 收起所有回复
@@ -1144,7 +1153,7 @@ export default {
           commentData,
           {
             headers: {
-              "token": `${this.$store.state.token}`,
+              token: `${this.$store.state.token}`,
             },
           }
         )
@@ -1255,7 +1264,6 @@ export default {
     setInterval(this.changeColor, 1200);
     this.showExams();
   },
- 
 };
 </script>
 
@@ -1367,10 +1375,10 @@ export default {
   opacity: 0;
   transform: translateY(15px);
 }
-.text2{
+.text2 {
   top: 12vh;
   left: 0vw;
-position: absolute;
+  position: absolute;
 }
 .tip {
   color: #fff;
