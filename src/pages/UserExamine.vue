@@ -987,7 +987,7 @@ export default {
         this.fullscreenLoading = true;
         axios
           .post(
-            "http://localhost:8080//qingteng-recruitment/user/examine_score",
+            "http://localhost:8080/qingteng-recruitment/user/examine_score",
             { id: exam.id },
             {
               headers: {
@@ -1031,7 +1031,7 @@ export default {
         this.rankingTable = true;
         axios
           .post(
-            "http://localhost:8080//qingteng-recruitment/user/examine_ranking",
+            "http://localhost:8080/qingteng-recruitment/user/examine_ranking",
             {},
             {
               headers: {
