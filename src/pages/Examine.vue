@@ -28,9 +28,9 @@
       :cell-style="{ fontSize: '18px' }"
     >
       <el-table-column prop="name" label="考核" width="200"> </el-table-column>
-      <el-table-column prop="start-date" label="开始时间" width="240">
+      <el-table-column prop="start_date" label="开始时间" width="240">
       </el-table-column>
-      <el-table-column prop="end-time" label="结束时间" width="240">
+      <el-table-column prop="end_time" label="结束时间" width="240">
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
