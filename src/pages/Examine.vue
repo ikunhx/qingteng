@@ -955,12 +955,12 @@ export default {
           : Date.now();
         const discussId = id;
         const formData = new FormData();
-        formData.append("examID", this.examID);
+        formData.append("exam_id", this.examID);
         formData.append("end_time", endTime);
-        formData.append("discussId", discussId);
+        formData.append("discuss_id", discussId);
         axios
           .post(
-            "http://localhost:8080/qingteng-recruitment/root/discuss/select",
+            "http://localhost:8080/qingteng-recruitment/user/discuss/select",
             formData,
             {
               headers: {
@@ -995,21 +995,21 @@ export default {
             this.fullscreenLoading = false;
             this.$message.error("ERROR：" + error.message);
             // 展开所有回复
-            if (comment.originalDiscussNum === undefined) {
-              comment.originalDiscussNum = comment.discussNum;
-            }
-            comment.discussNum -= 10;
-            comment.replays.forEach((replay) => {
-              replay.replayVisible = true;
-            });
-            comment.showAllReplays = true;
-            console.log(
-              comment.discussNum,
-              "----------",
-              this.num,
-              "-----",
-              comment.replays.length
-            );
+            // if (comment.originalDiscussNum === undefined) {
+            //   comment.originalDiscussNum = comment.discussNum;
+            // }
+            // comment.discussNum -= 10;
+            // comment.replays.forEach((replay) => {
+            //   replay.replayVisible = true;
+            // });
+            // comment.showAllReplays = true;
+            // console.log(
+            //   comment.discussNum,
+            //   "----------",
+            //   this.num,
+            //   "-----",
+            //   comment.replays.length
+            // );
           });
       } else {
         // 收起所有回复
