@@ -904,7 +904,7 @@ export default {
     handleDownload(exam){
       this.examTable=true;
       this.examID=exam.id
-      this.pdfFiles=this.pdfFiles.unshift(exam.fileUrl)
+      this.pdfFiles.unshift(exam.fileUrl)
     },
     downloadExam() {
       this.fullscreenLoading = true;
