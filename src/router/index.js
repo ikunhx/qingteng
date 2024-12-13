@@ -8,6 +8,7 @@ import User from '@/pages/User.vue';
 import UserExamine from '@/pages/UserExamine.vue';
 import showUser from '@/pages/showUser.vue';
 import showAdministrator from '@/pages/showAdministrator.vue';
+import showSuperAdministrator from '@/pages/showSuperAdministrator.vue';
 Vue.use(VueRouter);
 const router = new VueRouter({
     routes: [
@@ -54,6 +55,11 @@ const router = new VueRouter({
             path: '/showAdministrator',
             component: showAdministrator,
             name: 'showAdministrator'
+        },
+        {
+            path: '/showSuperAdministrator',
+            component: showSuperAdministrator,
+            name: 'showSuperAdministrator'
         }
 
     ]
