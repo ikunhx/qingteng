@@ -174,9 +174,9 @@
             <div class="exam-name">{{ exam.name }}</div>
           </div>
           <div class="time">
-            <div class="begin">{{ showDate(exam.beginTime) }}</div>
+            <div class="begin">{{ exam.start_date }}</div>
             <div class="connect-icon">—</div>
-            <div class="end">{{ showDate(exam.endTime) }}</div>
+            <div class="end">{{ exam.end_time }}</div>
           </div>
           <div class="operate">
             <div class="icon-container">
@@ -553,14 +553,14 @@ export default {
         {
           id: 875346325,
           name: "第一次考核",
-          beginTime: 1728613183630,
-          endTime: 2728613524152,
+          start_date: 1728613183630,
+          end_time: 2728613524152,
         },
         {
           id: 987654334,
           name: "第二次考核",
-          beginTime: 1728635736858,
-          endTime: 1728696238545,
+          start_date: 1728635736858,
+          end_time: 1728696238545,
         },
       ],
       examId: "",
