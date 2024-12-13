@@ -490,7 +490,7 @@
         class="pdf-container"
       >
         <embed
-          :src="pdfFile.url"
+          :src="pdfFile"
           type="application/pdf"
           width="100%"
           height="80vh"
@@ -904,7 +904,7 @@ export default {
     handleDownload(exam){
       this.examTable=true;
       this.examID=exam.id
-      this.pdfFiles = [exam.fileUrl, ...this.pdfFiles];
+      // this.pdfFiles = [exam.fileUrl, ...this.pdfFiles];
     },
     downloadExam() {
       this.fullscreenLoading = true;
