@@ -536,6 +536,7 @@ export default {
       commentTable: false, //是否展示评论窗口
       examTable: false, //是否展示预览考核
       examID: "",
+      downloadUrl:'',
       pdfFiles: [],
       videoFiles: [],
       exams: [
