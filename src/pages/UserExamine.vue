@@ -555,12 +555,14 @@ export default {
           name: "第一次考核",
           start_date: 1728613183630,
           end_time: 2728613524152,
+          fileUrl:''
         },
         {
           id: 987654334,
           name: "第二次考核",
           start_date: 1728635736858,
           end_time: 1728696238545,
+          fileUrl:''
         },
       ],
       examId: "",
