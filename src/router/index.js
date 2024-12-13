@@ -2,8 +2,6 @@ import Vue from 'vue';
 import VueRouter from "vue-router";
 import Examine from '@/pages/Examine.vue';
 import Introduction from '@/pages/Introduction.vue';
-import MyResource from '@/pages/MyResource.vue';
-import UserResource from '@/pages/UserResource.vue';
 import User from '@/pages/User.vue';
 import UserExamine from '@/pages/UserExamine.vue';
 import showUser from '@/pages/showUser.vue';
