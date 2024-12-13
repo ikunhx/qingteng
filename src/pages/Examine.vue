@@ -442,7 +442,7 @@
           {{ comment.discussNum <= 0 ? "收起▴" : "查看回复▾" }}
         </el-button>
       </div>
-      <el-button type="text" class="btn-moreReplay" @click="getComments">
+      <el-button type="text" class="btn-moreReplay" @click="getComments" v-if="comments.length">
         查看更多评论▾
       </el-button>
       <div class="inputDiv">

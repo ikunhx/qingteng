@@ -242,7 +242,6 @@
               只能上传zip文件,且不超过400MB
             </div>
           </el-upload>
-          
         </el-form>
         <button class="btn-upload btn" @click="submitUpload">提 交</button>
       </div>
