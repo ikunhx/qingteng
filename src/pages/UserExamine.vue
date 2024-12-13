@@ -1359,7 +1359,7 @@ export default {
 .text {
   position: absolute;
   top: 20vh;
-  left: -40vw;
+  left: -20vw;
   animation: floatUp 1.5s ease-in-out forwards;
   animation-delay: 0.3s;
   opacity: 0;
