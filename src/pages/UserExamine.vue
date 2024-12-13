@@ -324,15 +324,20 @@
       </el-table>
     </el-drawer>
     <!-- 评论区展示 -->
-    <el-drawer
+     <el-drawer
       :with-header="false"
       :visible.sync="commentTable"
       direction="rtl"
       size="30%"
       class="commentDrawer"
+      @close="clearComments"
     >
-      <div v-for="comment in comments" :key="comment.id" class="comment">
-        <el-avatar :size="40" :src="comment.url"></el-avatar>
+      <div
+        v-for="comment in comments"
+        :key="comment.id"
+        class="comment"
+      >
+        <el-avatar :size="40" :src="comment.avatar"></el-avatar>
         <span class="userName">{{ comment.name }}</span>
         <div class="commentContent" :class="{ expanded: comment.expanded }">
           {{
@@ -350,7 +355,7 @@
           </el-button>
         </div>
         <div class="commentDate">
-          {{ showTime(comment.data) }}
+          {{ comment.createTime }}
           <el-button type="text" class="btn-replay" @click="makeReplay(comment)"
             >回复</el-button
           >
@@ -379,7 +384,7 @@
               </el-button>
             </div>
             <div class="commentDate">
-              {{ showTime(replay.data) }}
+              {{ replay.createTime }}
             </div>
           </div>
         </div>
@@ -393,35 +398,36 @@
           {{ comment.discussNum <= 0 ? "收起▴" : "查看回复▾" }}
         </el-button>
       </div>
-      <el-button type="text" class="btn-moreReplay" @click="getComments">
+      <el-button type="text" class="btn-moreReplay" @click="getComments" v-if="comments.length">
         查看更多评论▾
       </el-button>
       <div class="inputDiv">
-        <el-input
-          ref="commentInput"
-          placeholder="说点啥吧"
-          v-model="textarea"
-          class="commentInput"
-        >
-          <el-tooltip
-            slot="suffix"
-            class="item"
-            effect="light"
-            content="还没说呢"
-            placement="top-end"
-            v-show="this.textarea === ''"
-          >
-            <i :class="iconClass" class="el-icon-s-promotion"></i>
-          </el-tooltip>
-          <i
-            slot="suffix"
-            :class="iconClass"
-            class="el-icon-s-promotion"
-            v-show="this.textarea !== ''"
-            @click="sendComment()"
-          ></i>
-        </el-input>
-      </div>
+  <el-input
+    ref="commentInput"
+    placeholder="说点啥吧"
+    v-model="textarea"
+    class="commentInput"
+    @keyup.enter.native="sendComment" 
+  >
+    <el-tooltip
+      slot="suffix"
+      class="item"
+      effect="light"
+      content="还没说呢"
+      placement="top-end"
+      v-show="textarea === ''"  
+    >
+      <i :class="iconClass" class="el-icon-s-promotion"></i>
+    </el-tooltip>
+    <i
+      slot="suffix"
+      :class="iconClass"
+      class="el-icon-s-promotion"
+      v-show="textarea !== ''"  
+      @click="sendComment"
+    ></i>
+  </el-input>
+</div>
       <div style="height: 40px"></div>
     </el-drawer>
     <!-- 排名里查看考核答案窗口 -->
@@ -542,7 +548,7 @@ export default {
       exams: [
         //考核列表
         {
-          id: 875346325,
+          id: 1,
           name: "第一次考核",
           start_date: "2024-02-10 00:00:00",
           end_time: "2024-04-10 00:00:00",
@@ -1052,20 +1058,23 @@ export default {
     handleComment(id) {
       this.commentTable = true;
       this.examID = id;
-      getComments();
+      this.getComments();
     },
-    getComments() {
+       getComments() {
       this.fullscreenLoading = true;
       const endTime = this.comments.length ? this.lastTime : Date.now();
       const discussId = 0;
-      const formData = new FormData();
-      formData.append("examID", this.examID);
-      formData.append("end_time", endTime);
-      formData.append("discussId", discussId);
+      const commentData = {
+        exam_id: this.examID,
+        end_time: endTime,
+        discuss_id: discussId,
+      };
+      console.log(commentData);
+      
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/discuss/select",
-          formData,
+          "http://localhost:8080/qingteng-recruitment/user/discuss/select",
+          commentData,
           {
             headers: {
               token: `${this.$store.state.token}`,
@@ -1076,27 +1085,33 @@ export default {
           this.comments.unshift(...response.data.data.discussVOList);
           this.lastTime = response.data.data.endTime;
           this.fullscreenLoading = false;
+          console.log(this.lastTime);
+          
         })
         .catch((error) => {
           this.fullscreenLoading = false;
           this.$message.error("ERROR：" + error.message);
         });
     },
+     clearComments(){
+    this.comments=[]
+   },
     getReplays(id, comment) {
       if (comment.discussNum > 0) {
         this.fullscreenLoading = true;
         const targetId = this.comments.findIndex((item) => item.id === id);
-        const endTime = this.comments[targetId].replays.length
-          ? this.lastTime
-          : Date.now();
+        
+        const endTime = this.comments[targetId].replays.length ? this.lastTime: Date.now();
         const discussId = id;
-        const formData = new FormData();
-        formData.append("examID", this.examID);
-        formData.append("end_time", endTime);
-        formData.append("discussId", discussId);
+        const formData = {
+          exam_id:this.examID,
+          end_time:endTime,
+          discuss_id:discussId
+        };
+        
         axios
           .post(
-            "http://localhost:8080/qingteng-recruitment/root/discuss/select",
+            "http://localhost:8080/qingteng-recruitment/user/discuss/select",
             formData,
             {
               headers: {
@@ -1106,7 +1121,7 @@ export default {
           )
           .then((response) => {
             this.fullscreenLoading = false;
-            this.comments[targetId].replays.unshift(
+            this.comments[targetId].replays.push(
               ...response.data.data.discussVOList
             );
             this.lastTime = response.data.data.endTime;
@@ -1130,10 +1145,27 @@ export default {
           .catch((error) => {
             this.fullscreenLoading = false;
             this.$message.error("ERROR：" + error.message);
+            // 展开所有回复
+            // if (comment.originalDiscussNum === undefined) {
+            //   comment.originalDiscussNum = comment.discussNum;
+            // }
+            // comment.discussNum -= 10;
+            // comment.replays.forEach((replay) => {
+            //   replay.replayVisible = true;
+            // });
+            // comment.showAllReplays = true;
+            // console.log(
+            //   comment.discussNum,
+            //   "----------",
+            //   this.num,
+            //   "-----",
+            //   comment.replays.length
+            // );
           });
       } else {
         // 收起所有回复
         comment.discussNum = comment.originalDiscussNum; // 还原 discussNum
+        comment.originalDiscussNum=undefined
         comment.replays.forEach((replay) => {
           replay.replayVisible = false;
         });
@@ -1149,6 +1181,7 @@ export default {
         );
       }
     },
+
     rowColor({ row, rowIndex }) {
       if (rowIndex % 2 === 1) {
         return "warning-row";
@@ -1163,9 +1196,11 @@ export default {
         discussId: this.commentType,
         examId: this.examID,
       };
+      console.log(commentData);
+
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/discuss/save",
+          "http://localhost:8080/qingteng-recruitment/user/discuss/save",
           commentData,
           {
             headers: {

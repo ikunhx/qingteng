@@ -374,6 +374,7 @@
       direction="rtl"
       size="30%"
       class="commentDrawer"
+      @close="clearComments"
     >
       <div
         v-for="comment in comments"
@@ -445,31 +446,32 @@
         查看更多评论▾
       </el-button>
       <div class="inputDiv">
-        <el-input
-          ref="commentInput"
-          placeholder="说点啥吧"
-          v-model="textarea"
-          class="commentInput"
-        >
-          <el-tooltip
-            slot="suffix"
-            class="item"
-            effect="light"
-            content="还没说呢"
-            placement="top-end"
-            v-show="this.textarea === ''"
-          >
-            <i :class="iconClass" class="el-icon-s-promotion"></i>
-          </el-tooltip>
-          <i
-            slot="suffix"
-            :class="iconClass"
-            class="el-icon-s-promotion"
-            v-show="this.textarea !== ''"
-            @click="sendComment()"
-          ></i>
-        </el-input>
-      </div>
+  <el-input
+    ref="commentInput"
+    placeholder="说点啥吧"
+    v-model="textarea"
+    class="commentInput"
+    @keyup.enter.native="sendComment" 
+  >
+    <el-tooltip
+      slot="suffix"
+      class="item"
+      effect="light"
+      content="还没说呢"
+      placement="top-end"
+      v-show="textarea === ''"  
+    >
+      <i :class="iconClass" class="el-icon-s-promotion"></i>
+    </el-tooltip>
+    <i
+      slot="suffix"
+      :class="iconClass"
+      class="el-icon-s-promotion"
+      v-show="textarea !== ''"  
+      @click="sendComment"
+    ></i>
+  </el-input>
+</div>
       <div style="height: 40px"></div>
     </el-drawer>
   </div>
@@ -945,21 +947,22 @@ export default {
           this.$message.error("ERROR：" + error.message);
         });
     },
-   
+   clearComments(){
+    this.comments=[]
+   },
     getReplays(id, comment) {
       if (comment.discussNum > 0) {
         this.fullscreenLoading = true;
-        alert(1)
         const targetId = this.comments.findIndex((item) => item.id === id);
-        const endTime = this.comments[targetId].replays.length
-          ? this.lastTime
-          : Date.now();
+        
+        const endTime = this.comments[targetId].replays.length ? this.lastTime: Date.now();
         const discussId = id;
-        const formData = new FormData();
-        formData.append("exam_id", this.examID);
-        formData.append("end_time", endTime);
-        formData.append("discuss_id", discussId);
-        alert(2)
+        const formData = {
+          exam_id:this.examID,
+          end_time:endTime,
+          discuss_id:discussId
+        };
+        
         axios
           .post(
             "http://localhost:8080/qingteng-recruitment/user/discuss/select",
@@ -972,7 +975,7 @@ export default {
           )
           .then((response) => {
             this.fullscreenLoading = false;
-            this.comments[targetId].replays.unshift(
+            this.comments[targetId].replays.push(
               ...response.data.data.discussVOList
             );
             this.lastTime = response.data.data.endTime;
@@ -1279,7 +1282,7 @@ export default {
 
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/discuss/save",
+          "http://localhost:8080/qingteng-recruitment/user/discuss/save",
           commentData,
           {
             headers: {
