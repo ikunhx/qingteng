@@ -1062,6 +1062,7 @@ export default {
       this.getComments();
     },
     getComments() {
+      this.comments=[];
       this.fullscreenLoading = true;
       const endTime = this.comments.length ? this.lastTime : Date.now();
       const discussId = 0;
