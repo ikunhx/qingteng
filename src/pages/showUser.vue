@@ -235,37 +235,52 @@ export default {
         reader.readAsDataURL(this.selectedFile);
       }
     },
-    saveChanges() {
-      this.userInformation.direction = this.direction;
-      this.isEditing = false;
-      this.userInformation.qq = this.qq;
-      this.userInformation.url = this.url;
-      axios
-        .post(
-          "http://localhost:8080/qingteng-recruitment/user/detail/edit",
-          this.userInformation,
-          {
+    async saveChanges() {
+      if (this.selectedFile) {
+        const formData = new FormData();
+        formData.append('file', this.selectedFile);
+
+        try {
+          const response = await axios.post("http://localhost:8080/qingteng-recruitment/user/common/upload", formData, {
             headers: {
               "token": `${this.$store.state.token}`,
+              "Content-Type": "multipart/form-data",
             },
-          }
-        )
-        .then((response) => {
-          if (response.data.code == 200) {
-            this.selectedFile = null;
-            this.previewUrl = response.data.data.url || this.defaultUrl;
-            this.$message.success("用户信息保存成功");
+          });
+
+          if (response.data.code === 200) {
+            this.userInformation.url = response.data.data.url;
           } else {
             this.$message.error(response.data.message);
-            this.userInformation = this.originalUser;
+            return;
+          }
+        } catch (error) {
+          this.$message.error("头像上传失败");
+          console.error("头像上传失败:", error);
+          return;
+        }
+      }
+
+      this.userInformation.direction = this.direction;
+      this.userInformation.qq = this.qq;
+
+      axios.post("http://localhost:8080/qingteng-recruitment/user/detail/edit", this.userInformation, {
+        headers: {
+          "token": `${this.$store.state.token}`,
+        },
+      })
+        .then((response) => {
+          if (response.data.code === 200) {
+            this.$message.success("用户信息保存成功");
+            this.isEditing = false;
+          } else {
+            this.$message.error(response.data.message);
+            this.userInformation = { ...this.originalUser };
           }
         })
         .catch((error) => {
-          // 更新失败
           this.$message.error("用户信息更新失败");
-          console.error("更新用户信息失败:", error);
-          // 如果需要，可以在这里恢复到编辑前的状态
-          this.userInformation = { ...this.originalUser };
+          console.error("用户信息更新失败:", error);
         });
     },
   },
