@@ -4,9 +4,9 @@
       <div>
         <div class="top">
           <div class="top-middle">
-            <img v-if="!isEditing" class="top-img" :src="previewUrl || userInformation.url || defaultUrl" />
+            <img v-if="!isEditing" class="top-img" :src="userInformation.avatar || defaultUrl" />
             <div class="top-img2" v-else>
-              <img class="top-img" :src="previewUrl || userInformation.url || defaultUrl">
+              <img class="top-img" :src="userInformation.avatar || defaultUrl">
               <el-button class="change-button" type="primary" plain @click="showFileInput"
                 v-if="isEditing">上传头像</el-button>
               <input type="file" accept="image/*" @change="handleFileUpload" ref="fileInput" style="display: none;" />
@@ -162,7 +162,7 @@ export default {
     return {
       isEditing: false,
       userInformation: {
-        url: "",
+        avatar: "",
         name: "",
         classes: "",
         studentId: "",
@@ -176,7 +176,6 @@ export default {
       qq: "",
       selectedFile: null, // 用于存储用户选择的文件
       defaultUrl: 'https://q7.itc.cn/q_70/images03/20240613/38e50443a3a148b287d1d13bd43ebd69.jpeg',
-      previewUrl: '', // 用于存储头像预览的URL
     };
   },
   mounted() {
@@ -205,8 +204,7 @@ export default {
         .then((response) => {
           this.userInformation = response.data.data;
           this.qq = this.userInformation.qq;
-          this.url = this.userInformation.url;
-          this.previewUrl = this.userInformation.url || this.defaultAvatarUrl;
+          this.avatar = this.userInformation.avatar;
         })
         .catch((error) => {
           this.error = error.message;
@@ -220,18 +218,14 @@ export default {
     cancelEdit() {
       this.isEditing = false;
       this.selectedFile = null;
-      this.previewUrl = this.userInformation.url || this.defaultUrl;
     },
     showFileInput() {
       this.$refs.fileInput.click();
     },
     handleFileUpload(event) {
       this.selectedFile = event.target.files[0];
-      if (this.selectedFile) {
+      if(this.selectedFile) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          this.previewUrl = e.target.result;
-        };
         reader.readAsDataURL(this.selectedFile);
       }
     },
@@ -249,7 +243,7 @@ export default {
           });
 
           if (response.data.code === 200) {
-            this.userInformation.url = response.data.data.url;
+            this.userInformation.avatar = response.data.data;
           } else {
             this.$message.error(response.data.message);
             return;
