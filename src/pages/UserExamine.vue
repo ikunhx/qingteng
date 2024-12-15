@@ -324,7 +324,7 @@
       </el-table>
     </el-drawer>
     <!-- 评论区展示 -->
-     <el-drawer
+    <el-drawer
       :with-header="false"
       :visible.sync="commentTable"
       direction="rtl"
@@ -540,6 +540,7 @@ export default {
       fullscreenLoading: false,
       rankingTable: false, //是否展示排名窗口
       commentTable: false, //是否展示评论窗口
+      commentType: "0",
       examTable: false, //是否展示预览考核
       examID: "",
       downloadUrl:'',
@@ -1055,12 +1056,12 @@ export default {
           });
       }
     },
-    handleComment(id) {
+    handleComment(row) {
       this.commentTable = true;
-      this.examID = id;
+      this.examID = row.id;
       this.getComments();
     },
-       getComments() {
+    getComments() {
       this.fullscreenLoading = true;
       const endTime = this.comments.length ? this.lastTime : Date.now();
       const discussId = 0;
@@ -1093,10 +1094,10 @@ export default {
           this.$message.error("ERROR：" + error.message);
         });
     },
-     clearComments(){
+    clearComments(){
     this.comments=[]
    },
-    getReplays(id, comment) {
+   getReplays(id, comment) {
       if (comment.discussNum > 0) {
         this.fullscreenLoading = true;
         const targetId = this.comments.findIndex((item) => item.id === id);
@@ -1181,7 +1182,6 @@ export default {
         );
       }
     },
-
     rowColor({ row, rowIndex }) {
       if (rowIndex % 2 === 1) {
         return "warning-row";
