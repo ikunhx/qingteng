@@ -4,7 +4,13 @@
       <div>
         <div class="top">
           <div class="top-middle">
-            <img class="top-img" src="../../src/assets/itr-png/29.jpg" />
+            <img v-if="!isEditing" class="top-img" :src="previewUrl || userInformation.url || defaultUrl" />
+            <div class="top-img2" v-else>
+              <img class="top-img" :src="previewUrl || userInformation.url || defaultUrl">
+              <el-button class="change-button" type="primary" plain @click="showFileInput"
+                v-if="isEditing">上传头像</el-button>
+              <input type="file" accept="image/*" @change="handleFileUpload" ref="fileInput" style="display: none;" />
+            </div>
             <div class="top-aside">
               <input
                 v-if="isEditing"
@@ -168,6 +174,9 @@ export default {
       originalUser: {},
       direction: "前端",
       qq: "",
+      selectedFile: null, // 用于存储用户选择的文件
+      defaultUrl: 'https://img2.baidu.com/it/u=3802563531,3604194644&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500',
+      previewUrl: '', // 用于存储头像预览的URL
     };
   },
   mounted() {
@@ -196,6 +205,8 @@ export default {
         .then((response) => {
           this.userInformation = response.data.data;
           this.qq = this.userInformation.qq;
+          this.url = this.userInformation.url;
+          this.previewUrl = this.userInformation.url || this.defaultAvatarUrl;
         })
         .catch((error) => {
           this.error = error.message;
@@ -208,12 +219,27 @@ export default {
     },
     cancelEdit() {
       this.isEditing = false;
+      this.selectedFile = null;
+      this.previewUrl = this.userInformation.url || this.defaultUrl;
+    },
+    showFileInput() {
+      this.$refs.fileInput.click();
+    },
+    handleFileUpload(event) {
+      this.selectedFile = event.target.files[0];
+      if (this.selectedFile) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.previewUrl = e.target.result;
+        };
+        reader.readAsDataURL(this.selectedFile);
+      }
     },
     saveChanges() {
       this.userInformation.direction = this.direction;
-
       this.isEditing = false;
       this.userInformation.qq = this.qq;
+      this.userInformation.url = this.url;
       axios
         .post(
           "http://localhost:8080/qingteng-recruitment/user/detail/edit",
@@ -226,6 +252,8 @@ export default {
         )
         .then((response) => {
           if (response.data.code == 200) {
+            this.selectedFile = null;
+            this.previewUrl = response.data.data.url || this.defaultUrl;
             this.$message.success("用户信息保存成功");
           } else {
             this.$message.error(response.data.message);
@@ -301,6 +329,7 @@ h2 {
   width: 100px;
   height: 100px;
   margin-left: 50px;
+  border-radius: 50%;
 }
 
 .top {

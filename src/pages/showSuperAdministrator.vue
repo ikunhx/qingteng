@@ -9,6 +9,7 @@
                     <el-table-column prop="user" label="用户" width="210">
                         <template slot-scope="scope">
                             <div>
+                                <img class="user-img" :src="previewUrl || userData.url || defaultUrl">
                                 <span>{{ scope.row.name }}</span>
                                 <span class="user-classes">{{ scope.row.classes }}</span>
                             </div>
@@ -60,8 +61,10 @@ export default {
         return {
             currentPage: "administrator",
             email: '',
+            defaultUrl:'https://img2.baidu.com/it/u=3802563531,3604194644&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500',
+            previewUrl: '', // 用于存储头像预览的URL
             userData: [
-                { ranking: 1, name: '诸雨轩', classes: '软件2302', average: 100 },
+                { ranking: 1, url:'',name: '诸雨轩', classes: '软件2302', average: 100 },
                 { ranking: 2, name: '方雅雯', classes: '会计2303', average: 99 },
                 { ranking: 3, name: '张思琦', classes: '国贸2302', average: 97 },
                 { ranking: 5, name: '张思琦', classes: '国贸2302', average: 95 },
@@ -121,6 +124,7 @@ export default {
                 }
             )
                 .then((response) => {
+                    this.previewUrl = this.userData.url || this.defaultUrl;
                     this.userData = response.data.data;
                 })
                 .catch((error) => {
@@ -241,6 +245,12 @@ export default {
 
 .user-classes {
     margin-left: 40px;
+}
+
+.user-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
 }
 
 .administrator {
