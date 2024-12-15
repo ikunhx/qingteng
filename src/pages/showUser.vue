@@ -175,7 +175,7 @@ export default {
       direction: "前端",
       qq: "",
       selectedFile: null, // 用于存储用户选择的文件
-      defaultUrl: 'https://img2.baidu.com/it/u=3802563531,3604194644&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500',
+      defaultUrl: 'https://q7.itc.cn/q_70/images03/20240613/38e50443a3a148b287d1d13bd43ebd69.jpeg',
       previewUrl: '', // 用于存储头像预览的URL
     };
   },
