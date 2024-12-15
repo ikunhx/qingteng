@@ -495,7 +495,7 @@ export default {
       markTable: false, //是否展示评分窗口
       commentTable: false, //是否展示评论窗口
       examID: "0",
-      commentType: "0",
+      commentType: 0,
       lastTime: "",
       answerUrl: "",
       grades:'',
@@ -1279,7 +1279,36 @@ export default {
         discussId: this.commentType,
         examId: this.examID,
       };
-      console.log(commentData);
+      const newComment={
+        id:this.$store.state.studentId,
+        avatar:this.$store.state.avatarUrl,
+        name:this.$store.state.userName,
+        content:commentData.content,
+        createTime:this.showTime(new Date().getTime()),
+        discussNum:0,
+        expanded:false,
+        replayVisible:false,
+        showAllReplays:false,
+        replay:[]
+      }
+      const newReplay={
+        id:this.$store.state.studentId,
+        avatar:this.$store.state.avatarUrl,
+        name:this.$store.state.userName,
+        content:commentData.content,
+        createTime:this.showTime(new Date().getTime()),
+        discussNum:0,
+        expanded:false,
+        replayVisible:false,
+        showAllReplays:false,
+        replay:[]
+      }
+      if(commentData.discussId===0){
+        this.comments.unshift(newComment)
+      }else if(commentData.discussId===1){
+        const targetId = this.comments.findIndex((item) => item.id === commentData.discussId);
+        this.comments[targetId].replays.push(newReplay);
+      }
 
       axios
         .post(

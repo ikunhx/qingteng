@@ -1197,7 +1197,36 @@ export default {
         discussId: this.commentType,
         examId: this.examID,
       };
-      console.log(commentData);
+      const newComment={
+        id:this.$store.state.studentId,
+        avatar:this.$store.state.avatarUrl,
+        name:this.$store.state.userName,
+        content:commentData.content,
+        createTime:this.showTime(new Date().getTime()),
+        discussNum:0,
+        expanded:false,
+        replayVisible:false,
+        showAllReplays:false,
+        replay:[]
+      }
+      const newReplay={
+        id:this.$store.state.studentId,
+        avatar:this.$store.state.avatarUrl,
+        name:this.$store.state.userName,
+        content:commentData.content,
+        createTime:this.showTime(new Date().getTime()),
+        discussNum:0,
+        expanded:false,
+        replayVisible:false,
+        showAllReplays:false,
+        replay:[]
+      }
+      if(commentData.discussId===0){
+        this.comments.unshift(newComment)
+      }else if(commentData.discussId===1){
+        const targetId = this.comments.findIndex((item) => item.id === commentData.discussId);
+        this.comments[targetId].replays.push(newReplay);
+      }
 
       axios
         .post(
