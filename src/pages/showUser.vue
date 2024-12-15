@@ -172,7 +172,7 @@ export default {
         advantage: "",
       },
       originalUser: {},
-      direction: "前端",
+      direction: "",
       qq: "",
       selectedFile: null, // 用于存储用户选择的文件
       defaultUrl: 'https://q7.itc.cn/q_70/images03/20240613/38e50443a3a148b287d1d13bd43ebd69.jpeg',
@@ -204,6 +204,7 @@ export default {
         .then((response) => {
           this.userInformation = response.data.data;
           this.qq = this.userInformation.qq;
+          this.direction = this.userInformation.direction;
           this.avatar = this.userInformation.avatar;
         })
         .catch((error) => {
@@ -244,6 +245,7 @@ export default {
 
           if (response.data.code === 200) {
             this.userInformation.avatar = response.data.data;
+            this.$store.dispatch("setAvatarUrl", response.data.data);
           } else {
             this.$message.error(response.data.message);
             return;
@@ -257,7 +259,13 @@ export default {
 
       this.userInformation.direction = this.direction;
       this.userInformation.qq = this.qq;
-
+      this.$store.dispatch("setDirection", this.direction);
+      this.$store.dispatch("setQQnum", this.qq);
+      this.$store.dispatch("setUserName", this.userInformation.name);
+      this.$store.dispatch("setClasses", this.userInformation.classes);
+      this.$store.dispatch("setStudentId", this.userInformation.studentId);
+      this.$store.dispatch("setPhone", this.userInformation.phone);
+      this.$store.dispatch("setAdvantage", this.userInformation.advantage);
       axios.post("http://localhost:8080/qingteng-recruitment/user/detail/edit", this.userInformation, {
         headers: {
           "token": `${this.$store.state.token}`,
@@ -265,7 +273,7 @@ export default {
       })
         .then((response) => {
           if (response.data.code === 200) {
-            this.$message.success("用户信息保存成功");
+            this.$message.success(response.data.message);
             this.isEditing = false;
           } else {
             this.$message.error(response.data.message);
