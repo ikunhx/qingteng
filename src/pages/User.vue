@@ -147,7 +147,7 @@ export default {
           console.error("Login error:", error);
           this.$message.error(
             error.response
-              ? error.response.data.error || "登录失败"
+              ? error.response.data.message || "登录失败"
               : "网络请求失败"
           );
         });
