@@ -1308,7 +1308,7 @@ export default {
     },
     makeReplay(comment) {
       this.$refs.commentInput.focus(); // 跳转到输入框
-      this.textarea.value=`@${comment.name}`
+      this.textarea=`@${comment.name}`
       this.commentType = comment.id;
     },
     showExams() {
