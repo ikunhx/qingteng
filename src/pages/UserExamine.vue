@@ -366,7 +366,7 @@
           class="comment replayComment"
         >
           <div v-if="replay.replayVisible">
-            <el-avatar :size="35" :src="replay.url"></el-avatar>
+            <el-avatar :size="35" :src="replay.avatar"></el-avatar>
             <span class="userName">{{ replay.name }}</span>
             <div class="commentContent" :class="{ expanded: replay.expanded }">
               {{
