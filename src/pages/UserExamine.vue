@@ -1056,9 +1056,9 @@ export default {
           });
       }
     },
-    handleComment(row) {
+    handleComment(id) {
       this.commentTable = true;
-      this.examID = row.id;
+      this.examID = id;
       this.getComments();
     },
     getComments() {
