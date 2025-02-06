@@ -16,20 +16,12 @@
 
     <div class="user-resource-func">用户端资源功能</div>
     <div class="content-container">
-      <div
-        v-for="resource in resources"
-        :key="resource.id"
-        class="resource-container"
-        :style="colors[colorId(resource.id)]"
-      >
+      <div v-for="resource in resources" :key="resource.id" class="resource-container"
+        :style="colors[colorId(resource.id)]">
         <div class="resource-id">{{ resource.id }}</div>
         <div class="download-box">
-          <a @click="downloadResource(resource)">
-            <img
-              class="download-png"
-              src="../assets/icon-png/下载.png"
-              alt=""
-            />
+          <a :href="resource.file">
+            <img class="download-png" src="../assets/icon-png/下载.png" alt="" />
           </a>
         </div>
 
@@ -39,21 +31,21 @@
       </div>
     </div>
   </div>
-</template>  
-  
-  <script>
+</template>
+
+<script>
 import axios from "axios";
 export default {
   name: "UserResource",
   data() {
     return {
       resources: [
-        { id: "001", name: "html常用知识点总结" },
-        { id: "002", name: "css常用知识点总结" },
-        { id: "003", name: "javascript常用知识点总结" },
-        { id: "004", name: "ajax常用知识点总结" },
-        { id: "005", name: "vue常用知识点总结" },
-        { id: "006", name: "react常用知识点总结" },
+        // { id: "001", name: "html常用知识点总结" ,fileUrl:''},
+        // { id: "002", name: "css常用知识点总结" ,fileUrl:''},
+        // { id: "003", name: "javascript常用知识点总结" ,fileUrl:''},
+        // { id: "004", name: "ajax常用知识点总结" ,fileUrl:''},
+        // { id: "005", name: "vue常用知识点总结" ,fileUrl:''},
+        // { id: "006", name: "react常用知识点总结" ,fileUrl:''},
       ], // 将初始值更改为一个空数组
       colors: [
         "background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);",
@@ -71,55 +63,6 @@ export default {
         }
       }
     },
-    async fetchResources() {
-      try {
-        const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/user/display_resource",
-          {},
-          {
-            headers: {
-              token: `${this.$store.state.token}`,
-            },
-          }
-        );
-        this.resources = response.data.data;
-      } catch (error) {
-        console.log("获取资源失败", error);
-      }
-    },
-    async downloadResource(resource) {
-  try {
-    const response = await axios.post(
-      "http://localhost:8080/qingteng-recruitment/user/resource_download",
-      {
-        id: resource.id,
-        name: resource.name,
-      },
-      {
-        responseType: "blob", // 确保响应类型为 blob
-      }
-    );
-    if (response.status === 200) {
-      // 创建一个下载链接并触发点击
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url; // 设置链接的 href 属性为 Blob URL
-      link.setAttribute("download", `${resource.name}.zip`); // 设置下载的文件名
-      document.body.appendChild(link);
-      link.click(); // 触发点击下载
-      document.body.removeChild(link); // 清理临时链接
-      window.URL.revokeObjectURL(url); // 释放创建的 Blob URL
-    }
-  } catch (error) {
-    console.error("下载资源失败", error);
-    // 处理下载错误
-    if (error.response && error.response.status === 401) {
-      this.$message.error("未授权，无法下载资源");
-    } else {
-      this.$message.error("下载失败，请重试");
-    }
-  }
-},
     //自动往右滚动
     scrollToRight() {
       // 获取窗口的宽度
@@ -134,19 +77,54 @@ export default {
     colorId(id) {
       return id % 4;
     },
-  },
+    async fetchResources() {
+      try {
+        const response = await axios.post(
+          "http://121.40.221.40:8080/qingteng-recruitment/user/display_resource",
+          {},
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        );
+        this.resources = response.data.data;
+      } catch (error) {
+        if (error.response) {
+          console.log("错误信息：", error.response.message)
+        }
+      }
+    },
+    async downloadResource(resource) {
 
-  mounted() {
+          // 创建一个下载链接并触发点击
+          axios
+        .get(resource.file, {
+          responseType: "blob", // 确保响应类型是blob
+        })
+        .then((response) => {
+        })
+        .catch((error) => {
+          this.$message.error("ERROR：" + error.message);
+        });
+          // const url = window.URL.createObjectURL(new Blob([this.resources.fileUrl]));
+          // const link = document.createElement("a");
+          // link.href = url; // 设置链接的 href 属性为 Blob URL
+          // document.body.appendChild(link);
+          // link.click(); // 触发点击下载
+          // document.body.removeChild(link); // 清理临时链接
+          // window.URL.revokeObjectURL(url); // 释放创建的 Blob URL
+        
+      } 
+    },
+    mounted() {
     // this.judge();
     this.fetchResources(); // 页面加载时获取资源
     this.scrollToRight();
-  },
-//   beforeDestroy() {
-//     this.$store.dispatch("setToken", "");
-//   },
-};
-</script>  
-  
+  }
+}
+</script>
+
 <style>
 .resource-box {
   width: 100vw;
@@ -162,6 +140,7 @@ export default {
   height: 30vh;
   width: 100%;
 }
+
 #stage {
   overflow: hidden;
   position: relative;
@@ -173,6 +152,7 @@ export default {
   width: 100%;
   height: 100%;
 }
+
 .scenes-ready #stage .space {
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
@@ -181,6 +161,7 @@ export default {
   -moz-animation: moving 450s linear 0.8s infinite normal none;
   animation: moving 450s linear 0.8s infinite normal none;
 }
+
 #stage .space {
   width: 3840px;
   height: 100%;
@@ -190,20 +171,24 @@ export default {
   z-index: 0;
   background: url(../assets/mountain-png/space.png) repeat-x;
 }
+
 @keyframes moving {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   100% {
     transform: translate3d(-50%, 0, 0);
   }
 }
+
 .scenes-ready #stage .mountains {
   opacity: 1;
   -webkit-animation: mountains-in 0.8s ease-out 0s 1 normal forwards;
   -moz-animation: mountains-in 0.8s ease-out 0s 1 normal forwards;
   animation: mountains-in 0.8s ease-out 0s 1 normal forwards;
 }
+
 #stage .mountains {
   width: 100%;
   height: 17.78125em;
@@ -220,14 +205,17 @@ export default {
   -moz-transform-origin: center top;
   transform-origin: center top;
 }
+
 @keyframes mountains-in {
   0% {
     transform: scale(1.5);
   }
+
   100% {
     transform: scale(1);
   }
 }
+
 .scenes-ready #stage .mountain-1 {
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
@@ -236,6 +224,7 @@ export default {
   -moz-animation: moving 100s linear 0.8s infinite normal none;
   animation: moving 100s linear 0.8s infinite normal none;
 }
+
 #stage .mountain-1 {
   height: 10.5em;
   z-index: 3;
@@ -243,12 +232,14 @@ export default {
   background-size: auto 50%;
   background-position: 0 bottom;
 }
+
 #stage .mountain {
   width: 240em;
   position: absolute;
   left: 0;
   bottom: 0;
 }
+
 .scenes-ready #stage .mountain-2 {
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
@@ -257,6 +248,7 @@ export default {
   -moz-animation: moving 160s linear 0.8s infinite normal none;
   animation: moving 160s linear 0.8s infinite normal none;
 }
+
 #stage .mountain-2 {
   height: 12em;
   z-index: 2;
@@ -264,6 +256,7 @@ export default {
   background-size: auto 50%;
   background-position: 0 bottom;
 }
+
 .scenes-ready #stage .mountain-3 {
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
@@ -272,6 +265,7 @@ export default {
   -moz-animation: moving 360s linear 0.8s infinite normal none;
   animation: moving 360s linear 0.8s infinite normal none;
 }
+
 #stage .mountain-3 {
   height: 17.78125em;
   z-index: 1;
@@ -279,6 +273,7 @@ export default {
   background-size: auto 30%;
   background-position: 0 bottom;
 }
+
 .scenes-ready #stage .bear {
   -webkit-animation: bear-run-in 3.6s step-end 0.6s 1 normal forwards,
     bear-run 0.8s steps(8) 4.2s infinite normal forwards;
@@ -287,12 +282,14 @@ export default {
   animation: bear-run-in 3.6s step-end 0.6s 1 normal forwards,
     bear-run 0.8s steps(8) 4.2s infinite normal forwards;
 }
+
 .scenes-ready #stage .bear {
   opacity: 1;
   -webkit-transition: opacity 0.4s linear 0.6s;
   -moz-transition: opacity 0.4s linear 0.6s;
   transition: opacity 0.4s linear 0.6s;
 }
+
 #stage .bear {
   width: 3.12em;
   height: 1.625em;
@@ -305,228 +302,284 @@ export default {
   background-size: 25em 100%;
   opacity: 0;
 }
+
 @keyframes bear-run-in {
   0% {
     background-position: 0em 0;
     left: -4%;
   }
+
   1.38889% {
     background-position: -3.125em 0;
     left: -2.25%;
   }
+
   2.77778% {
     background-position: -6.25em 0;
     left: -0.5%;
   }
+
   4.16667% {
     background-position: -9.375em 0;
     left: 1.25%;
   }
+
   5.55556% {
     background-position: -12.5em 0;
     left: 3%;
   }
+
   6.94444% {
     background-position: -15.625em 0;
     left: 4.75%;
   }
+
   8.33333% {
     background-position: -18.75em 0;
     left: 6.5%;
   }
+
   9.72222% {
     background-position: -21.875em 0;
     left: 8.25%;
   }
+
   11.1111% {
     background-position: -25em 0;
     left: 10%;
   }
+
   11.1111% {
     background-position: 0em 0;
     left: 10%;
   }
+
   12.7778% {
     background-position: -3.125em 0;
     left: 11.5%;
   }
+
   14.4444% {
     background-position: -6.25em 0;
     left: 13%;
   }
+
   16.1111% {
     background-position: -9.375em 0;
     left: 14.5%;
   }
+
   17.7778% {
     background-position: -12.5em 0;
     left: 16%;
   }
+
   19.4444% {
     background-position: -15.625em 0;
     left: 17.5%;
   }
+
   21.1111% {
     background-position: -18.75em 0;
     left: 19%;
   }
+
   22.7778% {
     background-position: -21.875em 0;
     left: 20.5%;
   }
+
   24.4444% {
     background-position: -25em 0;
     left: 22%;
   }
+
   24.4444% {
     background-position: 0em 0;
     left: 22%;
   }
+
   26.3889% {
     background-position: -3.125em 0;
     left: 23.25%;
   }
+
   28.3333% {
     background-position: -6.25em 0;
     left: 24.5%;
   }
+
   30.2778% {
     background-position: -9.375em 0;
     left: 25.75%;
   }
+
   32.2222% {
     background-position: -12.5em 0;
     left: 27%;
   }
+
   34.1667% {
     background-position: -15.625em 0;
     left: 28.25%;
   }
+
   36.1111% {
     background-position: -18.75em 0;
     left: 29.5%;
   }
+
   38.0556% {
     background-position: -21.875em 0;
     left: 30.75%;
   }
+
   40% {
     background-position: -25em 0;
     left: 32%;
   }
+
   40% {
     background-position: 0em 0;
     left: 32%;
   }
+
   42.2222% {
     background-position: -3.125em 0;
     left: 33%;
   }
+
   44.4444% {
     background-position: -6.25em 0;
     left: 34%;
   }
+
   46.6667% {
     background-position: -9.375em 0;
     left: 35%;
   }
+
   48.8889% {
     background-position: -12.5em 0;
     left: 36%;
   }
+
   51.1111% {
     background-position: -15.625em 0;
     left: 37%;
   }
+
   53.3333% {
     background-position: -18.75em 0;
     left: 38%;
   }
+
   55.5556% {
     background-position: -21.875em 0;
     left: 39%;
   }
+
   57.7778% {
     background-position: -25em 0;
     left: 40%;
   }
+
   57.7778% {
     background-position: 0em 0;
     left: 40%;
   }
+
   60.2778% {
     background-position: -3.125em 0;
     left: 40.75%;
   }
+
   62.7778% {
     background-position: -6.25em 0;
     left: 41.5%;
   }
+
   65.2778% {
     background-position: -9.375em 0;
     left: 42.25%;
   }
+
   67.7778% {
     background-position: -12.5em 0;
     left: 43%;
   }
+
   70.2778% {
     background-position: -15.625em 0;
     left: 43.75%;
   }
+
   72.7778% {
     background-position: -18.75em 0;
     left: 44.5%;
   }
+
   75.2778% {
     background-position: -21.875em 0;
     left: 45.25%;
   }
+
   77.7778% {
     background-position: -25em 0;
     left: 46%;
   }
+
   77.7778% {
     background-position: 0em 0;
     left: 46%;
   }
+
   80.5556% {
     background-position: -3.125em 0;
     left: 46.5%;
   }
+
   83.3333% {
     background-position: -6.25em 0;
     left: 47%;
   }
+
   86.1111% {
     background-position: -9.375em 0;
     left: 47.5%;
   }
+
   88.8889% {
     background-position: -12.5em 0;
     left: 48%;
   }
+
   91.6667% {
     background-position: -15.625em 0;
     left: 48.5%;
   }
+
   94.4444% {
     background-position: -18.75em 0;
     left: 49%;
   }
+
   97.2222% {
     background-position: -21.875em 0;
     left: 49.5%;
   }
+
   100% {
     background-position: -25em 0;
     left: 50%;
   }
 }
+
 @keyframes bear-run {
   0% {
     background-position: 0 0;
   }
+
   100% {
     background-position: -25em 0;
   }
@@ -552,6 +605,7 @@ export default {
   padding: 20px;
   background-color: #f5f5f5;
 }
+
 .resource-container {
   position: relative;
   float: left;
@@ -579,6 +633,7 @@ export default {
   left: 330px;
   top: 25px;
 }
+
 .download-png {
   width: 32px;
   height: 32px;
@@ -597,6 +652,7 @@ export default {
   margin: 20px auto 0;
   text-align: center;
 }
+
 .resource-name {
   font-family: Misans, serif;
   font-weight: 600;

@@ -49,7 +49,7 @@
             class="upload-demo"
             drag
             multiple
-            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
+            action="http://121.40.221.40:8080/qingteng-recruitment/user/common/upload"
             :on-change="handleFileChange"
             :before-upload="beforeAvatarUpload"
             ref="upload"
@@ -82,7 +82,7 @@
             class="upload-demo"
             drag
             multiple
-            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
+            action="http://121.40.221.40:8080/qingteng-recruitment/user/common/upload"
             :on-change="handleFileChange"
             ref="upload"
             :before-upload="beforeAvatarUpload"
@@ -172,7 +172,7 @@ export default {
     async fetchResources() {
       try {
         const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/root/display_resource",
+          "http://121.40.221.40:8080/qingteng-recruitment/root/display_resource",
           {},
           {
             headers: {
@@ -180,7 +180,6 @@ export default {
             },
           }
         );
-        alert(response.data.data);
         this.resources = response.data.data; // 获取资源数据
         // 将每个资源的fileUrl添加到fileUrls数组中
         this.resources.forEach(resource => {
@@ -203,80 +202,7 @@ export default {
 
     return isZIP && isLt400M;
   },
-    // // 打开资源
-    // openResource(id) {
-    //   const index = this.resources.findIndex(item => item.id === id);
-    //   this.answerTable = true;
-    //   this.fetchAndUnzip(this.fileUrl);
-    //   const resource = this.resources.find((item) => item.id === id);
-    //   if (index !== -1) {
-    //     const fileUrl = this.fileUrls[index];
-    //     // 根据文件类型决定如何打开文件
-    //     const fileType = resource.fileUrl.split(".").pop().toLowerCase();
-    //     switch (fileType) {
-    //       case "pdf":
-    //         // 预览PDF文件
-    //         this.previewPdf(fileUrl);
-    //         break;
-    //       case "zip":
-    //         this.answerTable = true;
-    //         this.fetchAndUnzip(fileUrl);
-    //         break;
-    //       default:
-    //         console.error("不支持的文件类型");
-    //     }
-    //   } else {
-    //     console.error("文件未找到或没有可用的文件链接");
-    //   }
-    // },
-    // // 预览资源
-    // async fetchAndUnzip(zipUrl) {
-    //   try {
-    //     console.log(zipUrl);
-    //     // 使用 axios 下载文件
-    //     const response = await axios({
-    //       url: zipUrl,
-    //       method: "GET",
-    //       responseType: "arraybuffer", // 获取二进制数据
-    //     });
-    //     if (response.status !== 200) {
-    //       throw new Error(`请求失败，状态码: ${response.status}`);
-    //     }
-    //     // 使用 JSZip 解压压缩包
-    //     const zip = new JSZip();
-    //     const content = await zip.loadAsync(response.data);
-    //     // 清空现有的文件列表
-    //     this.pdfFiles = [];
-    //     this.videoFiles = [];
-    //     // 遍历压缩包中的文件
-    //     content.forEach((relativePath, file) => {
-    //       if (file.dir) return; // 忽略目录
-    //       // 将文件转换为 Blob 对象，并指定 MIME 类型
-    //       file.async("blob").then(async (blob) => {
-    //         const fileUrl = URL.createObjectURL(blob);
-    //         console.log(`Generated URL for ${file.name}: ${fileUrl}`); // 打印生成的 URL
-    //         const fileType = file.name.split(".").pop().toLowerCase();
-    //         let mimeType;
-    //         if (fileType === "pdf") {
-    //           mimeType = "application/pdf";
-    //         } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
-    //           mimeType = "video/" + fileType;
-    //         } else {
-    //           mimeType = "application/octet-stream"; // 默认 MIME 类型
-    //         }
-    //         const typedBlob = new Blob([blob], { type: mimeType });
-    //         const typedFileUrl = URL.createObjectURL(typedBlob);
-    //         if (fileType === "pdf") {
-    //           this.pdfFiles.push({ name: file.name, url: typedFileUrl });
-    //         } else if (["mp4", "avi", "mov", "mkv"].includes(fileType)) {
-    //           this.videoFiles.push({ name: file.name, url: typedFileUrl });
-    //         }
-    //       });
-    //     });
-    //   } catch (error) {
-    //     console.error("解压失败:", error.message);
-    //   }
-    // },
+  
     colorId(id) {
       return id % 4;
     },
@@ -318,7 +244,7 @@ export default {
       formData.append("fileUrl", fileUrl);
 
       const url =
-        "http://localhost:8080/qingteng-recruitment/root/resource_edit";
+        "http://121.40.221.40:8080/qingteng-recruitment/root/resource_edit";
       axios
         .post(url, formData, {
           headers: {
@@ -375,7 +301,7 @@ export default {
       formData.append("name", this.newForm.name);
       formData.append("fileUrl", fileUrl);
       const url =
-        "http://localhost:8080/qingteng-recruitment/root/resource_edit";
+        "http://121.40.221.40:8080/qingteng-recruitment/root/resource_edit";
       axios
         .post(url, formData, {
           headers: {
@@ -409,7 +335,6 @@ export default {
     },
     submitUpload() {
       this.$refs.upload.submit();
-      console.log(this.newForm.name);
     },
 
     publishResource() {
@@ -420,7 +345,7 @@ export default {
     async deleteResource(id) {
       try {
         const response = await axios.post(
-          `http://localhost:8080/qingteng-recruitment/root/resource_delete?id=${id}`,
+          `http://121.40.221.40:8080/qingteng-recruitment/root/resource_delete?id=${id}`,
           {},
           {
             headers: {
@@ -429,7 +354,6 @@ export default {
           }
         );
         if (response.data.code === 200) {
-          console.log("资源删除成功");
           this.fetchResources(); // 刷新资源列表
         }
       } catch (error) {

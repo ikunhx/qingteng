@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
     sessionStorage.setItem('pageSessionId', pageSessionId);
   }
   
-  // 检查是否有 token 需要恢复 (如果您的应用需要的话)
+  // 检查是否有 token 需要恢复 (如果应用需要的话)
   // 这里可以根据实际情况调整逻辑
 });
 

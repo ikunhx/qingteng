@@ -212,7 +212,7 @@
       :visible.sync="addExamVisible"
       width="30%"
       title="提交答案"
-      @close="closeAdd"
+      @close="closeEdit"
       class="exam-dialog"
     >
       <div style="height: 350px; text-align: center">
@@ -222,7 +222,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
+            action="http://121.40.221.40:8080/qingteng-recruitment/user/common/upload"
             multiple
             accept=".zip"
             :before-upload="beforeAvatarUpload"
@@ -239,7 +239,7 @@
               将文件拖到此处，或<em>点击上传</em>
             </div>
             <div class="el-upload__tip" slot="tip">
-              只能上传zip文件,且不超过400MB
+              只能上传zip文件,且不超过150MB
             </div>
           </el-upload>
         </el-form>
@@ -287,11 +287,11 @@
         :row-style="rowStyle"
         :header-row-style="headerStyle"
       >
-        <el-table-column property="avatarUrl" label="" width="50">
+        <el-table-column property="url" label="" width="50">
           <template slot-scope="scope">
             <el-avatar
               :size="40"
-              :src="scope.row.avatarUrl"
+              :src="scope.row.url"
             ></el-avatar> </template
         ></el-table-column>
         <el-table-column
@@ -548,20 +548,22 @@ export default {
       videoFiles: [],
       exams: [
         //考核列表
-        {
-          id: 1,
-          name: "第一次考核",
-          start_date: "2024-02-10 00:00:00",
-          end_time: "2024-04-10 00:00:00",
-          fileUrl: "",
-        },
-        {
-          id: 987654334,
-          name: "第二次考核",
-          start_date: "2024-11-10 00:00:00",
-          end_time: "2024-12-30 00:00:00",
-          fileUrl: "",
-        },
+        // {
+        //   id: 1,
+        //   name: "第一次考核",
+        //   start_date: "2024-02-10 00:00:00",
+        //   end_time: "2024-04-10 00:00:00",
+        //   fileUrl: "",
+        //   count:0
+        // },
+        // {
+        //   id: 987654334,
+        //   name: "第二次考核",
+        //   start_date: "2024-11-10 00:00:00",
+        //   end_time: "2024-12-30 00:00:00",
+        //   fileUrl: "",
+        //   count:2
+        // },
       ],
       examId: "",
       userAnswer: {
@@ -570,28 +572,28 @@ export default {
         studentId: "",
       },
       rankingData: [
-        {
-          userID: 24374635,
-          name: "张三",
-          classes: "软件2401",
-          avatarUrl:
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          average: 81,
-          ranking: 1,
-          answerUrl:
-            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
-        },
-        {
-          userID: 872435235,
-          name: "张三",
-          classes: "软件2401",
-          avatarUrl:
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-            average: 98,
-          ranking: 1,
-          answerUrl:
-            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
-        },
+        // {
+        //   userID: 24374635,
+        //   name: "张三",
+        //   classes: "软件2401",
+        //   avatarUrl:
+        //     "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //   average: 81,
+        //   ranking: 1,
+        //   answerUrl:
+        //     "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+        // },
+        // {
+        //   userID: 872435235,
+        //   name: "张三",
+        //   classes: "软件2401",
+        //   avatarUrl:
+        //     "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //     average: 98,
+        //   ranking: 1,
+        //   answerUrl:
+        //     "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+        // },
       ],
       comments: [
         // {
@@ -699,21 +701,41 @@ export default {
       }
     },
     addExam(exam) {
+      
       let now = Date.now();
       const endTime = new Date(exam.end_time.replace(' ', 'T'));
       if (now > endTime) {
         this.$message.warning("考核已截至!");
         return;
-      } else {
-        this.addExamVisible = true;
-        this.examId = exam.id;
-      }
+      }else{
+        axios
+        .post(`http://121.40.221.40:8080/qingteng-recruitment/user/getCount?exam_id=${exam.id}`,{} , {
+          headers: {
+            token: `${this.$store.state.token}`,
+          },
+        })
+        .then((response) => {
+          if(response.data.data !== 1){
+          // 成功处理
+          this.addExamVisible = true;
+          this.examId = exam.id;
+          }else{
+            this.$message.error("考核提交次数已用尽！");
+          }
+        })
+        .catch((error) => {
+          // 错误处理
+          this.$message.error(error.message)
+          
+        });
+      } 
     },
     submitUpload() {
       //提交文件到服务器
       this.$refs.upload.submit();
     },
     customUploadEdit(options) {
+
       const formData = new FormData();
       formData.append("file", options.file);
 
@@ -724,12 +746,19 @@ export default {
           },
         })
         .then((response) => {
+          if(response.data.code === 200){
           // 成功处理
           this.handleSuccessAdd(response.data.data);
+          this.$message.success(response.data.message);
+          }else{
+            this.$message.error(response.data.message);
+          }
         })
         .catch((error) => {
           // 错误处理
           options.onError && options.onError(error);
+          this.$message.error("上传失败：" + error.message)
+          
         });
     },
     handleExceed(files, fileList) {
@@ -755,7 +784,7 @@ export default {
       formData.append("exam_id", this.examId);
       formData.append("fileUrl", fileUrl);
       const url =
-        "http://localhost:8080/qingteng-recruitment/user/examine_upload";
+        "http://121.40.221.40:8080/qingteng-recruitment/user/examine_upload";
       axios
         .post(url, formData, {
           headers: {
@@ -767,42 +796,36 @@ export default {
           this.fullscreenLoading = false;
           this.$message({
             type: "success",
-            message: "提交成功!",
+            message: response.data.message,
           });
           this.closeEdit();
         })
         .catch((error) => {
           this.fullscreenLoading = false;
           this.$message.error("上传失败：" + error.message);
+          this.closeEdit();
         });
     },
     handleRemove(file, fileList) {
       //移除考核文件
-      console.log(file, fileList);
     },
     handlePreview(file) {
       //预览考核文件
-      console.log(file);
     },
     beforeAvatarUpload(file) {
       //限制大小
-      const isLt400M = file.size / 1024 / 1024 <= 400;
+      const isZip = file.type === 'application/x-zip-compressed';
+      const isLt150M = file.size / 1024 / 1024 <= 150;
 
-      if (!isLt400M) {
-        this.$message.error("上传文档大小不能超过 400MB!");
+      if (!isLt150M) {
+        this.$message.error("上传文档大小不能超过 150MB!");
       }
-      return isLt400M;
-    },
-    closeAdd() {
-      this.editExam.name = "";
-      this.editExam.beginTime = "";
-      this.editExam.endTime = "";
-      this.fileList = [];
-      this.editExamVisible = false;
-      this.editExam.id = "";
+      if (!isZip) {
+      this.$message.error('只能上传zip文件!');
+    }
+      return isLt150M&&isZip;
     },
     test() {
-      console.log(this.$store.state.userName);
     },
     showDate(timeString) {
       //传入时间戳，转化为具体时间
@@ -938,7 +961,7 @@ export default {
       const id = this.examID;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/user/examine_download?id=${id}`,
+          `http://121.40.221.40:8080/qingteng-recruitment/user/examine_download?id=${id}`,
           {},
           {
             headers: {
@@ -960,7 +983,7 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/display_exam",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/display_exam",
           {},
           {
             headers: {
@@ -994,7 +1017,7 @@ export default {
         this.fullscreenLoading = true;
         axios
           .post(
-            `http://localhost:8080/qingteng-recruitment/user/examine_score?id=${exam.id}`,
+            `http://121.40.221.40:8080/qingteng-recruitment/user/examine_score?id=${exam.id}`,
             {  },
             {
               headers: {
@@ -1038,7 +1061,7 @@ export default {
         this.rankingTable = true;
         axios
           .post(
-            `http://localhost:8080/qingteng-recruitment/user/examine_ranking?id=${exam.id}`,
+            `http://121.40.221.40:8080/qingteng-recruitment/user/examine_ranking?id=${exam.id}`,
             {},
             {
               headers: {
@@ -1071,11 +1094,10 @@ export default {
         end_time: endTime,
         discuss_id: discussId,
       };
-      console.log(commentData);
       
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/discuss/select",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/select",
           commentData,
           {
             headers: {
@@ -1087,7 +1109,6 @@ export default {
           this.comments.unshift(...response.data.data.discussVOList);
           this.lastTime = response.data.data.endTime;
           this.fullscreenLoading = false;
-          console.log(this.lastTime);
           
         })
         .catch((error) => {
@@ -1113,7 +1134,7 @@ export default {
         
         axios
           .post(
-            "http://localhost:8080/qingteng-recruitment/user/discuss/select",
+            "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/select",
             formData,
             {
               headers: {
@@ -1136,33 +1157,10 @@ export default {
               replay.replayVisible = true;
             });
             comment.showAllReplays = true;
-            console.log(
-              comment.discussNum,
-              "----------",
-              this.num,
-              "-----",
-              comment.replays.length
-            );
           })
           .catch((error) => {
             this.fullscreenLoading = false;
             this.$message.error("ERROR：" + error.message);
-            // 展开所有回复
-            // if (comment.originalDiscussNum === undefined) {
-            //   comment.originalDiscussNum = comment.discussNum;
-            // }
-            // comment.discussNum -= 10;
-            // comment.replays.forEach((replay) => {
-            //   replay.replayVisible = true;
-            // });
-            // comment.showAllReplays = true;
-            // console.log(
-            //   comment.discussNum,
-            //   "----------",
-            //   this.num,
-            //   "-----",
-            //   comment.replays.length
-            // );
           });
       } else {
         // 收起所有回复
@@ -1174,13 +1172,6 @@ export default {
         comment.showAllReplays = false;
         comment.replays = [];
         this.num = 0;
-        console.log(
-          comment.discussNum,
-          "----------",
-          this.num,
-          "-----",
-          comment.replays.length
-        );
       }
     },
     rowColor({ row, rowIndex }) {
@@ -1230,7 +1221,7 @@ export default {
 
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/discuss/save",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/save",
           commentData,
           {
             headers: {
@@ -1242,7 +1233,7 @@ export default {
           this.fullscreenLoading = false;
           this.$message({
             type: "success",
-            message: "评论成功!",
+            message: response.data.message,
           });
           this.commentType = "0";
         })
@@ -1304,12 +1295,10 @@ export default {
         // 遍历压缩包中的文件
         content.forEach((relativePath, file) => {
           if (file.dir) return; // 忽略目录
-          console.log(666);
 
           // 将文件转换为 Blob 对象，并指定 MIME 类型
           file.async("blob").then(async (blob) => {
             const fileUrl = URL.createObjectURL(blob);
-            console.log(`Generated URL for ${file.name}: ${fileUrl}`); // 打印生成的 URL
             const fileType = file.name.split(".").pop().toLowerCase();
 
             let mimeType;

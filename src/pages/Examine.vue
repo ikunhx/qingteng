@@ -92,7 +92,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
+            action="http://121.40.221.40:8080/qingteng-recruitment/user/common/upload"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -156,7 +156,7 @@
             class="upload-demo"
             ref="upload"
             drag
-            action="http://localhost:8080/qingteng-recruitment/user/common/upload"
+            action="http://121.40.221.40:8080/qingteng-recruitment/user/common/upload"
             multiple
             accept=".pdf"
             :before-upload="beforeAvatarUpload"
@@ -194,11 +194,11 @@
         :row-style="rowStyle"
         :header-row-style="headerStyle"
       >
-        <el-table-column property="avatarUrl" label="" width="50">
+        <el-table-column property="url" label="" width="50">
           <template slot-scope="scope">
             <el-avatar
               :size="40"
-              :src="scope.row.avatarUrl"
+              :src="scope.row.url"
             ></el-avatar> </template
         ></el-table-column>
         <el-table-column
@@ -349,7 +349,7 @@
       <el-form
         ref="examScore"
         label-width="80px"
-        v-if="pdfFiles.length && videoFiles.length"
+        
       >
         <div class="scoreItem">
           <el-form-item label="分数" id="exam-score">
@@ -486,7 +486,6 @@ export default {
   data() {
     return {
       textarea: "", // 输入框中的文字
-      pending: 118,
       addExamVisible: false, //是否展示添加考核框
       editExamVisible: false, //是否展示考核编辑框
       rankingTable: false, //是否展示排名框
@@ -494,33 +493,31 @@ export default {
       answerTable: false, //是否展示答案框
       markTable: false, //是否展示评分窗口
       commentTable: false, //是否展示评论窗口
-      examID: "0",
+      examID: "",
       commentType: 0,
       lastTime: "",
       answerUrl: "",
       grades:'',
-      // pdfFiles: ["http://localhost:8080/fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg","http://localhost:8080/fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg"],
-      // videoFiles: ['http://localhost:8080/www.w3schools.com/html/mov_bbb.mp4'],
       pdfFiles: [],
       videoFiles: [],
       fullscreenLoading: false,
      
       exams: [
         //考核列表
-        {
-          id: 875346325,
-          name: "第一次考核",
-          start_date: "2024-02-10 00:00:00",
-          end_time: "2024-04-10 00:00:00",
-          fileUrl: "",
-        },
-        {
-          id: 987654334,
-          name: "第二次考核",
-          start_date: "2024-11-10 00:00:00",
-          end_time: "2024-12-30 00:00:00",
-          fileUrl: "",
-        },
+        // {
+        //   id: 875346325,
+        //   name: "第一次考核",
+        //   start_date: "2024-02-10 00:00:00",
+        //   end_time: "2024-04-10 00:00:00",
+        //   fileUrl: "",
+        // },
+        // {
+        //   id: 987654334,
+        //   name: "第二次考核",
+        //   start_date: "2024-11-10 00:00:00",
+        //   end_time: "2024-12-30 00:00:00",
+        //   fileUrl: "",
+        // },
       ],
       editExam: {
         //新考核
@@ -531,274 +528,66 @@ export default {
       },
       newExam: {
         //新考核
-        id: 49156,
+        id: '',
         name: "",
         start_date: "",
         end_time: "",
       },
       rankingData: [
-        {
-          userID: 498156,
-          name: "张三",
-          classes: "软件2401",
-          avatarUrl:
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          average: 81,
-          ranking: 1,
-          answerUrl:
-            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
-        },
-        {
-          userID: 7653,
-          name: "张三",
-          classes: "软件2401",
-          avatarUrl:
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-            average: 98,
-          ranking: 1,
-          answerUrl:
-            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
-        },
+        // {
+        //   userID: 498156,
+        //   name: "张三",
+        //   classes: "软件2401",
+        //   avatarUrl:
+        //     "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //   average: 81,
+        //   ranking: 1,
+        //   answerUrl:
+        //     "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+        // },
+        // {
+        //   userID: 7653,
+        //   name: "张三",
+        //   classes: "软件2401",
+        //   avatarUrl:
+        //     "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //     average: 98,
+        //   ranking: 1,
+        //   answerUrl:
+        //     "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+        // },
       ],
       scoreData: [
-        {
-          userID: 7837835,
-          id:23344,
-          name: "张三",
-          classes: "软件2401",
-          avatarUrl:
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          answer: 
-            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+        // {
+        //   userID: 7837835,
+        //   id:23344,
+        //   name: "张三",
+        //   classes: "软件2401",
+        //   avatarUrl:
+        //     "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //   answer: 
+        //     "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
           
-        },
-        {
-          userID: 7354,
-          id:4324546,
-          name: "张三",
-          classes: "软件2401",
-          avatarUrl:
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-            answer: 
-            "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
-        },
+        // },
+        // {
+        //   userID: 7354,
+        //   id:4324546,
+        //   name: "张三",
+        //   classes: "软件2401",
+        //   avatarUrl:
+        //     "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        //     answer: 
+        //     "https://raw.githubusercontent.com/ikunhx/test/master/video.zip",
+        // },
       ],
 
       comments: [
-        // {
-        //   id: 7853205,
-        //   url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //   name: "张三",
-        //   data: 1729390765572,
-        //   expanded: false,
-        //   replayVisible: false, //是否展示回复评论窗口
-        //   showAllReplays: false, //展示所有回复
-        //   content: "考核好难55555555",
-        //   discussNum: 0,
-        //   replays: [],
-        // },
-        // {
-        //   id: 7534478,
-        //   url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //   name: "张大三",
-        //   data: 1729890765572,
-        //   expanded: false,
-        //   replayVisible: false, //是否展示回复评论窗口
-        //   showAllReplays: false, //展示所有回复
-        //   discussNum: 12,
-        //   content:
-        //     "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //   replays: [
-        //     {
-        //       id: 753941,
-        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //       name: "张三",
-        //       data: 1729390765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content: "考核好难55555555",
-        //     },
-        //     {
-        //       id: 4534444442,
-        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //       name: "张三",
-        //       data: 1729390765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content: "考核好难55555555",
-        //     },
-        //     {
-        //       id: 453434,
-        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //       name: "张大三",
-        //       data: 1729890765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content:
-        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //     },
-        //     {
-        //       id: 453123,
-        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //       name: "张大三",
-        //       data: 1729890765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content:
-        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //     },
-        //     {
-        //       id: 4531231,
-        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //       name: "张三",
-        //       data: 1729390765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content: "考核好难55555555",
-        //     },
-        //     {
-        //       id: 4534132,
-        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //       name: "张大三",
-        //       data: 1729890765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content:
-        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //     },
-        //     {
-        //       id: 76543456676,
-        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //       name: "张三",
-        //       data: 1729390765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content: "考核好难55555555",
-        //     },
-        //     {
-        //       id: 456547,
-        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //       name: "张大三",
-        //       data: 1729890765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content:
-        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //     },
-        //     {
-        //       id: 876542,
-        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //       name: "张三",
-        //       data: 1729390765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content: "考核好难55555555",
-        //     },
-        //     {
-        //       id: 8573454,
-        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //       name: "张大三",
-        //       data: 1729890765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content:
-        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //     },
-        //     {
-        //       id: 3475463,
-        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //       name: "张三",
-        //       data: 1729390765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content: "考核好难55555555",
-        //     },
-        //     {
-        //       id: 2374546,
-        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //       name: "张大三",
-        //       data: 1729890765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content:
-        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //     },
-        //     {
-        //       id: 2463548,
-        //       url: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //       name: "张三",
-        //       data: 1729390765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content: "考核好难55555555",
-        //     },
-        //     {
-        //       id: 743623545,
-        //       url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //       name: "张大三",
-        //       data: 1729890765572,
-        //       expanded: false,
-        //       replayVisible: false, //是否展示回复评论窗口
-        //       discussNum: 0,
-        //       content:
-        //         "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 237765,
-        //   url: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //   name: "张大三",
-        //   data: 1729890765572,
-        //   expanded: false,
-        //   replayVisible: false, //是否展示回复评论窗口
-        //   discussNum: 2,
-        //   showAllReplays: false, //展示所有回复
-        //   content:
-        //     "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //   replays: [
-        //     // {
-        //     //   id: numberID(),
-        //     //   url: "http://localhost:8080/fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        //     //   name: "张三",
-        //     //   data: 1729390765572,
-        //     //   expanded: false,
-        //     //   replayVisible: false, //是否展示回复评论窗口
-        //     //   discussNum:0 ,
-        //     //   content: "考核好难55555555",
-        //     // },
-        //     // {
-        //     //   id: numberID(),
-        //     //   url: "http://localhost:8080/fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-        //     //   name: "张大三",
-        //     //   data: 1729890765572,
-        //     //   expanded: false,
-        //     //   replayVisible: false, //是否展示回复评论窗口
-        //     //   discussNum:0 ,
-        //     //   content:
-        //     //     "关于主播组织赌博的问题，蓝鲸新闻记者咨询了律师。广东泰伦律师事务所罗建林律师认为，主播夏宁通过建立多个微信群组织赌博的行为，符合《刑法》第三百零三条第二款规定的开设赌场罪，是要追究刑事责任的。同时，根据《关于办理网络赌博犯罪案件适用法律若干问题的意见 》的规定，鉴于夏宁经常换群组织赌博，且从群赌博流水中抽成获利已超过了3万元，赌资金额累计超过30万元，参赌人数可能也累计达到120人以上，已经达到了“情节严重”的情形，将有可能被判处三年以上十年以下有期徒刑，并处罚金。罗建林称：“作为广大参与网络赌博者，一般无需承担刑事责任，因为法律主要是追究组织者或者以赌博为业的人。不过，如今手机及网络发达，广大群众应积极抵制网络赌博的行为，以避免因此遭受财产损失。”",
-        //     // },
-        //   ],
-        // },
+     
       ],
     };
   },
   methods: {
     judge() {
-      console.log("Checking token:", this.$store.state.token); // 使用 getter 获取 token
       if (this.$store.state.token === "") {
         if (this.$router.path !== "/User") {
           this.$router.push("/User");
@@ -862,12 +651,11 @@ export default {
     handleRanking(row) {
       this.fullscreenLoading = true;
       const id = row.id
-      alert(id)
       //查看排名
       this.rankingTable = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/root/examine_ranking?id=${id}`,
+          `http://121.40.221.40:8080/qingteng-recruitment/root/examine_ranking?id=${id}`,
           {},
           {
             headers: {
@@ -890,7 +678,7 @@ export default {
       this.examID = row.id;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/root/select_exam?id=${this.examID}`,
+          `http://121.40.221.40:8080/qingteng-recruitment/root/select_exam?id=${this.examID}`,
           { },
           {
             headers: {
@@ -924,11 +712,10 @@ export default {
         end_time: endTime,
         discuss_id: discussId,
       };
-      console.log(commentData);
       
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/discuss/select",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/select",
           commentData,
           {
             headers: {
@@ -940,7 +727,6 @@ export default {
           this.comments.unshift(...response.data.data.discussVOList);
           this.lastTime = response.data.data.endTime;
           this.fullscreenLoading = false;
-          console.log(this.lastTime);
           
         })
         .catch((error) => {
@@ -966,7 +752,7 @@ export default {
         
         axios
           .post(
-            "http://localhost:8080/qingteng-recruitment/user/discuss/select",
+            "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/select",
             formData,
             {
               headers: {
@@ -989,33 +775,12 @@ export default {
               replay.replayVisible = true;
             });
             comment.showAllReplays = true;
-            console.log(
-              comment.discussNum,
-              "----------",
-              this.num,
-              "-----",
-              comment.replays.length
-            );
+            
           })
           .catch((error) => {
             this.fullscreenLoading = false;
             this.$message.error("ERROR：" + error.message);
-            // 展开所有回复
-            // if (comment.originalDiscussNum === undefined) {
-            //   comment.originalDiscussNum = comment.discussNum;
-            // }
-            // comment.discussNum -= 10;
-            // comment.replays.forEach((replay) => {
-            //   replay.replayVisible = true;
-            // });
-            // comment.showAllReplays = true;
-            // console.log(
-            //   comment.discussNum,
-            //   "----------",
-            //   this.num,
-            //   "-----",
-            //   comment.replays.length
-            // );
+           
           });
       } else {
         // 收起所有回复
@@ -1027,13 +792,7 @@ export default {
         comment.showAllReplays = false;
         comment.replays = [];
         this.num = 0;
-        console.log(
-          comment.discussNum,
-          "----------",
-          this.num,
-          "-----",
-          comment.replays.length
-        );
+       
       }
     },
 
@@ -1042,11 +801,9 @@ export default {
     closeRanking() {},
     handleRemove(file, fileList) {
       //移除考核文件
-      console.log(file, fileList);
     },
     handlePreview(file) {
       //预览考核文件
-      console.log(file);
     },
     handleExceed(files, fileList) {
       //处理文件超出三个的情况
@@ -1124,7 +881,7 @@ export default {
       formData.append("beginTime", beginTime);
       formData.append("endTime", endTime);
       formData.append("fileUrl", fileUrl);
-      const url = "http://localhost:8080/qingteng-recruitment/root/edit_exam";
+      const url = "http://121.40.221.40:8080/qingteng-recruitment/root/edit_exam";
       axios
         .post(url, formData, {
           headers: {
@@ -1136,7 +893,7 @@ export default {
           this.fullscreenLoading = false;
           this.$message({
             type: "success",
-            message: "添加成功!",
+            message: response.data.message,
           });
           this.closeEdit();
         })
@@ -1157,7 +914,7 @@ export default {
       formData.append("beginTime", beginTime);
       formData.append("endTime", endTime);
       formData.append("fileUrl", fileUrl);
-      const url = "http://localhost:8080/qingteng-recruitment/root/edit_exam";
+      const url = "http://121.40.221.40:8080/qingteng-recruitment/root/edit_exam";
       axios
         .post(url, formData, {
           headers: {
@@ -1169,7 +926,7 @@ export default {
           this.fullscreenLoading = false;
           this.$message({
             type: "success",
-            message: "提交成功!",
+            message:response.data.message,
           });
           this.closeEdit();
         })
@@ -1233,6 +990,8 @@ export default {
       this.fetchAndUnzip(row.answerUrl);
     },
     giveScore(row) {
+      this.pdfFiles=[];
+      this.videoFiles=[];
       this.markTable = true;
       this.fetchAndUnzip(row.answer);
       this.examID=row.id
@@ -1240,15 +999,13 @@ export default {
 
     submitScore() {
       this.fullscreenLoading = true;
-      console.log(this.examID);
 
       const scoreData = { grades: this.grades, examId: this.examID };
 
-      console.log(scoreData);
 
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/score",
+          "http://121.40.221.40:8080/qingteng-recruitment/root/score",
           scoreData,
           {
             headers: {
@@ -1260,7 +1017,7 @@ export default {
           this.fullscreenLoading = false;
           this.$message({
             type: "success",
-            message: "评分成功",
+            message: response.data.message,
           });
         })
         .catch((error) => {
@@ -1312,7 +1069,7 @@ export default {
 
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/discuss/save",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/save",
           commentData,
           {
             headers: {
@@ -1324,7 +1081,7 @@ export default {
           this.fullscreenLoading = false;
           this.$message({
             type: "success",
-            message: "评论成功!",
+            message: response.data.message,
           });
           this.commentType = "0";
         })
@@ -1344,7 +1101,7 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/root/display_exam",
+          "http://121.40.221.40:8080/qingteng-recruitment/root/display_exam",
           {},
           {
             headers: {
@@ -1369,7 +1126,7 @@ export default {
       this.fullscreenLoading = true;
       axios
         .post(
-          `http://localhost:8080/qingteng-recruitment/root/examine_delete?id=${id}`,
+          `http://121.40.221.40:8080/qingteng-recruitment/root/examine_delete?id=${id}`,
           {},
           {
             headers: {
@@ -1383,7 +1140,7 @@ export default {
           this.fullscreenLoading = false;
           this.$message({
             type: "success",
-            message: "删除成功!",
+            message: response.data.message,
           });
           this.showExams();
         })
@@ -1421,7 +1178,6 @@ export default {
           // 将文件转换为 Blob 对象，并指定 MIME 类型
           file.async("blob").then(async (blob) => {
             const fileUrl = URL.createObjectURL(blob);
-            console.log(`Generated URL for ${file.name}: ${fileUrl}`); // 打印生成的 URL
             const fileType = file.name.split(".").pop().toLowerCase();
 
             let mimeType;

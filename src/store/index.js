@@ -7,22 +7,34 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    userName: 'Bob', // 用户信息存储在这里
-    classes: '软件2401',
-    studentId: '6020241790',
-    avatarUrl: 'https://profile-avatar.csdnimg.cn/869f73aba88141568df7e17f17ed575c_qq_56989560.jpg!1',
-    admin: 3,
-    token:"12345678900",
-
+    userName: '', // 用户信息存储在这里
+    classes: '',
+    studentId: '',
+    avatarUrl: '',
+    admin: null,
+    token:"",
+    phone:'',
+    QQnum:'',
+    direction:'',
+    advantage:'',
     userData: {
       ranking: '',
       user: '',
-      average: ''
+      average: '',
     },
   },
   mutations: {
-    setUser(state, user) {
-      state.user = user;
+    setUser(state, userName) {
+      state.userName = userName;
+    },
+    setClasses(state, classes) {
+      state.classes = classes;
+    },
+    setStudentId(state, studentId) {
+      state.studentId = studentId;
+    },
+    setAvatarUrl(state, avatarUrl) {
+      state.avatarUrl = avatarUrl;
     },
     setToken(state, token) {
       state.token = token;
@@ -32,6 +44,18 @@ export default new Vuex.Store({
     },
     setUserInfo(state, userInformation) {
       state.userInformation = userInformation;
+    },
+    setPhone(state, phone) {
+      state.phone = phone;
+    },
+    setQQnum(state, QQnum) {
+      state.QQnum = QQnum;
+    },
+    setDirection(state, direction) {
+      state.direction = direction;
+    },
+    setAdvantage(state, advantage) {
+      state.advantage = advantage;
     }
   },
   actions: {
@@ -46,6 +70,30 @@ export default new Vuex.Store({
     },
     setAdmin({ commit }, admin) {
       commit('setAdmin', admin);  // 提交 mutation
+    },
+    setUser({ commit }, userName) {
+      commit('setUser', userName);  // 提交 mutation
+    },
+    setClasses({ commit }, classes) {
+      commit('setClasses', classes);  // 提交 mutation
+    },
+    setStudentId({ commit }, studentId) {
+      commit('setStudentId', studentId);  // 提交 mutation
+    },
+    setAvatarUrl({ commit }, avatarUrl) {
+      commit('setAvatarUrl', avatarUrl);  // 提交 mutation
+    },
+    setPhone({ commit }, phone) {
+      commit('setPhone', phone);  // 提交 mutation
+    },
+    setQQnum({ commit }, QQnum) {
+      commit('setQQnum', QQnum);  // 提交 mutation
+    },
+    setDirection({ commit }, direction) {
+      commit('setDirection', direction);  // 提交 mutation
+    },
+    setAdvantage({ commit }, advantage) {
+      commit('setAdvantage', advantage);  // 提交 mutation
     },
     clearToken({ commit }) {
       commit('setToken', '');

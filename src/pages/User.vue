@@ -7,47 +7,105 @@
       </div>
       <div class="login" v-if="currentPage === 'login'">
         <div class="user">
-          <el-input v-model="user.email" placeholder="请输入您的QQ邮箱"></el-input>
+          <el-input
+            v-model="user.email"
+            placeholder="请输入您的QQ邮箱"
+          ></el-input>
         </div>
         <div class="password">
-          <el-input v-model="user.password" placeholder="请输入您的密码"></el-input>
+          <el-input
+            v-model="user.password"
+            placeholder="请输入您的密码"
+          ></el-input>
         </div>
-        <el-button class="login-button" @click="login" type="primary">登录</el-button>
+        <el-button class="login-button" @click="login" type="primary"
+          >登录</el-button
+        >
         <div class="register-box">
-          <a class="login-a">没有账号？<span class="login-span" @click="toRegister">立即注册</span></a>
+          <a class="login-a"
+            >没有账号？<span class="login-span" @click="toRegister"
+              >立即注册</span
+            ></a
+          >
         </div>
       </div>
 
       <div class="another-login" v-else-if="currentPage === 'emailLogin'">
         <div class="email1">
-          <el-input v-model="user.email" placeholder="请输入您的QQ邮箱"></el-input>
-          <button class="send-email" primary @click="sendVerificationCode">发送</button>
+          <el-input
+            v-model="user.email"
+            placeholder="请输入您的QQ邮箱"
+          ></el-input>
+          <button 
+  ref="sendEmailButton" 
+  class="send-email primary" 
+  :disabled="isCooldown"
+  @click="sendVerificationCode">
+  发送
+</button>
         </div>
         <div class="password">
-          <el-input v-model="user.code" placeholder="请输入您的验证码"></el-input>
+          <el-input
+            v-model="user.code"
+            placeholder="请输入您的验证码"
+          ></el-input>
         </div>
-        <el-button class="emailLogin-button" @click="emailLogin" type="primary">登录</el-button>
+        <el-button class="emailLogin-button" @click="emailLogin" type="primary"
+          >登录</el-button
+        >
         <div class="register-box">
-          <a class="login-a">没有账号？<span class="login-span" @click="toRegister">立即注册</span></a>
+          <a class="login-a"
+            >没有账号？<span class="login-span" @click="toRegister"
+              >立即注册</span
+            ></a
+          >
         </div>
       </div>
-      <div class="register" v-else-if="currentPage === 'register'" @submit.prevent="register">
+      <div
+        class="register"
+        v-else-if="currentPage === 'register'"
+        @submit.prevent="register"
+      >
         <div class="email">
-          <el-input v-model="user.email" placeholder="请输入您的QQ邮箱"></el-input>
-          <button class="send-email" primary @click="sendVerificationCode">发送</button>
+          <el-input
+            v-model="user.email"
+            placeholder="请输入您的QQ邮箱"
+          ></el-input>
+          <button 
+  ref="sendEmailButton" 
+  class="send-email primary" 
+  :disabled="isCooldown"
+  @click="sendVerificationCode">
+  发送
+</button>
         </div>
         <div class="password">
-          <el-input v-model="user.password" placeholder="请输入您的密码"></el-input>
+          <el-input
+            v-model="user.password"
+            placeholder="请输入密码（字母加数字）"
+          ></el-input>
         </div>
         <div class="password">
-          <el-input v-model="user.passwords" placeholder="请确认您的密码"></el-input>
+          <el-input
+            v-model="user.passwords"
+            placeholder="请确认您的密码"
+          ></el-input>
         </div>
         <div class="password">
-          <el-input v-model="user.code" placeholder="请输入您的验证码"></el-input>
+          <el-input
+            v-model="user.code"
+            placeholder="请输入您的验证码"
+          ></el-input>
         </div>
-        <el-button class="register-button" @click="register" type="primary">注册</el-button>
+        <el-button class="register-button" @click="register" type="primary"
+          >注册</el-button
+        >
         <div class="register-box">
-          <a class="register-a">已有账号？<span class="register-span" @click="toLogin">立即登录</span></a>
+          <a class="register-a"
+            >已有账号？<span class="register-span" @click="toLogin"
+              >立即登录</span
+            ></a
+          >
         </div>
       </div>
     </div>
@@ -67,9 +125,18 @@ export default {
         passwords: "",
         code: "",
         isCooldown: false,
-        cooldownTimer: null
+        cooldownTimer: null,
+        cooldownTime: 60, // 冷却时间（秒）
+      cooldownInterval: null, // 定时器引用
       },
     };
+  },
+  watch: {
+    currentPage(newVal) {
+      if (newVal === "login") {
+        this.resetUser();
+      }
+    },
   },
   methods: {
     judge() {
@@ -78,6 +145,16 @@ export default {
           this.$router.push("/User");
         }
       }
+    },
+    resetUser() {
+      this.user = {
+        email: "",
+        password: "",
+        passwords: "",
+        code: "",
+        isCooldown: false,
+        cooldownTimer: null,
+      };
     },
     toRegister() {
       console.log(this.currentPage);
@@ -97,102 +174,124 @@ export default {
         this.$message.error("请输入邮箱地址");
         return;
       }
-      axios
-        .post("http://localhost:8080/qingteng-recruitment/user/sendEmail", {
+
+      if (this.isCooldown){
+        this.$message.warning(`请在${this.cooldownTime}后重新发送！`)
+      }else{
+        axios
+        .post("http://121.40.221.40:8080/qingteng-recruitment/user/sendEmail", {
           email: this.user.email,
         })
         .then((response) => {
-          this.$message.success(
-            response.data.data || "验证码已发送，请查收邮件"
-          );
+          this.$message.success(response.data.message);
           this.startCooldown();
         })
         .catch((error) => {
-          console.error("发送验证码失败:", error);
-          this.$message.error(error.response.data.error || "发送验证码失败");
+          console.error("发送验证码失败:", error.message);
+          this.$message.error(error.message || "发送验证码失败");
         });
+      }
+
+     
     },
     startCooldown() {
       this.isCooldown = true;
-      this.cooldownTimer = setTimeout(() => {
-        this.isCooldown = false;
-      }, 60000);
+      this.cooldownTime = 60;
+
+      if (this.cooldownInterval) {
+        clearInterval(this.cooldownInterval);
+      }
+
+      this.updateButtonText(); // 初始化按钮文本
+
+      this.cooldownInterval = setInterval(() => {
+        if (this.cooldownTime > 0) {
+          this.cooldownTime--;
+          this.updateButtonText(); // 每秒更新按钮文本
+        } else {
+          this.stopCooldown();
+        }
+      }, 1000);
     },
+    stopCooldown() {
+      clearInterval(this.cooldownInterval);
+      this.cooldownInterval = null;
+      this.isCooldown = false;
+      this.updateButtonText(); // 更新按钮文本为初始状态
+    },
+    updateButtonText() {
+      // 直接在这里更新 cooldownTime 即可，不需要 $nextTick
+      // 因为这是响应式的，Vue 会自动处理 DOM 更新
+    },
+  
+
     login() {
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/login",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/login",
           this.user
         )
         .then((response) => {
           // 隐藏加载状态
           this.$message.closeAll();
-          console.log("Response:", response); // 调试输出
-          this.$store.dispatch("setToken", response.data.data.token);
-          this.$store.dispatch("setAdmin", response.data.data.admin);
-          if (response && response.data && response.data.data) {
+
+          if (response.data.code === 200) {
+            this.$store.dispatch("setToken", response.data.data.token);
+            this.$store.dispatch("setAdmin", response.data.data.admin);
             if (response.data.data.admin === 3) {
               this.$router.push({ name: "showUser" });
             } else if (response.data.data.admin === 1) {
               this.$router.push({ name: "showAdministrator" });
             }
-            this.$message.success("登录成功");
+            this.$message.success(response.data.message);
           } else {
-            this.$message.error("登录失败，服务器返回数据格式不正确");
+            this.$message.error(response.data.message);
           }
         })
         .catch((error) => {
           // 隐藏加载状态
           this.$message.closeAll();
-          console.error("Login error:", error);
-          this.$message.error(
-            error.response
-              ? error.response.data.message || "登录失败"
-              : "网络请求失败"
-          );
+          console.error("Login error:", error.message);
+          this.$message.error(error.message);
         });
-        
     },
     emailLogin() {
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/emailLogin",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/emailLogin",
           this.user
         )
         .then((response) => {
           // 隐藏加载状态
           this.$message.closeAll();
           console.log("Response:", response); // 调试输出
-          this.$store.dispatch("setToken", response.data.data.token);
-          this.$store.dispatch("setAdmin", response.data.data.admin);
-          if (response && response.data && response.data.data) {
+
+          if (response.data.data) {
+            this.$store.dispatch("setToken", response.data.data.token);
+            this.$store.dispatch("setAdmin", response.data.data.admin);
             if (response.data.data.admin === 3) {
               this.$router.push({ name: "showUser" });
             } else if (response.data.data.admin === 1) {
               this.$router.push({ name: "showAdministrator" });
             } else if (response.data.data.admin === 2) {
-              this.$router.push({ name: 'showSuperAdministrator' });
+              this.$router.push({ name: "showSuperAdministrator" });
             }
-            this.$message.success("登录成功");
+            this.$message.success(response.data.message);
           } else {
-            this.$message.error("登录失败，服务器返回数据格式不正确");
+            this.$message.error(response.data.message);
           }
         })
         .catch((error) => {
           // 隐藏加载状态
           this.$message.closeAll();
           console.error("Login error:", error);
-          this.$message.error(
-            error.response
-              ? error.response.data.error || "登录失败"
-              : "网络请求失败"
-          );
+          this.$message.error(error.message);
         });
     },
     async register() {
       try {
         const response = await axios.post(
-          "http://localhost:8080/qingteng-recruitment/user/register",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/register",
           {
             email: this.user.email,
             password: this.user.password,
@@ -200,21 +299,18 @@ export default {
             code: this.user.code,
           }
         );
-        if (response.data.message=="用户注册成功") {
+        if (response.data.message == "用户注册成功") {
           // 处理注册成功的情况
-          this.$message.success(response.data.data || "注册成功");
+          this.$message.success(response.data.message);
+          this.resetUser();
           this.currentPage = "login";
         } else {
           // 处理注册失败的情况
-          this.$message.error(response.data.error || "注册失败");
+          this.$message.error(response.data.message);
         }
       } catch (error) {
         // 处理网络请求失败的情况
-        this.$message.error(
-          error.response
-            ? error.response.data.error || "注册失败"
-            : "网络请求失败"
-        );
+        this.$message.error(error.response.message);
       }
     },
     scrollToRight() {
@@ -234,7 +330,10 @@ export default {
     if (this.cooldownTimer) {
       clearTimeout(this.cooldownTimer);
     }
-  }
+    if (this.cooldownInterval) {
+      clearInterval(this.cooldownInterval);
+    }
+  },
 };
 </script>
 

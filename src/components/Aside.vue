@@ -28,11 +28,11 @@
             >
             <el-menu-item
               index="2-3"
-              @click="handleChange('change', 'UserExamine')"
+              @click="handleChange('change', UserExamine)"
               v-if="this.$store.state.admin === 3"
               >用户考核</el-menu-item
             >
-          
+
             <el-menu-item
               index="/MyResource"
               @click="handleChange('change', 'MyResource')"
@@ -41,14 +41,14 @@
             >
             <el-menu-item
               index="/UserResource"
-              @click="handleChange('change', 'UserResource')"
+              @click="handleChange('change', UserResource)"
               v-if="this.$store.state.admin === 3"
               >用户资源</el-menu-item
             >
           </el-menu-item-group>
         </el-submenu>
 
-        <el-menu-item index="3" @click="handleChange('change', 'User')">
+        <el-menu-item index="3" @click="handleChange('change', User)">
           <i class="el-icon-user"></i>
           <span slot="title">用户</span>
         </el-menu-item>
@@ -72,11 +72,60 @@ export default {
     },
     //url跳转路由名，不要加斜杠，name为触发事件名
     handleChange(name, url) {
-      this.$bus.$emit(name, url);
-      // else {
-      //   if (this.$store.state.token !== "") this.$bus.$emit(name, url);
-      //   else this.$bus.$emit("change", "User");
-      // }
+      if(url==='err'){
+        this.$message({
+            type: "warning",
+            message: "用户信息不完整，请完善信息",
+          });
+      }else{
+        this.$bus.$emit(name, url)
+      }
+      
+    
+    },
+  },
+  computed: {
+    User() {
+      if (this.$store.state.token !== "") {
+        if(this.$store.state.admin === 1)
+        return "showAdministrator";
+        if(this.$store.state.admin === 3)
+        return "showUser";
+      } else {
+        return "User";
+      }
+    },
+    UserExamine() {
+      if (
+        this.$store.state.userName !== "" &&
+        this.$store.state.classes !== "" &&
+        this.$store.state.studentId !== "" &&
+        this.$store.state.avatarUrl !== "" &&
+        this.$store.state.phone !== "" &&
+        this.$store.state.QQnum !== "" &&
+        this.$store.state.direction !== "" &&
+        this.$store.state.advantage !== ""
+      ) {
+        return "UserExamine";
+      } else {
+        return "err";
+      }
+    },
+    UserResource() {
+      if (
+        this.$store.state.userName !== "" &&
+        this.$store.state.classes !== "" &&
+        this.$store.state.studentId !== "" &&
+        this.$store.state.avatarUrl !== "" &&
+        this.$store.state.phone !== "" &&
+        this.$store.state.QQnum !== "" &&
+        this.$store.state.direction !== "" &&
+        this.$store.state.advantage !== ""
+      ) {
+        return "UserResource";
+      } else {
+        return "err";
+      }
     },
   },
 };

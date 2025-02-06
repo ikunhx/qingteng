@@ -15,7 +15,7 @@ module.exports = defineConfig({
   },
   // 添加 devServer 配置以更改端口号
   devServer: {
-    port: 9000, // 更改为你想要使用的端口号
+    port: 888, // 更改为你想要使用的端口号
     // 其他 devServer 配置...
   }
 })

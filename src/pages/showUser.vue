@@ -4,12 +4,31 @@
       <div>
         <div class="top">
           <div class="top-middle">
-            <img v-if="!isEditing" class="top-img" :src="userInformation.avatar || defaultUrl" />
+            <img
+              v-if="!isEditing"
+              class="top-img"
+              :src="userInformation.avatar || defaultUrl"
+            />
             <div class="top-img2" v-else>
-              <img class="top-img" :src="userInformation.avatar || defaultUrl">
-              <el-button class="change-button" type="primary" plain @click="showFileInput"
-                v-if="isEditing">上传头像</el-button>
-              <input type="file" accept="image/*" @change="handleFileUpload" ref="fileInput" style="display: none;" />
+              <img
+                class="top-img"
+                :src="userInformation.avatar || defaultUrl"
+              />
+              <el-button
+                class="change-button"
+                type="primary"
+                plain
+                @click="showFileInput"
+                v-if="isEditing"
+                >上传头像</el-button
+              >
+              <input
+                type="file"
+                accept="image/*"
+                @change="handleFileUpload"
+                ref="fileInput"
+                style="display: none"
+              />
             </div>
             <div class="top-aside">
               <input
@@ -172,10 +191,11 @@ export default {
         advantage: "",
       },
       originalUser: {},
-      direction: "前端",
+      direction: "",
       qq: "",
       selectedFile: null, // 用于存储用户选择的文件
-      defaultUrl: 'https://q7.itc.cn/q_70/images03/20240613/38e50443a3a148b287d1d13bd43ebd69.jpeg',
+      defaultUrl:
+        "https://q7.itc.cn/q_70/images03/20240613/38e50443a3a148b287d1d13bd43ebd69.jpeg",
     };
   },
   mounted() {
@@ -193,18 +213,27 @@ export default {
     fetchUserInfo() {
       axios
         .post(
-          "http://localhost:8080/qingteng-recruitment/user/detail/show",
+          "http://121.40.221.40:8080/qingteng-recruitment/user/detail/show",
           {}, // 如果没有请求体，可以保留为空对象
           {
             headers: {
-              "token": `${this.$store.state.token}`, // 设置 Authorization 头
+              token: `${this.$store.state.token}`, // 设置 Authorization 头
             },
           }
         )
         .then((response) => {
           this.userInformation = response.data.data;
           this.qq = this.userInformation.qq;
+          this.direction = this.userInformation.direction;
           this.avatar = this.userInformation.avatar;
+          this.$store.dispatch("setDirection", response.data.data.direction);
+          this.$store.dispatch("setAvatarUrl", response.data.data.avatar);
+          this.$store.dispatch("setQQnum", response.data.data.qq);
+          this.$store.dispatch("setUser", response.data.data.name);
+          this.$store.dispatch("setClasses", response.data.data.classes);
+          this.$store.dispatch("setStudentId", response.data.data.studentId);
+          this.$store.dispatch("setPhone", response.data.data.phone);
+          this.$store.dispatch("setAdvantage", response.data.data.advantage);
         })
         .catch((error) => {
           this.error = error.message;
@@ -224,26 +253,33 @@ export default {
     },
     handleFileUpload(event) {
       this.selectedFile = event.target.files[0];
-      if(this.selectedFile) {
+      this.userInformation.avatar = URL.createObjectURL(this.selectedFile);
+      if (this.selectedFile) {
         const reader = new FileReader();
+        // 读取文件作为 data URL
         reader.readAsDataURL(this.selectedFile);
       }
     },
     async saveChanges() {
       if (this.selectedFile) {
         const formData = new FormData();
-        formData.append('file', this.selectedFile);
+        formData.append("file", this.selectedFile);
 
         try {
-          const response = await axios.post("http://localhost:8080/qingteng-recruitment/user/common/upload", formData, {
-            headers: {
-              "token": `${this.$store.state.token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          });
+          const response = await axios.post(
+            "http://121.40.221.40:8080/qingteng-recruitment/user/common/upload",
+            formData,
+            {
+              headers: {
+                token: `${this.$store.state.token}`,
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
 
           if (response.data.code === 200) {
             this.userInformation.avatar = response.data.data;
+            this.$store.dispatch("setAvatarUrl", response.data.data);
           } else {
             this.$message.error(response.data.message);
             return;
@@ -257,15 +293,26 @@ export default {
 
       this.userInformation.direction = this.direction;
       this.userInformation.qq = this.qq;
-
-      axios.post("http://localhost:8080/qingteng-recruitment/user/detail/edit", this.userInformation, {
-        headers: {
-          "token": `${this.$store.state.token}`,
-        },
-      })
+      this.$store.dispatch("setDirection", this.direction);
+      this.$store.dispatch("setQQnum", this.qq);
+      this.$store.dispatch("setUserName", this.userInformation.name);
+      this.$store.dispatch("setClasses", this.userInformation.classes);
+      this.$store.dispatch("setStudentId", this.userInformation.studentId);
+      this.$store.dispatch("setPhone", this.userInformation.phone);
+      this.$store.dispatch("setAdvantage", this.userInformation.advantage);
+      axios
+        .post(
+          "http://121.40.221.40:8080/qingteng-recruitment/user/detail/edit",
+          this.userInformation,
+          {
+            headers: {
+              token: `${this.$store.state.token}`,
+            },
+          }
+        )
         .then((response) => {
           if (response.data.code === 200) {
-            this.$message.success("用户信息保存成功");
+            this.$message.success(response.data.message);
             this.isEditing = false;
           } else {
             this.$message.error(response.data.message);
@@ -278,9 +325,9 @@ export default {
         });
     },
   },
-//   beforeDestroy() {
-//     this.$store.dispatch("setToken", "");
-//   },
+  //   beforeDestroy() {
+  //     this.$store.dispatch("setToken", "");
+  //   },
 };
 </script>
 
@@ -407,6 +454,9 @@ h3 {
 .edit-button {
   margin-top: 20px;
   margin-left: 640px;
+  position: absolute;
+  bottom: 2vh;
+  right: 16vw;
 }
 
 .cancel-button {
