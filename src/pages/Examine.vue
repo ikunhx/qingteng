@@ -327,6 +327,7 @@
       </div>
       <video
         v-for="(videoFile, index) in videoFiles"
+        
         :key="index"
         :src="videoFile.url"
         fit="fill"
@@ -375,6 +376,7 @@
       size="30%"
       class="commentDrawer"
       @close="clearComments"
+      :key="drawerKey"
     >
       <div
         v-for="comment in comments"
@@ -432,7 +434,6 @@
             </div>
           </div>
         </div>
-
         <el-button
           type="text"
           class="btn-moreReplay"
@@ -494,6 +495,7 @@ export default {
       markTable: false, //是否展示评分窗口
       commentTable: false, //是否展示评论窗口
       examID: "",
+      drawerKey:null,
       commentType: 0,
       lastTime: "",
       answerUrl: "",
@@ -986,6 +988,8 @@ export default {
       };
     },
     showAnswer(row) {
+      this.pdfFiles=[];
+      this.videoFiles=[];
       this.answerTable = true;
       this.fetchAndUnzip(row.answerUrl);
     },
@@ -1029,68 +1033,121 @@ export default {
       comment.expanded = !comment.expanded;
     },
    
-    sendComment() {
-      this.fullscreenLoading = true;
-      const commentData = {
-        content: this.textarea,
-        discussId: this.commentType,
-        examId: this.examID,
-      };
-      const newComment={
-        id:this.$store.state.studentId,
-        avatar:this.$store.state.avatarUrl,
-        name:this.$store.state.userName,
-        content:commentData.content,
-        createTime:this.showTime(new Date().getTime()),
-        discussNum:0,
-        expanded:false,
-        replayVisible:false,
-        showAllReplays:false,
-        replay:[]
-      }
-      const newReplay={
-        id:this.$store.state.studentId,
-        avatar:this.$store.state.avatarUrl,
-        name:this.$store.state.userName,
-        content:commentData.content,
-        createTime:this.showTime(new Date().getTime()),
-        discussNum:0,
-        expanded:false,
-        replayVisible:false,
-        showAllReplays:false,
-        replay:[]
-      }
-      if(commentData.discussId===0){
-        this.comments.unshift(newComment)
-      }else if(commentData.discussId===1){
-        const targetId = this.comments.findIndex((item) => item.id === commentData.discussId);
-        this.comments[targetId].replays.push(newReplay);
-      }
+    // sendComment() {
+    //   this.fullscreenLoading = true;
+    //   const commentData = {
+    //     content: this.textarea,
+    //     discussId: this.commentType,
+    //     examId: this.examID,
+    //   };
+    //   const newComment={
+    //     id:this.$store.state.studentId,
+    //     avatar:this.$store.state.avatarUrl,
+    //     name:this.$store.state.userName,
+    //     content:commentData.content,
+    //     createTime:this.showTime(new Date().getTime()),
+    //     discussNum:0,
+    //     expanded:false,
+    //     replayVisible:false,
+    //     showAllReplays:false,
+    //     replay:[]
+    //   }
+    //   const newReplay={
+    //     id:this.$store.state.studentId,
+    //     avatar:this.$store.state.avatarUrl,
+    //     name:this.$store.state.userName,
+    //     content:commentData.content,
+    //     createTime:this.showTime(new Date().getTime()),
+    //     discussNum:0,
+    //     expanded:false,
+    //     replayVisible:false,
+    //     showAllReplays:false,
+    //     replay:[]
+    //   }
+    //   if(commentData.discussId===0){
+    //     this.comments.unshift(newComment)
+    //   }else if(commentData.discussId===1){
+    //     const targetId = this.comments.findIndex((item) => item.id === commentData.discussId);
+    //     this.comments[targetId].replays.push(newReplay);
+    //   }
 
-      axios
-        .post(
-          "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/save",
-          commentData,
-          {
-            headers: {
-              token: `${this.$store.state.token}`,
-            },
-          }
-        )
-        .then((response) => {
-          this.fullscreenLoading = false;
-          this.$message({
-            type: "success",
-            message: response.data.message,
-          });
-          this.commentType = "0";
-        })
-        .catch((error) => {
-          this.fullscreenLoading = false;
-          this.$message.error("ERROR：" + error.message);
-          this.commentType = "0";
-        });
-      this.textarea = "";
+    //   axios
+    //     .post(
+    //       "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/save",
+    //       commentData,
+    //       {
+    //         headers: {
+    //           token: `${this.$store.state.token}`,
+    //         },
+    //       }
+    //     )
+    //     .then((response) => {
+    //       this.fullscreenLoading = false;
+    //       this.$message({
+    //         type: "success",
+    //         message: response.data.message,
+    //       });
+    //       this.commentType = "0";
+    //       this.textarea = ""; // 清空输入框
+    //       this.getComments(); // 关键点：成功回调后刷新评论列表
+    //     })
+    //     .catch((error) => {
+    //       this.fullscreenLoading = false;
+    //       this.$message.error("ERROR：" + error.message);
+    //       this.commentType = "0";
+    //     });
+    //   this.textarea = "";
+    // },
+    
+    sendComment() {
+  this.fullscreenLoading = true;
+  const commentData = {
+    content: this.textarea,
+    discussId: this.commentType,
+    examId: this.examID,
+  };
+
+  axios
+    .post(
+      "http://121.40.221.40:8080/qingteng-recruitment/user/discuss/save",
+      commentData,
+      {
+        headers: {
+          token: `${this.$store.state.token}`,
+        },
+      }
+    )
+    .then((response) => {
+      this.fullscreenLoading = false;
+      this.$message({
+        type: "success",
+        message: response.data.message,
+      });
+      this.commentType = "0";
+      this.textarea = ""; // 清空输入框
+      this.comments.splice(0, this.comments.length);
+      this.comments=[]
+      setTimeout(() => {
+        this.getComments(); // 关键点：成功回调后刷新评论列表
+      }, 0);
+      
+
+      this.drawerKey = Date.now(); 
+      
+      // this.reload();
+    })
+    .catch((error) => {
+      this.fullscreenLoading = false;
+      this.$message.error("ERROR：" + error.message);
+      this.commentType = "0";
+    });
+},
+    reload(){
+      this.commentTable=false
+      this.$nextTick(()=>{
+        this.commentTable=true
+        this.getComments(); // 关键点：成功回调后刷新评论列表
+      })
     },
     makeReplay(comment) {
       this.$refs.commentInput.focus(); // 跳转到输入框

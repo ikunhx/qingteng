@@ -97,14 +97,14 @@ export default {
     },
     UserExamine() {
       if (
-        this.$store.state.userName !== "" &&
-        this.$store.state.classes !== "" &&
-        this.$store.state.studentId !== "" &&
-        this.$store.state.avatarUrl !== "" &&
-        this.$store.state.phone !== "" &&
-        this.$store.state.QQnum !== "" &&
-        this.$store.state.direction !== "" &&
-        this.$store.state.advantage !== ""
+        this.$store.state.userName !== null &&
+        this.$store.state.classes !== null &&
+        this.$store.state.studentId !== null &&
+        this.$store.state.avatarUrl !== null &&
+        this.$store.state.phone !== null &&
+        this.$store.state.QQnum !== null &&
+        this.$store.state.direction !== null &&
+        this.$store.state.advantage !== null
       ) {
         return "UserExamine";
       } else {
@@ -113,14 +113,14 @@ export default {
     },
     UserResource() {
       if (
-        this.$store.state.userName !== "" &&
-        this.$store.state.classes !== "" &&
-        this.$store.state.studentId !== "" &&
-        this.$store.state.avatarUrl !== "" &&
-        this.$store.state.phone !== "" &&
-        this.$store.state.QQnum !== "" &&
-        this.$store.state.direction !== "" &&
-        this.$store.state.advantage !== ""
+        this.$store.state.userName !== null &&
+        this.$store.state.classes !== null &&
+        this.$store.state.studentId !== null &&
+        this.$store.state.avatarUrl !== null &&
+        this.$store.state.phone !== null &&
+        this.$store.state.QQnum !== null &&
+        this.$store.state.direction !== null &&
+        this.$store.state.advantage !== null
       ) {
         return "UserResource";
       } else {

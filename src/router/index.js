@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from "vue-router";
+
 import Examine from '@/pages/Examine.vue';
 import Introduction from '@/pages/Introduction.vue';
 import User from '@/pages/User.vue';
@@ -62,7 +63,6 @@ const router = new VueRouter({
 
     ]
 })
-
 
 
 

@@ -4,44 +4,16 @@
       <div>
         <div class="top">
           <div class="top-middle">
-            <img
-              v-if="!isEditing"
-              class="top-img"
-              :src="userInformation.avatar || defaultUrl"
-            />
+            <img v-if="!isEditing" class="top-img" :src="userInformation.avatar || defaultUrl" />
             <div class="top-img2" v-else>
-              <img
-                class="top-img"
-                :src="userInformation.avatar || defaultUrl"
-              />
-              <el-button
-                class="change-button"
-                type="primary"
-                plain
-                @click="showFileInput"
-                v-if="isEditing"
-                >上传头像</el-button
-              >
-              <input
-                type="file"
-                accept="image/*"
-                @change="handleFileUpload"
-                ref="fileInput"
-                style="display: none"
-              />
+              <img class="top-img" :src="userInformation.avatar || defaultUrl" />
+              <el-button class="change-button" type="primary" plain @click="showFileInput"
+                v-if="isEditing">上传头像</el-button>
+              <input type="file" accept="image/*" @change="handleFileUpload" ref="fileInput" style="display: none" />
             </div>
             <div class="top-aside">
-              <input
-                v-if="isEditing"
-                class="input-style"
-                v-model="userInformation.name"
-                placeholder="请输入姓名"
-              />
-              <span
-                v-else
-                class="detail-text"
-                v-text="userInformation.name"
-              ></span>
+              <input v-if="isEditing" class="input-style" v-model="userInformation.name" placeholder="请输入姓名" />
+              <span v-else class="detail-text" v-text="userInformation.name"></span>
               <h4 class="slogan">编程世界，我为王！</h4>
             </div>
           </div>
@@ -52,63 +24,31 @@
               <img class="detail-img" src="../../src/assets/itr-png/20.png" />
               <h4>班级</h4>
             </div>
-            <input
-              v-if="isEditing"
-              class="input-style"
-              v-model="userInformation.classes"
-              placeholder="请输入班级"
-            />
-            <span
-              v-else
-              class="detail-text"
-              v-text="userInformation.classes"
-            ></span>
+            <input v-if="isEditing" class="input-style" v-model="userInformation.classes" placeholder="请输入班级" />
+            <span v-else class="detail-text" v-text="userInformation.classes"></span>
           </div>
           <div class="detail">
             <div class="detail-aside">
               <img class="detail-img" src="../../src/assets/itr-png/4.png" />
               <h4>学号</h4>
             </div>
-            <input
-              v-if="isEditing"
-              class="input-style"
-              v-model="userInformation.studentId"
-              placeholder="请输入学号"
-            />
-            <span
-              v-else
-              class="detail-text"
-              v-text="userInformation.studentId"
-            ></span>
+            <input v-if="isEditing" class="input-style" v-model="userInformation.studentId" placeholder="请输入学号" />
+            <span v-else class="detail-text" v-text="userInformation.studentId"></span>
           </div>
           <div class="detail">
             <div class="detail-aside">
               <img class="detail-img" src="../../src/assets/itr-png/21.png" />
               <h4>电话</h4>
             </div>
-            <input
-              v-if="isEditing"
-              class="input-style"
-              v-model="userInformation.phone"
-              placeholder="请输入电话"
-            />
-            <span
-              v-else
-              class="detail-text"
-              v-text="userInformation.phone"
-            ></span>
+            <input v-if="isEditing" class="input-style" v-model="userInformation.phone" placeholder="请输入电话" />
+            <span v-else class="detail-text" v-text="userInformation.phone"></span>
           </div>
           <div class="detail">
             <div class="detail-aside">
               <img class="detail-img" src="../../src/assets/itr-png/22.png" />
               <h4>QQ</h4>
             </div>
-            <input
-              v-if="isEditing"
-              class="input-style"
-              v-model="qq"
-              placeholder="请输入QQ"
-            />
+            <input v-if="isEditing" class="input-style" v-model="qq" placeholder="请输入QQ" />
             <span v-else class="detail-text" v-text="qq"></span>
           </div>
           <div class="detail">
@@ -117,9 +57,7 @@
               <h4>学习方向</h4>
             </div>
             <div class="select">
-              <strong
-                ><span v-if="!isEditing">{{ direction }}</span></strong
-              >
+              <strong><span v-if="!isEditing">{{ direction }}</span></strong>
               <div v-if="isEditing">
                 <el-radio v-model="direction" label="前端"></el-radio>
                 <el-radio v-model="direction" label="后端"></el-radio>
@@ -132,44 +70,13 @@
               <img class="detail-img" src="../../src/assets/itr-png/24.png" />
               <h4>个人优势</h4>
             </div>
-            <input
-              v-if="isEditing"
-              class="input-style"
-              v-model="userInformation.advantage"
-              placeholder="请输入个人优势"
-            />
-            <span
-              v-else
-              class="detail-text"
-              @click="startEditing"
-              v-text="userInformation.advantage"
-            ></span>
+            <input v-if="isEditing" class="input-style" v-model="userInformation.advantage" placeholder="请输入个人优势" />
+            <span v-else class="detail-text" @click="startEditing" v-text="userInformation.advantage"></span>
           </div>
         </div>
-        <el-button
-          class="edit-button"
-          type="primary"
-          plain
-          @click="startEditing"
-          v-if="!isEditing"
-          >编辑</el-button
-        >
-        <el-button
-          class="edit-button"
-          type="primary"
-          plain
-          @click="cancelEdit"
-          v-if="isEditing"
-          >取消</el-button
-        >
-        <el-button
-          class="edit-button"
-          type="primary"
-          plain
-          @click="saveChanges"
-          v-if="isEditing"
-          >保存</el-button
-        >
+        <el-button class="edit-button" type="primary" plain @click="startEditing" v-if="!isEditing">编辑</el-button>
+        <el-button class="edit-button" type="primary" plain @click="cancelEdit" v-if="isEditing">取消</el-button>
+        <el-button class="edit-button" type="primary" plain @click="saveChanges" v-if="isEditing">保存</el-button>
       </div>
     </div>
   </div>
